@@ -53,7 +53,7 @@ export function AppSidebar() {
         })}
       </nav>
       <div className="mt-8 rounded-[1.5rem] border border-border bg-white/70 p-4 text-sm text-muted">
-        Demo mode works without external keys. Add Clerk, OpenRouter, UploadThing, Polar, and Neon env vars to switch to live providers.
+        Demo mode works without external keys. Add Clerk, OpenRouter, UploadThing, and Neon env vars to switch to live providers.
       </div>
     </aside>
   );

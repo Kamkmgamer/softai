@@ -57,8 +57,8 @@ export const subscriptions = pgTable("subscriptions", {
   userId: uuid("user_id").notNull(),
   plan: varchar("plan", { length: 100 }).notNull(),
   status: varchar("status", { length: 50 }).notNull(),
-  polarCustomerId: varchar("polar_customer_id", { length: 255 }),
-  polarSubscriptionId: varchar("polar_subscription_id", { length: 255 }),
+  clerkPayerId: varchar("clerk_payer_id", { length: 255 }),
+  clerkSubscriptionId: varchar("clerk_subscription_id", { length: 255 }),
   currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
   monthlyCredits: integer("monthly_credits").notNull().default(1000),
 });

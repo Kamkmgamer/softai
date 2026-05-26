@@ -1,3 +1,4 @@
+import { PricingTable } from "@clerk/nextjs";
 import { Card, PageHeader, Pill } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
 import { getBillingSummary } from "@/lib/store";
@@ -12,7 +13,7 @@ export default async function BillingPage() {
       <PageHeader
         eyebrow="Billing"
         title="Credits and subscription state."
-        description="Polar manages checkout and subscriptions. The app keeps a local entitlement view and credit ledger for generation controls."
+        description="Clerk Billing manages checkout and subscriptions. The app keeps a local entitlement view and credit ledger for generation controls."
       />
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <Card className="rounded-[2rem] p-6">
@@ -43,6 +44,10 @@ export default async function BillingPage() {
           </div>
         </Card>
       </div>
+      <Card className="rounded-[2rem] p-6">
+        <h2 className="mb-6 text-xl font-semibold">Manage plan</h2>
+        <PricingTable />
+      </Card>
     </div>
   );
 }

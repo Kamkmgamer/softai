@@ -3,9 +3,8 @@ const requiredEnvNames = [
   "DATABASE_URL",
   "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
   "CLERK_SECRET_KEY",
+  "CLERK_WEBHOOK_SIGNING_SECRET",
   "UPLOADTHING_TOKEN",
-  "POLAR_ACCESS_TOKEN",
-  "POLAR_WEBHOOK_SECRET",
 ] as const;
 
 export function getEnv() {
@@ -15,10 +14,8 @@ export function getEnv() {
     databaseUrl: process.env.DATABASE_URL,
     clerkPublishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     clerkSecretKey: process.env.CLERK_SECRET_KEY,
+    clerkWebhookSigningSecret: process.env.CLERK_WEBHOOK_SIGNING_SECRET,
     uploadThingToken: process.env.UPLOADTHING_TOKEN,
-    polarAccessToken: process.env.POLAR_ACCESS_TOKEN,
-    polarWebhookSecret: process.env.POLAR_WEBHOOK_SECRET,
-    polarOrganizationToken: process.env.POLAR_ORGANIZATION_TOKEN,
     adminEmails: (process.env.ADMIN_EMAILS ?? "")
       .split(",")
       .map((value) => value.trim().toLowerCase())

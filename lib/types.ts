@@ -56,8 +56,8 @@ export type SubscriptionRecord = {
   userId: string;
   plan: string;
   status: SubscriptionStatus;
-  polarCustomerId: string | null;
-  polarSubscriptionId: string | null;
+  clerkPayerId: string | null;
+  clerkSubscriptionId: string | null;
   currentPeriodEnd: string | null;
   monthlyCredits: number;
 };

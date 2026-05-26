@@ -1,3 +1,4 @@
+import { PricingTable } from "@clerk/nextjs";
 import { MarketingNav } from "@/components/marketing-nav";
 import { Card, PageHeader, Pill } from "@/components/ui";
 
@@ -8,21 +9,15 @@ export default function PricingPage() {
       <main className="mx-auto max-w-6xl px-6 py-12 lg:px-10">
         <PageHeader
           eyebrow="Pricing"
-          title="One focused plan for SMB creative teams."
-          description="The v1 commercial model is subscription plus credits. You get predictable monthly capacity with overage control rather than unlimited usage."
+          title="Three plans for SMB creative teams."
+          description="The commercial model is subscription plus credits. Choose the monthly capacity that matches your production volume."
         />
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <Card className="rounded-[2.5rem] p-8">
-            <Pill>Starter</Pill>
-            <p className="mt-4 text-5xl font-semibold">$79</p>
-            <p className="mt-2 text-sm text-muted">per month, billed via Polar</p>
-            <ul className="mt-8 space-y-4 text-sm leading-6 text-muted">
-              <li>1,000 monthly credits</li>
-              <li>Storyboard, image batch, and video render pipeline</li>
-              <li>Asset library and campaign archive</li>
-              <li>Abuse reporting and admin safety tools</li>
-              <li>Demo mode fallback while you wire live providers</li>
-            </ul>
+            <Pill>Clerk Billing</Pill>
+            <div className="mt-6">
+              <PricingTable />
+            </div>
           </Card>
           <Card className="rounded-[2.5rem] p-8">
             <p className="font-mono text-xs uppercase tracking-[0.26em] text-accent-strong">Credit economics</p>

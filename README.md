@@ -7,7 +7,7 @@ SoftAI is a Next 16 App Router SaaS skeleton for SMB ad-video generation. It inc
 - Storyboard review UI
 - Credit ledger and billing summary
 - OpenRouter-backed storyboard, image, and video generation hooks
-- Clerk, UploadThing, Polar, and Neon integration points
+- Clerk Billing, UploadThing, and Neon integration points
 - Admin safety surfaces and abuse reporting
 
 ## Run locally
@@ -34,9 +34,8 @@ Copy `.env.example` and fill in providers when you want live integrations:
 - `DATABASE_URL`
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - `CLERK_SECRET_KEY`
+- `CLERK_WEBHOOK_SIGNING_SECRET`
 - `UPLOADTHING_TOKEN`
-- `POLAR_ACCESS_TOKEN`
-- `POLAR_WEBHOOK_SECRET`
 - `ADMIN_EMAILS`
 
 ## Current architecture

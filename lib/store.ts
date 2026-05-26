@@ -71,8 +71,8 @@ function createSeedStore(): DatabaseState {
         userId,
         plan: DEFAULT_PLAN_NAME,
         status: "active",
-        polarCustomerId: null,
-        polarSubscriptionId: null,
+        clerkPayerId: null,
+        clerkSubscriptionId: null,
         currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
         monthlyCredits: DEFAULT_MONTHLY_CREDITS,
       },
@@ -260,8 +260,8 @@ export function upsertUser(input: Pick<UserRecord, "clerkUserId" | "email" | "na
     userId: created.id,
     plan: DEFAULT_PLAN_NAME,
     status: "trialing",
-    polarCustomerId: null,
-    polarSubscriptionId: null,
+    clerkPayerId: null,
+    clerkSubscriptionId: null,
     currentPeriodEnd: null,
     monthlyCredits: DEFAULT_MONTHLY_CREDITS,
   });
@@ -612,6 +612,51 @@ export function getCreditBalance(userId: string) {
 
 export function getUserSubscription(userId: string) {
   return getState().subscriptions.find((entry) => entry.userId === userId) ?? null;
+}
+
+export function upsertUserSubscription(
+  userId: string,
+  input: {
+    clerkPayerId: string | null;
+    clerkSubscriptionId?: string | null;
+    plan: string;
+    status: SubscriptionRecord["status"];
+    currentPeriodEnd?: string | null;
+    monthlyCredits?: number;
+  },
+) {
+  const state = getState();
+  const existing =
+    state.subscriptions.find(
+      (entry) =>
+        input.clerkSubscriptionId !== null &&
+        entry.clerkSubscriptionId === input.clerkSubscriptionId,
+    ) ?? state.subscriptions.find((entry) => entry.userId === userId);
+
+  if (existing) {
+    existing.clerkPayerId = input.clerkPayerId;
+    existing.clerkSubscriptionId =
+      input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId;
+    existing.plan = input.plan;
+    existing.status = input.status;
+    existing.currentPeriodEnd = input.currentPeriodEnd ?? existing.currentPeriodEnd;
+    existing.monthlyCredits = input.monthlyCredits ?? existing.monthlyCredits;
+    return existing;
+  }
+
+  const created: SubscriptionRecord = {
+    id: randomUUID(),
+    userId,
+    plan: input.plan,
+    status: input.status,
+    clerkPayerId: input.clerkPayerId,
+    clerkSubscriptionId: input.clerkSubscriptionId ?? null,
+    currentPeriodEnd: input.currentPeriodEnd ?? null,
+    monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+  };
+
+  state.subscriptions.push(created);
+  return created;
 }
 
 export function addCreditEvent(

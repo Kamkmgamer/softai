@@ -1,0 +1,39 @@
+{
+  "billing": {
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "description": "Entry plan for small teams starting with SoftAI credits.",
+        "amount": 2000,
+        "annual_monthly_amount": 0,
+        "currency": "usd",
+        "payer_type": "user",
+        "is_recurring": true,
+        "publicly_visible": true,
+        "features": []
+      },
+      "growth": {
+        "name": "Growth",
+        "description": "Higher monthly capacity for teams producing campaigns every week.",
+        "amount": 10000,
+        "annual_monthly_amount": 0,
+        "currency": "usd",
+        "payer_type": "user",
+        "is_recurring": true,
+        "publicly_visible": true,
+        "features": []
+      },
+      "scale": {
+        "name": "Scale",
+        "description": "Expanded production capacity for larger creative teams.",
+        "amount": 20000,
+        "annual_monthly_amount": 0,
+        "currency": "usd",
+        "payer_type": "user",
+        "is_recurring": true,
+        "publicly_visible": true,
+        "features": []
+      }
+    }
+  }
+}
