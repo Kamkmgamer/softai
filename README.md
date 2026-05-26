@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SoftAI
 
-## Getting Started
+SoftAI is a Next 16 App Router SaaS skeleton for SMB ad-video generation. It includes:
 
-First, run the development server:
+- Marketing site and authenticated app shell
+- Project brief flow for ad creation
+- Storyboard review UI
+- Credit ledger and billing summary
+- OpenRouter-backed storyboard, image, and video generation hooks
+- Clerk, UploadThing, Polar, and Neon integration points
+- Admin safety surfaces and abuse reporting
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app runs in `demo mode` if external environment variables are missing. Demo mode gives you:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- A seeded demo user
+- Starter credits
+- A seeded sample project
+- Fallback outputs for storyboard, image, and video generation
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` and fill in providers when you want live integrations:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `OPENROUTER_API_KEY`
+- `DATABASE_URL`
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `UPLOADTHING_TOKEN`
+- `POLAR_ACCESS_TOKEN`
+- `POLAR_WEBHOOK_SECRET`
+- `ADMIN_EMAILS`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Current architecture
 
-## Deploy on Vercel
+- `app/(marketing)`: landing and pricing pages
+- `app/(auth)`: Clerk sign-in and sign-up routes
+- `app/(app)`: dashboard, project, review, library, billing, settings
+- `app/(admin)`: admin and audit view
+- `app/api`: Route Handlers matching the SaaS plan contract
+- `db/schema.ts`: Postgres/Drizzle schema definitions
+- `lib/store.ts`: in-memory demo repository mirroring the Neon data model
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Route handlers currently persist to the in-memory store for local usability.
+- `db/schema.ts` is ready for the next step of replacing the demo store with a real Neon-backed repository.
+- OpenRouter calls fall back to deterministic demo responses when no API key is present.

@@ -1,0 +1,71 @@
+import { apiError, apiSuccess, requireAppUser } from "@/lib/api";
+import { holdVideoCredits, refundVideoCredits, settleVideoCredits } from "@/lib/credits";
+import {
+  createGenerationJob,
+  createOutput,
+  getProjectBundle,
+  updateGenerationJob,
+} from "@/lib/store";
+import { submitVideoRender } from "@/lib/openrouter";
+
+export async function POST(
+  _request: Request,
+  { params }: { params: Promise<{ projectId: string }> },
+) {
+  try {
+    const user = await requireAppUser();
+    const { projectId } = await params;
+    const bundle = getProjectBundle(user.id, projectId);
+
+    if (!bundle) {
+      return apiError(new Error("Project not found."), 404);
+    }
+
+    if (!bundle.storyboard || bundle.scenes.some((scene) => !scene.imageUrl)) {
+      return apiError(new Error("Render scene images before the final video."), 409);
+    }
+
+    holdVideoCredits(user.id, projectId);
+    const prompt = [
+      bundle.storyboard.headline,
+      bundle.storyboard.hook,
+      ...bundle.scenes.map((scene) => scene.narration),
+      bundle.storyboard.cta,
+    ].join(" ");
+
+    const job = createGenerationJob(user.id, projectId, {
+      type: "video",
+      status: "processing",
+      requestPayload: { prompt },
+    });
+
+    const result = await submitVideoRender(
+      prompt,
+      bundle.scenes.map((scene) => scene.imageUrl as string),
+    );
+
+    updateGenerationJob(job.id, {
+      status: result.status === "completed" ? "completed" : "submitted",
+      providerJobId: result.id,
+      responsePayload: result.responsePayload,
+    });
+
+    if (result.url) {
+      createOutput(user.id, projectId, {
+        type: "final_video",
+        title: `${bundle.project.title} final render`,
+        url: result.url,
+      });
+    }
+
+    settleVideoCredits(user.id, projectId);
+    return apiSuccess({ jobId: job.id, providerJobId: result.id, url: result.url });
+  } catch (error) {
+    const { projectId } = await params;
+    const user = await requireAppUser().catch(() => null);
+    if (user) {
+      refundVideoCredits(user.id, projectId);
+    }
+    return apiError(error);
+  }
+}
