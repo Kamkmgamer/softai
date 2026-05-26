@@ -1,44 +1,57 @@
-import { Card, PageHeader, Pill } from "@/components/ui";
+import { redirect } from "next/navigation";
+import { FolderArchive, Download } from "lucide-react";
 import { getAppSession } from "@/lib/auth";
 import { listProjects } from "@/lib/store";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { formatDate } from "@/lib/utils";
 
 export default async function LibraryPage() {
   const session = await getAppSession();
-  const projects = listProjects(session.userId);
-  const outputs = projects.flatMap((project) =>
-    project ? [] : [],
-  );
+  if (!session) redirect("/sign-in");
+
+  const projects = await listProjects(session.userId);
+  const completedProjects = projects.filter((p) => p.status === "completed");
 
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Library"
-        title="Assets, avatars, and outputs."
-        description="A single archive for the product assets you uploaded and the creative artifacts the generation pipeline produced."
+        title="Library"
+        description="Your finalized campaigns and rendered exports."
       />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-[2rem] p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Project archive</h2>
-            <Pill>{projects.length} campaigns</Pill>
-          </div>
-          <div className="mt-6 space-y-3">
-            {projects.map((project) => (
-              <div key={project.id} className="rounded-[1.5rem] border border-border bg-white/70 p-4">
-                <p className="font-semibold">{project.title}</p>
-                <p className="mt-1 text-sm text-muted">{project.productName}</p>
+
+      <div className="space-y-4">
+        {completedProjects.length === 0 ? (
+          <EmptyState
+            icon={FolderArchive}
+            title="Your library is empty"
+            description="When your video campaigns finish rendering, they will appear here for download."
+          />
+        ) : (
+          <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border bg-surface">
+            {completedProjects.map((project) => (
+              <div key={project.id} className="flex items-center justify-between p-4 transition-colors hover:bg-surface-raised">
+                <div>
+                  <h3 className="text-sm font-medium text-text">{project.title}</h3>
+                  <p className="mt-0.5 text-xs text-text-secondary">
+                    {project.productName} · Completed {formatDate(project.updatedAt)}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={`/projects/${project.id}`}
+                    className="btn-secondary btn-sm"
+                  >
+                    View
+                  </a>
+                  <button type="button" className="btn-primary btn-sm px-2">
+                    <Download className="h-4 w-4" />
+                    <span className="sr-only">Download all</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
-        </Card>
-        <Card className="rounded-[2rem] p-6">
-          <h2 className="text-xl font-semibold">Output policy</h2>
-          <div className="mt-6 space-y-4 text-sm leading-7 text-muted">
-            <p>All generated outputs should carry traceable metadata and remain linked to the originating project.</p>
-            <p>Identity-based generations require user attestation and must not depict celebrities or public figures without consent.</p>
-            <p>{outputs.length === 0 ? "No final outputs have been rendered yet." : `${outputs.length} outputs available.`}</p>
-          </div>
-        </Card>
+        )}
       </div>
     </div>
   );

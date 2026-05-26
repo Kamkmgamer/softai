@@ -6,12 +6,12 @@ import { findUserByClerkId, upsertUser } from "@/lib/store";
 export async function requireAppUser() {
   const session = await getAppSession();
   const existing =
-    findUserByClerkId(session.clerkUserId) ??
-    upsertUser({
+    (await findUserByClerkId(session.clerkUserId)) ??
+    (await upsertUser({
       clerkUserId: session.clerkUserId,
       email: session.email,
       name: session.name,
-    });
+    }));
 
   if (existing.bannedAt) {
     throw new Error("This account has been banned.");

@@ -12,10 +12,12 @@ export async function POST(
   _request: Request,
   { params }: { params: Promise<{ projectId: string }> },
 ) {
+  let heldCredits = false;
+
   try {
     const user = await requireAppUser();
     const { projectId } = await params;
-    const bundle = getProjectBundle(user.id, projectId);
+    const bundle = await getProjectBundle(user.id, projectId);
 
     if (!bundle) {
       return apiError(new Error("Project not found."), 404);
@@ -25,7 +27,8 @@ export async function POST(
       return apiError(new Error("Render scene images before the final video."), 409);
     }
 
-    holdVideoCredits(user.id, projectId);
+    await holdVideoCredits(user.id, projectId);
+    heldCredits = true;
     const prompt = [
       bundle.storyboard.headline,
       bundle.storyboard.hook,
@@ -33,7 +36,7 @@ export async function POST(
       bundle.storyboard.cta,
     ].join(" ");
 
-    const job = createGenerationJob(user.id, projectId, {
+    const job = await createGenerationJob(user.id, projectId, {
       type: "video",
       status: "processing",
       requestPayload: { prompt },
@@ -44,27 +47,27 @@ export async function POST(
       bundle.scenes.map((scene) => scene.imageUrl as string),
     );
 
-    updateGenerationJob(job.id, {
+    await updateGenerationJob(job.id, {
       status: result.status === "completed" ? "completed" : "submitted",
       providerJobId: result.id,
       responsePayload: result.responsePayload,
     });
 
     if (result.url) {
-      createOutput(user.id, projectId, {
+      await createOutput(user.id, projectId, {
         type: "final_video",
         title: `${bundle.project.title} final render`,
         url: result.url,
       });
     }
 
-    settleVideoCredits(user.id, projectId);
+    await settleVideoCredits(user.id, projectId);
     return apiSuccess({ jobId: job.id, providerJobId: result.id, url: result.url });
   } catch (error) {
     const { projectId } = await params;
     const user = await requireAppUser().catch(() => null);
-    if (user) {
-      refundVideoCredits(user.id, projectId);
+    if (user && heldCredits) {
+      await refundVideoCredits(user.id, projectId);
     }
     return apiError(error);
   }

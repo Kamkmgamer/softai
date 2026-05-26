@@ -6,12 +6,12 @@ export async function POST(request: Request) {
   try {
     const admin = await requireAdminUser();
     const input = await readJson(request, adminCreditAdjustmentSchema);
-    const ledgerEvent = addCreditEvent(input.targetUserId, {
+    const ledgerEvent = await addCreditEvent(input.targetUserId, {
       reason: "admin_adjustment",
       amount: input.amount,
       note: input.details,
     });
-    const action = createAdminAction(admin.id, {
+    const action = await createAdminAction(admin.id, {
       targetUserId: input.targetUserId,
       action: "credit_adjustment",
       details: `${input.details} | amount:${input.amount}`,

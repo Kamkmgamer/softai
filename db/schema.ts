@@ -136,6 +136,7 @@ export const outputs = pgTable("outputs", {
   title: varchar("title", { length: 255 }).notNull(),
   url: text("url").notNull(),
   metadataTag: varchar("metadata_tag", { length: 255 }).notNull(),
+  removedAt: timestamp("removed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

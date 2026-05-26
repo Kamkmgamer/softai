@@ -6,13 +6,13 @@ export async function POST(request: Request) {
   try {
     const admin = await requireAdminUser();
     const input = await readJson(request, adminOutputSchema);
-    const output = takedownOutput(input.outputId);
+    const output = await takedownOutput(input.outputId);
 
     if (!output) {
       return apiError(new Error("Output not found."), 404);
     }
 
-    const action = createAdminAction(admin.id, {
+    const action = await createAdminAction(admin.id, {
       targetUserId: input.targetUserId,
       action: "takedown_output",
       details: `${input.details} | output:${input.outputId}`,

@@ -6,7 +6,7 @@ const f = createUploadthing();
 export const uploadRouter = {
   brandAssetUploader: f({
     image: {
-      maxFileCount: 8,
+      maxFileCount: 1,
       maxFileSize: "8MB",
     },
   })

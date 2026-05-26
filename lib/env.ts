@@ -11,6 +11,7 @@ export function getEnv() {
   return {
     appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
     openRouterApiKey: process.env.OPENROUTER_API_KEY,
+    openRouterWebhookSecret: process.env.OPENROUTER_WEBHOOK_SECRET,
     databaseUrl: process.env.DATABASE_URL,
     clerkPublishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     clerkSecretKey: process.env.CLERK_SECRET_KEY,

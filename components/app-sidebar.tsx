@@ -2,12 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Film, FolderKanban, LibraryBig, Settings, Shield, Sparkles, Wallet } from "lucide-react";
+import {
+  FolderKanban,
+  LibraryBig,
+  Settings,
+  Shield,
+  Sparkles,
+  Wallet,
+} from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: FolderKanban },
-  { href: "/projects/new", label: "New Project", icon: Sparkles },
+  { href: "/projects/new", label: "New project", icon: Sparkles },
   { href: "/library", label: "Library", icon: LibraryBig },
   { href: "/billing", label: "Billing", icon: Wallet },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -18,43 +26,78 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="mesh-panel sticky top-6 h-[calc(100vh-3rem)] rounded-[2rem] border border-border p-5 shadow-[0_20px_50px_rgba(65,32,11,0.12)]">
-      <div className="mb-10 flex items-center gap-3 px-2">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-foreground text-background">
-          <Film className="h-5 w-5" />
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:w-[220px] lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:py-5">
+        {/* Logo */}
+        <Link href="/dashboard" className="flex items-center gap-2.5 px-5 mb-6">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-text text-[11px] font-bold text-bg">
+            S
+          </div>
+          <span className="text-sm font-semibold tracking-tight text-text">SoftAI</span>
+        </Link>
+
+        {/* Nav */}
+        <nav className="flex-1 space-y-0.5 px-3">
+          {links.map((link) => {
+            const Icon = link.icon;
+            const active =
+              pathname === link.href || pathname.startsWith(`${link.href}/`);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-[var(--radius-md)] px-2.5 py-[7px] text-[13px] font-medium transition-colors",
+                  active
+                    ? "bg-accent-soft text-accent-text"
+                    : "text-text-secondary hover:bg-surface-raised hover:text-text",
+                )}
+              >
+                <Icon className="h-[15px] w-[15px] shrink-0" />
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User */}
+        <div className="mt-auto border-t border-border px-5 pt-4">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "h-7 w-7",
+              },
+            }}
+          />
         </div>
-        <div>
-          <p className="font-semibold">SoftAI Studio</p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted">
-            Build ads
-          </p>
-        </div>
-      </div>
-      <nav className="space-y-2">
-        {links.map((link) => {
+      </aside>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-border bg-surface/95 backdrop-blur-md px-2 py-1.5 lg:hidden">
+        {links.slice(0, 5).map((link) => {
           const Icon = link.icon;
-          const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+          const active =
+            pathname === link.href || pathname.startsWith(`${link.href}/`);
 
           return (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition",
+                "flex flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium transition-colors",
                 active
-                  ? "bg-foreground text-background"
-                  : "text-muted hover:bg-white/70 hover:text-foreground",
+                  ? "text-accent-text"
+                  : "text-text-tertiary",
               )}
             >
-              <Icon className="h-4 w-4" />
-              {link.label}
+              <Icon className="h-[18px] w-[18px]" />
+              <span>{link.label.split(" ").pop()}</span>
             </Link>
           );
         })}
       </nav>
-      <div className="mt-8 rounded-[1.5rem] border border-border bg-white/70 p-4 text-sm text-muted">
-        Demo mode works without external keys. Add Clerk, OpenRouter, UploadThing, and Neon env vars to switch to live providers.
-      </div>
-    </aside>
+    </>
   );
 }

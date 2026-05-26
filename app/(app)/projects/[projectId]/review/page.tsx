@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { StoryboardReviewForm } from "@/components/storyboard-review-form";
-import { Card, PageHeader } from "@/components/ui";
+import { PageHeader } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
 import { burnStoryboardCredits } from "@/lib/credits";
 import { generateStoryboard } from "@/lib/openrouter";
@@ -13,14 +13,14 @@ export default async function ReviewPage({
 }) {
   const { projectId } = await params;
   const session = await getAppSession();
-  let bundle = getProjectBundle(session.userId, projectId);
+  let bundle = await getProjectBundle(session.userId, projectId);
 
   if (!bundle) {
     notFound();
   }
 
   if (!bundle.storyboard || bundle.scenes.length === 0) {
-    burnStoryboardCredits(session.userId, projectId);
+    await burnStoryboardCredits(session.userId, projectId);
     const generated = await generateStoryboard({
       productName: bundle.project.productName,
       offer: bundle.project.offer,
@@ -30,20 +30,20 @@ export default async function ReviewPage({
       script: bundle.project.script,
     });
 
-    createGenerationJob(session.userId, projectId, {
+    await createGenerationJob(session.userId, projectId, {
       type: "storyboard",
       status: "completed",
       requestPayload: generated.requestPayload,
       responsePayload: generated.responsePayload,
     });
 
-    saveStoryboard(session.userId, projectId, {
+    await saveStoryboard(session.userId, projectId, {
       headline: generated.headline,
       hook: generated.hook,
       cta: generated.cta,
       scenes: generated.scenes,
     });
-    bundle = getProjectBundle(session.userId, projectId);
+    bundle = await getProjectBundle(session.userId, projectId);
   }
 
   if (!bundle) {
@@ -51,15 +51,13 @@ export default async function ReviewPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-3xl">
       <PageHeader
-        eyebrow="Review"
-        title={`Polish ${bundle.project.title}`}
-        description="This is the lightweight review step. Tighten the hook, scene narration, overlay text, and visual direction before rendering images or video."
+        title={`Review: ${bundle.project.title}`}
+        description="Tighten the hook, narration, and visual direction before rendering."
       />
-      <Card className="rounded-[2rem] p-6">
-        <StoryboardReviewForm projectId={projectId} initialBundle={bundle} />
-      </Card>
+      
+      <StoryboardReviewForm projectId={projectId} initialBundle={bundle} />
     </div>
   );
 }

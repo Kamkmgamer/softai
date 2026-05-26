@@ -2,67 +2,64 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { ProjectBundle } from "@/lib/types";
+import { type ProjectBundle } from "@/lib/types";
+import { FieldLabel } from "@/components/ui";
 
-type Props = {
+export function StoryboardReviewForm({
+  projectId,
+  initialBundle,
+}: {
   projectId: string;
   initialBundle: ProjectBundle;
-};
-
-export function StoryboardReviewForm({ projectId, initialBundle }: Props) {
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [scenes, setScenes] = useState(initialBundle.scenes);
   const [error, setError] = useState<string | null>(null);
-  const [headline, setHeadline] = useState(initialBundle.storyboard?.headline ?? "");
-  const [hook, setHook] = useState(initialBundle.storyboard?.hook ?? "");
-  const [cta, setCta] = useState(initialBundle.storyboard?.cta ?? initialBundle.project.cta);
-  const [scenes, setScenes] = useState(
-    initialBundle.scenes.map((scene) => ({
-      title: scene.title,
-      narration: scene.narration,
-      visualDirection: scene.visualDirection,
-      overlayText: scene.overlayText,
-      durationSeconds: scene.durationSeconds,
-    })),
-  );
+  const storyboard = initialBundle.storyboard;
 
-  function updateScene(index: number, key: keyof (typeof scenes)[number], value: string | number) {
+  const updateScene = (id: string, field: "title" | "narration" | "overlayText" | "visualDirection", value: string) => {
     setScenes((current) =>
-      current.map((scene, sceneIndex) =>
-        sceneIndex === index ? { ...scene, [key]: value } : scene,
-      ),
+      current.map((scene) => (scene.id === id ? { ...scene, [field]: value } : scene))
     );
-  }
+  };
 
-  async function save() {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setError(null);
+
     startTransition(async () => {
       const response = await fetch(`/api/projects/${projectId}/storyboard`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ headline, hook, cta, scenes }),
+        body: JSON.stringify({
+          headline: storyboard?.headline ?? initialBundle.project.title,
+          hook: storyboard?.hook ?? initialBundle.project.offer,
+          cta: storyboard?.cta ?? initialBundle.project.cta,
+          scenes: scenes.map((scene) => ({
+            title: scene.title,
+            narration: scene.narration,
+            visualDirection: scene.visualDirection,
+            overlayText: scene.overlayText,
+            durationSeconds: scene.durationSeconds,
+          })),
+        }),
       });
+
       const payload = await response.json();
 
       if (!response.ok) {
-        setError(payload.error ?? "Unable to save storyboard.");
+        setError(payload.error ?? "Failed to save storyboard.");
         return;
       }
 
-      router.refresh();
-    });
-  }
-
-  async function approve() {
-    setError(null);
-    startTransition(async () => {
-      const response = await fetch(`/api/projects/${projectId}/storyboard`, {
+      const approveResponse = await fetch(`/api/projects/${projectId}/storyboard`, {
         method: "POST",
       });
-      const payload = await response.json();
+      const approvePayload = await approveResponse.json();
 
-      if (!response.ok) {
-        setError(payload.error ?? "Unable to approve storyboard.");
+      if (!approveResponse.ok) {
+        setError(approvePayload.error ?? "Failed to approve storyboard.");
         return;
       }
 
@@ -71,94 +68,92 @@ export function StoryboardReviewForm({ projectId, initialBundle }: Props) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="grid gap-4 rounded-[2rem] border border-border bg-white/70 p-6">
-        <input
-          value={headline}
-          onChange={(event) => setHeadline(event.target.value)}
-          className="rounded-2xl border border-border bg-background px-4 py-3 text-xl font-semibold"
-          placeholder="Headline"
-        />
-        <input
-          value={hook}
-          onChange={(event) => setHook(event.target.value)}
-          className="rounded-2xl border border-border bg-background px-4 py-3"
-          placeholder="Hook"
-        />
-        <input
-          value={cta}
-          onChange={(event) => setCta(event.target.value)}
-          className="rounded-2xl border border-border bg-background px-4 py-3"
-          placeholder="CTA"
-        />
-      </div>
-
-      <div className="grid gap-5">
+    <form onSubmit={onSubmit} className="space-y-8">
+      <div className="space-y-8">
         {scenes.map((scene, index) => (
-          <div key={index} className="grid gap-4 rounded-[2rem] border border-border bg-white/70 p-6">
-            <div className="flex items-center justify-between">
-              <p className="font-mono text-xs uppercase tracking-[0.25em] text-muted">
-                Scene {index + 1}
-              </p>
-              <input
-                type="number"
-                min={3}
-                max={15}
-                value={scene.durationSeconds}
-                onChange={(event) => updateScene(index, "durationSeconds", Number(event.target.value))}
-                className="w-24 rounded-2xl border border-border bg-background px-3 py-2 text-sm"
-              />
+          <div key={scene.id} className="rounded-[var(--radius-lg)] border border-border bg-surface p-5 sm:p-6 shadow-[var(--shadow-sm)]">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-text text-[10px] font-bold text-bg">
+                {index + 1}
+              </span>
+              <h3 className="text-sm font-semibold text-text">Scene {index + 1}</h3>
             </div>
-            <input
-              value={scene.title}
-              onChange={(event) => updateScene(index, "title", event.target.value)}
-              className="rounded-2xl border border-border bg-background px-4 py-3"
-              placeholder="Scene title"
-            />
-            <textarea
-              rows={4}
-              value={scene.narration}
-              onChange={(event) => updateScene(index, "narration", event.target.value)}
-              className="rounded-[1.5rem] border border-border bg-background px-4 py-3"
-              placeholder="Narration"
-            />
-            <textarea
-              rows={4}
-              value={scene.visualDirection}
-              onChange={(event) => updateScene(index, "visualDirection", event.target.value)}
-              className="rounded-[1.5rem] border border-border bg-background px-4 py-3"
-              placeholder="Visual direction"
-            />
-            <input
-              value={scene.overlayText}
-              onChange={(event) => updateScene(index, "overlayText", event.target.value)}
-              className="rounded-2xl border border-border bg-background px-4 py-3"
-              placeholder="Overlay text"
-            />
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <FieldLabel htmlFor={`scene-title-${scene.id}`} label="Internal title" />
+                <input
+                  id={`scene-title-${scene.id}`}
+                  value={scene.title}
+                  onChange={(e) => updateScene(scene.id, "title", e.target.value)}
+                  className="control-field"
+                  placeholder="e.g. Opening hook"
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <FieldLabel htmlFor={`scene-narration-${scene.id}`} label="Narration (TTS)" />
+                  <textarea
+                    id={`scene-narration-${scene.id}`}
+                    rows={3}
+                    value={scene.narration}
+                    onChange={(e) => updateScene(scene.id, "narration", e.target.value)}
+                    className="control-field resize-y text-[13px]"
+                    placeholder="What the voiceover says..."
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <FieldLabel htmlFor={`scene-visual-${scene.id}`} label="Visual direction" />
+                  <textarea
+                    id={`scene-visual-${scene.id}`}
+                    rows={3}
+                    value={scene.visualDirection}
+                    onChange={(e) => updateScene(scene.id, "visualDirection", e.target.value)}
+                    className="control-field resize-y text-[13px]"
+                    placeholder="Describe the image..."
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <FieldLabel htmlFor={`scene-overlay-${scene.id}`} label="Text overlay (optional)" />
+                <input
+                  id={`scene-overlay-${scene.id}`}
+                  value={scene.overlayText || ""}
+                  onChange={(e) => updateScene(scene.id, "overlayText", e.target.value)}
+                  className="control-field"
+                  placeholder="e.g. 50% OFF TODAY"
+                />
+              </div>
+            </div>
           </div>
         ))}
       </div>
 
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
+      {error ? (
+        <div className="rounded-md bg-danger-soft p-3 text-[13px] text-danger">
+          {error}
+        </div>
+      ) : null}
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col-reverse justify-end gap-3 sm:flex-row pt-4 border-t border-border">
         <button
           type="button"
-          onClick={save}
-          disabled={isPending}
-          className="rounded-full border border-border bg-white/80 px-5 py-3 text-sm font-semibold"
+          onClick={() => router.push(`/projects/${projectId}`)}
+          className="btn-secondary w-full sm:w-auto"
         >
-          Save edits
+          Cancel
         </button>
         <button
-          type="button"
-          onClick={approve}
+          type="submit"
           disabled={isPending}
-          className="rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background"
+          className="btn-primary w-full sm:w-auto"
         >
-          Approve storyboard
+          {isPending ? "Saving..." : "Approve and save"}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

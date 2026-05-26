@@ -219,28 +219,46 @@ export async function generateSceneImage(prompt: string) {
     };
   }
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.openRouterApiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": env.appUrl,
-      "X-Title": "SoftAI",
-    },
-    body: JSON.stringify({
-      model: DEFAULT_IMAGE_MODEL,
-      modalities: ["image", "text"],
-      image_config: { aspect_ratio: "9:16" },
-      messages: [
-        {
-          role: "user",
-          content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image. ${prompt}`,
-        },
-      ],
-    }),
-  });
+  const requestPayload = {
+    model: DEFAULT_IMAGE_MODEL,
+    modalities: ["image", "text"],
+    image_config: { aspect_ratio: "9:16" },
+    messages: [
+      {
+        role: "user",
+        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image. ${prompt}`,
+      },
+    ],
+  };
 
-  const payload = await response.json();
+  async function postImageRequest(body: typeof requestPayload | Omit<typeof requestPayload, "image_config">) {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.openRouterApiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": env.appUrl,
+        "X-Title": "SoftAI",
+      },
+      body: JSON.stringify(body),
+    });
+
+    return {
+      response,
+      payload: await response.json().catch(() => null),
+    };
+  }
+
+  let { response, payload } = await postImageRequest(requestPayload);
+  if (!response.ok && response.status === 400) {
+    const retryPayload = {
+      model: requestPayload.model,
+      modalities: requestPayload.modalities,
+      messages: requestPayload.messages,
+    };
+    ({ response, payload } = await postImageRequest(retryPayload));
+  }
+
   if (!response.ok) {
     throw new Error(payload?.error?.message ?? payload?.error ?? `OpenRouter image request failed with status ${response.status}.`);
   }
@@ -253,7 +271,7 @@ export async function generateSceneImage(prompt: string) {
   return {
     imageUrl,
     provider: DEFAULT_IMAGE_MODEL,
-    requestPayload: { prompt },
+    requestPayload,
     responsePayload: payload,
   };
 }

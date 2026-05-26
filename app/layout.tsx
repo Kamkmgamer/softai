@@ -1,24 +1,30 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
+import "@uploadthing/react/styles.css";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "SoftAI",
+  title: {
+    default: "SoftAI – AI Ad Video Studio",
+    template: "%s – SoftAI",
+  },
   description:
-    "AI ad video studio for SMBs to generate short-form campaigns from brand assets, scripts, and avatars.",
+    "Turn product briefs, brand assets, and scripts into short-form ad video campaigns. Built for SMB operators.",
 };
 
 export default function RootLayout({
@@ -29,9 +35,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${ibmPlexMono.variable}`}
     >
-      <body className="min-h-full bg-background text-foreground">
+      <body>
         <ClerkProvider>
           <Providers>{children}</Providers>
         </ClerkProvider>

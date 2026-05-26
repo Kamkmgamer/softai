@@ -6,13 +6,13 @@ export async function POST(request: Request) {
   try {
     const admin = await requireAdminUser();
     const input = await readJson(request, adminBanSchema);
-    const user = banUser(input.targetUserId);
+    const user = await banUser(input.targetUserId);
 
     if (!user) {
       return apiError(new Error("Target user not found."), 404);
     }
 
-    const action = createAdminAction(admin.id, {
+    const action = await createAdminAction(admin.id, {
       targetUserId: input.targetUserId,
       action: "ban_user",
       details: input.details,

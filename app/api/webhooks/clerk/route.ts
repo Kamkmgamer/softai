@@ -81,8 +81,16 @@ function normalizeDate(value: string | number | Date | null | undefined) {
 }
 
 function getMonthlyCredits(plan: string) {
+  if (plan === "pro") {
+    return 2500;
+  }
+
   if (plan === "growth") {
     return 5000;
+  }
+
+  if (plan === "business") {
+    return 8500;
   }
 
   if (plan === "scale") {
@@ -113,7 +121,7 @@ export async function POST(request: NextRequest) {
     return new Response("OK", { status: 200 });
   }
 
-  const user = findUserByClerkId(clerkUserId);
+  const user = await findUserByClerkId(clerkUserId);
 
   if (!user) {
     return new Response("OK", { status: 200 });
@@ -125,7 +133,7 @@ export async function POST(request: NextRequest) {
     firstItem?.period?.end ?? firstItem?.current_period_end ?? data.period?.end ?? data.current_period_end,
   );
 
-  upsertUserSubscription(user.id, {
+  await upsertUserSubscription(user.id, {
     clerkPayerId: data.payer?.organization_id ?? data.payer?.user_id ?? null,
     clerkSubscriptionId: event.type.startsWith("subscriptionItem.") ? undefined : data.id,
     plan,

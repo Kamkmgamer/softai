@@ -4,7 +4,7 @@ import { getBillingSummary } from "@/lib/store";
 export async function GET() {
   try {
     const user = await requireAppUser();
-    return apiSuccess({ billing: getBillingSummary(user.id) });
+    return apiSuccess({ billing: await getBillingSummary(user.id) });
   } catch (error) {
     return apiError(error);
   }

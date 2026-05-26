@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   try {
     const user = await requireAppUser();
     const input = await readJson(request, abuseReportSchema);
-    const report = createAbuseReport(user.id, {
+    const report = await createAbuseReport(user.id, {
       projectId: input.projectId ?? null,
       outputId: input.outputId ?? null,
       reason: input.reason,

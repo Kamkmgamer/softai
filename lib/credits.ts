@@ -1,16 +1,16 @@
 import { CREDIT_COSTS } from "@/lib/constants";
 import { addCreditEvent, getCreditBalance } from "@/lib/store";
 
-export function requireCredits(userId: string, amount: number) {
-  const balance = getCreditBalance(userId);
+export async function requireCredits(userId: string, amount: number) {
+  const balance = await getCreditBalance(userId);
 
   if (balance < amount) {
     throw new Error(`Insufficient credits. Required ${amount}, available ${balance}.`);
   }
 }
 
-export function burnStoryboardCredits(userId: string, projectId: string) {
-  requireCredits(userId, CREDIT_COSTS.storyboard);
+export async function burnStoryboardCredits(userId: string, projectId: string) {
+  await requireCredits(userId, CREDIT_COSTS.storyboard);
   return addCreditEvent(userId, {
     projectId,
     reason: "storyboard_burn",
@@ -19,8 +19,8 @@ export function burnStoryboardCredits(userId: string, projectId: string) {
   });
 }
 
-export function holdImageCredits(userId: string, projectId: string) {
-  requireCredits(userId, CREDIT_COSTS.imageBatch);
+export async function holdImageCredits(userId: string, projectId: string) {
+  await requireCredits(userId, CREDIT_COSTS.imageBatch);
   return addCreditEvent(userId, {
     projectId,
     reason: "image_hold",
@@ -47,8 +47,8 @@ export function refundImageCredits(userId: string, projectId: string) {
   });
 }
 
-export function holdVideoCredits(userId: string, projectId: string) {
-  requireCredits(userId, CREDIT_COSTS.videoRender);
+export async function holdVideoCredits(userId: string, projectId: string) {
+  await requireCredits(userId, CREDIT_COSTS.videoRender);
   return addCreditEvent(userId, {
     projectId,
     reason: "video_hold",

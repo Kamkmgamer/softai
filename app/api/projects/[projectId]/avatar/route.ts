@@ -9,14 +9,14 @@ export async function POST(
   try {
     const user = await requireAppUser();
     const { projectId } = await params;
-    const bundle = getProjectBundle(user.id, projectId);
+    const bundle = await getProjectBundle(user.id, projectId);
 
     if (!bundle) {
       return apiError(new Error("Project not found."), 404);
     }
 
     const input = await readJson(request, avatarSchema);
-    const avatar = saveAvatar(user.id, projectId, input);
+    const avatar = await saveAvatar(user.id, projectId, input);
     return apiSuccess({ avatar }, { status: 201 });
   } catch (error) {
     return apiError(error);

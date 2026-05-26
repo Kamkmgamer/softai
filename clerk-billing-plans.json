@@ -12,10 +12,32 @@
         "publicly_visible": true,
         "features": []
       },
+      "pro": {
+        "name": "Pro",
+        "description": "Balanced monthly capacity for teams producing regular campaign assets.",
+        "amount": 5000,
+        "annual_monthly_amount": 0,
+        "currency": "usd",
+        "payer_type": "user",
+        "is_recurring": true,
+        "publicly_visible": true,
+        "features": []
+      },
       "growth": {
         "name": "Growth",
         "description": "Higher monthly capacity for teams producing campaigns every week.",
         "amount": 10000,
+        "annual_monthly_amount": 0,
+        "currency": "usd",
+        "payer_type": "user",
+        "is_recurring": true,
+        "publicly_visible": true,
+        "features": []
+      },
+      "business": {
+        "name": "Business",
+        "description": "Advanced monthly capacity for teams scaling creative production.",
+        "amount": 15000,
         "annual_monthly_amount": 0,
         "currency": "usd",
         "payer_type": "user",

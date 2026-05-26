@@ -1,45 +1,34 @@
+"use client";
+
 import Link from "next/link";
-import { Show, UserButton } from "@clerk/nextjs";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
 
-type AuthControlsProps = {
-  variant?: "marketing" | "app";
-};
+export function AuthControls() {
+  const { isSignedIn, isLoaded } = useAuth();
 
-const linkBaseClassName =
-  "inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition";
+  if (!isLoaded) {
+    return <div className="h-8 w-20 animate-pulse rounded bg-surface-raised" />;
+  }
 
-export function AuthControls({ variant = "marketing" }: AuthControlsProps) {
+  if (isSignedIn) {
+    return (
+      <Link href="/dashboard" className="btn-primary">
+        Dashboard
+      </Link>
+    );
+  }
+
   return (
     <div className="flex items-center gap-3">
-      <Show when="signed-out">
-        <Link
-          href="/sign-in"
-          className={cn(
-            linkBaseClassName,
-            "border border-border bg-white/70 text-foreground hover:border-accent hover:bg-accent-soft/40",
-          )}
-        >
-          Sign in
-        </Link>
-        <Link
-          href="/sign-up"
-          className={cn(linkBaseClassName, "bg-foreground text-background hover:bg-accent-strong")}
-        >
-          {variant === "app" ? "Create account" : "Sign up"}
-        </Link>
-      </Show>
-      <Show when="signed-in">
-        {variant === "marketing" ? (
-          <Link
-            href="/dashboard"
-            className={cn(linkBaseClassName, "bg-foreground text-background hover:bg-accent-strong")}
-          >
-            Dashboard
-          </Link>
-        ) : null}
-        <UserButton />
-      </Show>
+      <Link
+        href="/sign-in"
+        className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
+      >
+        Log in
+      </Link>
+      <Link href="/sign-up" className="btn-primary">
+        Sign up
+      </Link>
     </div>
   );
 }

@@ -1,42 +1,54 @@
-import { PricingTable } from "@clerk/nextjs";
 import { MarketingNav } from "@/components/marketing-nav";
-import { Card, PageHeader, Pill } from "@/components/ui";
+import { PricingTable } from "@clerk/nextjs";
+import { getAppSession } from "@/lib/auth";
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const session = await getAppSession().catch(() => null);
+  const hasAccess = session !== null;
+
   return (
-    <div className="min-h-screen">
-      <MarketingNav />
-      <main className="mx-auto max-w-6xl px-6 py-12 lg:px-10">
-        <PageHeader
-          eyebrow="Pricing"
-          title="Three plans for SMB creative teams."
-          description="The commercial model is subscription plus credits. Choose the monthly capacity that matches your production volume."
-        />
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <Card className="rounded-[2.5rem] p-8">
-            <Pill>Clerk Billing</Pill>
-            <div className="mt-6">
-              <PricingTable />
+    <div className="flex min-h-screen flex-col bg-bg">
+      <MarketingNav hasAccess={hasAccess} />
+
+      <main className="flex-1">
+        <section className="mx-auto max-w-5xl px-6 py-20 lg:py-32">
+          <div className="text-center mb-16">
+            <h1 className="text-3xl font-semibold tracking-tight text-text sm:text-4xl text-balance">
+              Simple, transparent pricing
+            </h1>
+            <p className="mt-4 text-text-secondary">
+              Pay for the credits you need. No hidden fees.
+            </p>
+          </div>
+
+          <div className="mx-auto max-w-3xl rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var(--shadow-sm)]">
+            <PricingTable />
+          </div>
+
+          <div className="mx-auto mt-20 max-w-2xl">
+            <h2 className="text-xl font-semibold text-text mb-6 text-center">Credit economics</h2>
+            <div className="rounded-[var(--radius-lg)] border border-border bg-surface overflow-hidden">
+              <table className="w-full text-left text-[13px]">
+                <thead className="border-b border-border bg-surface-raised text-xs font-medium text-text-secondary">
+                  <tr>
+                    <th className="px-5 py-3">Action</th>
+                    <th className="px-5 py-3 text-right">Cost</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr className="hover:bg-surface-raised transition-colors">
+                    <td className="px-5 py-3 font-medium text-text">Generate storyboard</td>
+                    <td className="px-5 py-3 text-right text-text-secondary">100 credits</td>
+                  </tr>
+                  <tr className="hover:bg-surface-raised transition-colors">
+                    <td className="px-5 py-3 font-medium text-text">Render final video</td>
+                    <td className="px-5 py-3 text-right text-text-secondary">500 credits</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </Card>
-          <Card className="rounded-[2.5rem] p-8">
-            <p className="font-mono text-xs uppercase tracking-[0.26em] text-accent-strong">Credit economics</p>
-            <div className="mt-6 grid gap-4">
-              <div className="rounded-2xl border border-border bg-white/70 p-4">
-                <p className="text-sm font-medium">Storyboard draft</p>
-                <p className="mt-1 text-sm text-muted">25 credits</p>
-              </div>
-              <div className="rounded-2xl border border-border bg-white/70 p-4">
-                <p className="text-sm font-medium">Scene image generation</p>
-                <p className="mt-1 text-sm text-muted">120 credits per batch</p>
-              </div>
-              <div className="rounded-2xl border border-border bg-white/70 p-4">
-                <p className="text-sm font-medium">Final video render</p>
-                <p className="mt-1 text-sm text-muted">300 credits</p>
-              </div>
-            </div>
-          </Card>
-        </div>
+          </div>
+        </section>
       </main>
     </div>
   );

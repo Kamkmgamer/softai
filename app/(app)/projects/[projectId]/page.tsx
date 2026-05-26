@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Sparkles, WandSparkles } from "lucide-react";
 import { ProjectActions } from "@/components/project-actions";
 import { ProjectInputs } from "@/components/project-inputs";
-import { Card, PageHeader, Pill } from "@/components/ui";
+import { PageHeader, StatusBadge, ButtonLink, SectionHeader, DataRow, EmptyState } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
 import { getProjectBundle } from "@/lib/store";
+import { ImageIcon } from "lucide-react";
 
 export default async function ProjectDetailPage({
   params,
@@ -21,132 +21,118 @@ export default async function ProjectDetailPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <PageHeader
-        eyebrow="Project"
         title={bundle.project.title}
-        description={`${bundle.project.productName} for ${bundle.project.targetAudience}. Review the storyboard, render images, and finish with the final vertical video.`}
-        action={<Pill>{bundle.project.status.replaceAll("_", " ")}</Pill>}
+        action={<StatusBadge status={bundle.project.status} />}
       />
 
-      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card>
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Brief</h2>
-            <Link href={`/projects/${projectId}/review`} className="text-sm font-semibold text-accent-strong">
-              Review storyboard
-            </Link>
-          </div>
-          <dl className="mt-6 grid gap-4 md:grid-cols-2">
-            {[
-              ["Offer", bundle.project.offer],
-              ["CTA", bundle.project.cta],
-              ["Audience", bundle.project.targetAudience],
-              ["Voice", bundle.project.brandVoice],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-xl border border-border bg-card-strong p-4">
-                <dt className="text-sm text-muted">{label}</dt>
-                <dd className="mt-2 font-medium text-foreground">{value}</dd>
+      <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-8">
+          {/* Brief section */}
+          <section className="space-y-4">
+            <SectionHeader
+              title="Project brief"
+              action={
+                <Link href={`/projects/${projectId}/review`} className="text-[13px] font-medium text-accent-text hover:underline">
+                  Review storyboard
+                </Link>
+              }
+            />
+            <div className="rounded-[var(--radius-lg)] border border-border bg-surface">
+              <div className="px-5">
+                <DataRow label="Product">{bundle.project.productName}</DataRow>
+                <DataRow label="Offer">{bundle.project.offer}</DataRow>
+                <DataRow label="CTA">{bundle.project.cta}</DataRow>
+                <DataRow label="Audience">{bundle.project.targetAudience}</DataRow>
+                <DataRow label="Voice">{bundle.project.brandVoice}</DataRow>
               </div>
-            ))}
-          </dl>
-          <div className="mt-6 rounded-xl border border-border bg-card-strong p-5">
-            <p className="text-sm text-muted">Script seed</p>
-            <p className="mt-2 text-sm leading-7 text-foreground">{bundle.project.script}</p>
-          </div>
-        </Card>
+              <div className="border-t border-border bg-surface-raised px-5 py-4 rounded-b-[var(--radius-lg)]">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-text-tertiary">Script seed</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">{bundle.project.script}</p>
+              </div>
+            </div>
+          </section>
 
-        <Card>
-          <h2 className="text-2xl font-semibold">Pipeline actions</h2>
-          <div className="mt-6 grid gap-4">
-            <ActionTile
-              icon={WandSparkles}
-              title="Generate storyboard"
-              description="Burns storyboard credits and drafts 3-6 scenes."
-              href={`/projects/${projectId}/review`}
-            />
-          </div>
-          <div className="mt-6">
-            <ProjectActions
-              projectId={projectId}
-              canRenderImages={Boolean(bundle.storyboard && bundle.scenes.length > 0)}
-              canRenderVideo={Boolean(bundle.storyboard && bundle.scenes.length > 0 && bundle.scenes.every((scene) => scene.imageUrl))}
-            />
-          </div>
-        </Card>
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-2">
-        <Card id="images">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Scene gallery</h2>
-            <span className="text-sm text-muted">{bundle.scenes.length} scenes</span>
-          </div>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {bundle.scenes.map((scene) => (
-              <div key={scene.id} className="rounded-2xl border border-border bg-card-strong p-4">
-                <div className="aspect-[9/16] overflow-hidden rounded-xl bg-accent-soft">
-                  {scene.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={scene.imageUrl} alt={scene.title} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-muted">No image yet</div>
-                  )}
+          {/* Scene gallery */}
+          <section className="space-y-4">
+            <SectionHeader title="Scene gallery" count={`${bundle.scenes.length} scenes`} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {bundle.scenes.length === 0 ? (
+                <div className="sm:col-span-2">
+                  <EmptyState title="No scenes yet" description="Generate a storyboard to see scenes here." />
                 </div>
-                <h3 className="mt-4 font-semibold">{scene.title}</h3>
-                <p className="mt-1 text-sm text-muted">{scene.overlayText}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card id="video">
-          <h2 className="text-xl font-semibold">Outputs</h2>
-          <div className="mt-6 space-y-4">
-            {bundle.outputs.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border bg-card-strong p-8 text-sm text-muted">
-                Render images and the final video to populate the output library.
-              </div>
-            ) : (
-              bundle.outputs.map((output) => (
-                <div key={output.id} className="rounded-2xl border border-border bg-card-strong p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold">{output.title}</p>
-                      <p className="text-sm text-muted">{output.type.replace("_", " ")}</p>
+              ) : (
+                bundle.scenes.map((scene) => (
+                  <div key={scene.id} className="group relative overflow-hidden rounded-[var(--radius-md)] border border-border bg-surface">
+                    <div className="aspect-[9/16] bg-surface-sunken">
+                      {scene.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={scene.imageUrl} alt={scene.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full flex-col items-center justify-center gap-2 text-text-tertiary">
+                          <ImageIcon className="h-6 w-6 opacity-50" />
+                          <span className="text-[11px] font-medium">Pending render</span>
+                        </div>
+                      )}
                     </div>
-                    <a href={output.url} target="_blank" rel="noreferrer" className="text-sm font-semibold text-accent-strong">
-                      Open
+                    {/* Gradient overlay for text legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <p className="text-[10px] font-medium uppercase tracking-wider text-white/70">Scene {scene.order}</p>
+                      <h3 className="mt-0.5 text-[13px] font-medium leading-tight">{scene.title}</h3>
+                      {scene.overlayText && (
+                        <p className="mt-1.5 text-xs font-medium text-accent-soft line-clamp-2">&quot;{scene.overlayText}&quot;</p>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        </div>
+
+        <div className="space-y-8">
+          {/* Actions */}
+          <section className="space-y-4">
+            <SectionHeader title="Pipeline actions" />
+            <div className="space-y-3">
+              <ButtonLink href={`/projects/${projectId}/review`} variant="secondary">
+                Generate storyboard
+              </ButtonLink>
+              <ProjectActions
+                projectId={projectId}
+                canRenderImages={Boolean(bundle.storyboard && bundle.scenes.length > 0)}
+                canRenderVideo={Boolean(bundle.storyboard && bundle.scenes.length > 0 && bundle.scenes.every((scene) => scene.imageUrl))}
+              />
+            </div>
+          </section>
+
+          {/* Outputs */}
+          <section className="space-y-4">
+            <SectionHeader title="Final outputs" count={bundle.outputs.length} />
+            {bundle.outputs.length === 0 ? (
+              <EmptyState title="No outputs" description="Render the video to see outputs here." />
+            ) : (
+              <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border bg-surface">
+                {bundle.outputs.map((output) => (
+                  <div key={output.id} className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="text-sm font-medium text-text">{output.title}</p>
+                      <p className="text-[11px] text-text-tertiary uppercase tracking-wider mt-0.5">{output.type.replace("_", " ")}</p>
+                    </div>
+                    <a href={output.url} target="_blank" rel="noreferrer" className="text-[13px] font-medium text-accent-text hover:underline">
+                      View
                     </a>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
-          </div>
-        </Card>
-      </section>
-
-      <ProjectInputs projectId={projectId} />
+          </section>
+          
+          <ProjectInputs projectId={projectId} />
+        </div>
+      </div>
     </div>
-  );
-}
-
-function ActionTile({
-  icon: Icon,
-  title,
-  description,
-  href,
-}: {
-  icon: typeof Sparkles;
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <Link href={href} className="rounded-2xl border border-border bg-card p-5 transition hover:border-accent hover:bg-accent-soft/35 focus-visible:shadow-[var(--focus-ring)]">
-      <Icon className="h-5 w-5 text-accent-strong" />
-      <h3 className="mt-4 font-semibold">{title}</h3>
-      <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
-    </Link>
   );
 }
