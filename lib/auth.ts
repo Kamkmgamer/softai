@@ -1,4 +1,5 @@
 import { getEnv } from "@/lib/env";
+import { upsertUser } from "@/lib/store";
 
 export type AppSession = {
   userId: string;
@@ -9,20 +10,30 @@ export type AppSession = {
   isDemo: boolean;
 };
 
-const demoSession: AppSession = {
-  userId: "user_demo",
+const demoUser = {
   clerkUserId: "demo_clerk_user",
   email: "demo@softai.local",
   name: "Demo User",
-  isAdmin: true,
-  isDemo: true,
 };
+
+async function getDemoSession(): Promise<AppSession> {
+  const user = await upsertUser(demoUser);
+
+  return {
+    userId: user.id,
+    clerkUserId: demoUser.clerkUserId,
+    email: demoUser.email,
+    name: user.name,
+    isAdmin: true,
+    isDemo: true,
+  };
+}
 
 export async function getAppSession(): Promise<AppSession> {
   const env = getEnv();
 
   if (!env.clerkPublishableKey || !env.clerkSecretKey) {
-    return demoSession;
+    return getDemoSession();
   }
 
   try {
@@ -30,22 +41,31 @@ export async function getAppSession(): Promise<AppSession> {
     const auth = await clerk.auth();
 
     if (!auth.userId) {
-      return demoSession;
+      throw new Error("Authentication required.");
     }
 
     const client = await clerk.clerkClient();
     const user = await client.users.getUser(auth.userId);
     const email = user.emailAddresses[0]?.emailAddress ?? "unknown@softai.app";
-
-    return {
-      userId: auth.userId,
+    const appUser = await upsertUser({
       clerkUserId: auth.userId,
       email,
       name: [user.firstName, user.lastName].filter(Boolean).join(" ") || "SoftAI User",
+    });
+
+    return {
+      userId: appUser.id,
+      clerkUserId: auth.userId,
+      email,
+      name: appUser.name,
       isAdmin: env.adminEmails.includes(email.toLowerCase()),
       isDemo: false,
     };
-  } catch {
-    return demoSession;
+  } catch (error) {
+    if (error instanceof Error && error.message === "Authentication required.") {
+      throw error;
+    }
+
+    throw new Error("Unable to resolve authenticated user.");
   }
 }

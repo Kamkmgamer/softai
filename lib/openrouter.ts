@@ -1,9 +1,9 @@
 import { getEnv } from "@/lib/env";
 import { SOFTAI_METADATA_TAG } from "@/lib/constants";
 
-const DEFAULT_TEXT_MODEL = "openai/gpt-4.1-mini";
-const DEFAULT_IMAGE_MODEL = "google/gemini-2.5-flash-image-preview";
-const DEFAULT_VIDEO_MODEL = "minimax/video-01";
+const DEFAULT_TEXT_MODEL = "minimax/minimax-m2.5:free";
+const DEFAULT_IMAGE_MODEL = "google/gemini-2.5-flash-image";
+const DEFAULT_VIDEO_MODEL = "x-ai/grok-imagine-video";
 
 type StoryboardInput = {
   productName: string;
@@ -14,37 +14,155 @@ type StoryboardInput = {
   script: string;
 };
 
+type GeneratedScene = {
+  title: string;
+  narration: string;
+  visualDirection: string;
+  overlayText: string;
+  durationSeconds: number;
+};
+
+function fallbackStoryboard(input: StoryboardInput) {
+  return {
+    headline: `Launch ${input.productName} without a camera crew`,
+    hook: `${input.offer} for ${input.targetAudience}`,
+    cta: input.cta,
+    scenes: [
+      {
+        title: "Thumbstopper opener",
+        narration: input.script || `Stop scrolling. ${input.productName} is built for ${input.targetAudience}.`,
+        visualDirection: `Fast close-up of product with bold ${input.brandVoice} typography.`,
+        overlayText: input.offer,
+        durationSeconds: 5,
+      },
+      {
+        title: "Problem and promise",
+        narration: `Most teams waste time creating ads. ${input.productName} gets you from idea to publishable creative faster.`,
+        visualDirection: "Talking-head avatar beside kinetic product visuals and before/after frames.",
+        overlayText: "Fast ad production",
+        durationSeconds: 7,
+      },
+      {
+        title: "Offer close",
+        narration: `Try ${input.productName} today and claim ${input.offer}. ${input.cta}`,
+        visualDirection: "Product hero shot with warm gradient background and direct CTA treatment.",
+        overlayText: input.cta,
+        durationSeconds: 6,
+      },
+    ],
+  };
+}
+
+function textOrFallback(value: unknown, fallback: string) {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function normalizeStoryboard(value: unknown, input: StoryboardInput) {
+  const fallback = fallbackStoryboard(input);
+  const parsed = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const scenes = Array.isArray(parsed.scenes) ? parsed.scenes : [];
+  const normalizedScenes = scenes
+    .map((scene): GeneratedScene | null => {
+      if (!scene || typeof scene !== "object") return null;
+      const record = scene as Record<string, unknown>;
+      return {
+        title: textOrFallback(record.title, "Storyboard scene"),
+        narration: textOrFallback(record.narration, input.script || fallback.hook),
+        visualDirection: textOrFallback(record.visualDirection, `Show ${input.productName} with ${input.brandVoice} styling.`),
+        overlayText: textOrFallback(record.overlayText, input.offer),
+        durationSeconds: typeof record.durationSeconds === "number" ? Math.min(Math.max(Math.round(record.durationSeconds), 3), 15) : 5,
+      };
+    })
+    .filter((scene): scene is GeneratedScene => Boolean(scene));
+
+  return {
+    headline: textOrFallback(parsed.headline, fallback.headline),
+    hook: textOrFallback(parsed.hook, fallback.hook),
+    cta: textOrFallback(parsed.cta, fallback.cta),
+    scenes: normalizedScenes.length >= 3 ? normalizedScenes.slice(0, 6) : fallback.scenes,
+  };
+}
+
+function getNestedImageUrl(value: unknown): string | null {
+  if (typeof value === "string" && value.trim()) {
+    return value;
+  }
+
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  return getNestedImageUrl(record.url) ?? getNestedImageUrl(record.image_url) ?? getNestedImageUrl(record.data);
+}
+
+function extractImageUrl(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const record = payload as Record<string, unknown>;
+  const directImages = Array.isArray(record.images) ? record.images : [];
+  for (const image of directImages) {
+    const imageUrl = getNestedImageUrl(image);
+    if (imageUrl) return imageUrl;
+  }
+
+  const choices = Array.isArray(record.choices) ? record.choices : [];
+  for (const choice of choices) {
+    if (!choice || typeof choice !== "object") continue;
+    const message = (choice as Record<string, unknown>).message;
+    if (!message || typeof message !== "object") continue;
+
+    const messageRecord = message as Record<string, unknown>;
+    const messageImages = Array.isArray(messageRecord.images) ? messageRecord.images : [];
+    for (const image of messageImages) {
+      const imageUrl = getNestedImageUrl(image);
+      if (imageUrl) return imageUrl;
+    }
+
+    const content = messageRecord.content;
+    if (Array.isArray(content)) {
+      for (const part of content) {
+        const imageUrl = getNestedImageUrl(part);
+        if (imageUrl) return imageUrl;
+      }
+    }
+  }
+
+  return null;
+}
+
+function extractVideoUrl(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const record = payload as Record<string, unknown>;
+  const directUrl = getNestedImageUrl(record.url) ?? getNestedImageUrl(record.video_url);
+  if (directUrl) return directUrl;
+
+  const videos = Array.isArray(record.videos) ? record.videos : [];
+  for (const video of videos) {
+    const videoUrl = getNestedImageUrl(video);
+    if (videoUrl) return videoUrl;
+  }
+
+  const output = Array.isArray(record.output) ? record.output : [];
+  for (const item of output) {
+    const videoUrl = getNestedImageUrl(item);
+    if (videoUrl) return videoUrl;
+  }
+
+  return null;
+}
+
 export async function generateStoryboard(input: StoryboardInput) {
   const env = getEnv();
 
   if (!env.openRouterApiKey) {
     return {
-      headline: `Launch ${input.productName} without a camera crew`,
-      hook: `${input.offer} for ${input.targetAudience}`,
-      cta: input.cta,
-      scenes: [
-        {
-          title: "Thumbstopper opener",
-          narration: input.script || `Stop scrolling. ${input.productName} is built for ${input.targetAudience}.`,
-          visualDirection: `Fast close-up of product with bold ${input.brandVoice} typography.`,
-          overlayText: input.offer,
-          durationSeconds: 5,
-        },
-        {
-          title: "Problem and promise",
-          narration: `Most teams waste time creating ads. ${input.productName} gets you from idea to publishable creative faster.`,
-          visualDirection: "Talking-head avatar beside kinetic product visuals and before/after frames.",
-          overlayText: "Fast ad production",
-          durationSeconds: 7,
-        },
-        {
-          title: "Offer close",
-          narration: `Try ${input.productName} today and claim ${input.offer}. ${input.cta}`,
-          visualDirection: "Product hero shot with warm gradient background and direct CTA treatment.",
-          overlayText: input.cta,
-          durationSeconds: 6,
-        },
-      ],
+      ...fallbackStoryboard(input),
       provider: "demo-fallback",
       requestPayload: input,
       responsePayload: null,
@@ -79,9 +197,10 @@ export async function generateStoryboard(input: StoryboardInput) {
   const payload = await response.json();
   const content = payload.choices?.[0]?.message?.content;
   const parsed = typeof content === "string" ? JSON.parse(content) : content;
+  const storyboard = normalizeStoryboard(parsed, input);
 
   return {
-    ...parsed,
+    ...storyboard,
     provider: DEFAULT_TEXT_MODEL,
     requestPayload: input,
     responsePayload: payload,
@@ -111,12 +230,25 @@ export async function generateSceneImage(prompt: string) {
     body: JSON.stringify({
       model: DEFAULT_IMAGE_MODEL,
       modalities: ["image", "text"],
-      messages: [{ role: "user", content: prompt }],
+      image_config: { aspect_ratio: "9:16" },
+      messages: [
+        {
+          role: "user",
+          content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image. ${prompt}`,
+        },
+      ],
     }),
   });
 
   const payload = await response.json();
-  const imageUrl = payload.images?.[0]?.image_url ?? payload.choices?.[0]?.message?.images?.[0]?.image_url;
+  if (!response.ok) {
+    throw new Error(payload?.error?.message ?? payload?.error ?? `OpenRouter image request failed with status ${response.status}.`);
+  }
+
+  const imageUrl = extractImageUrl(payload);
+  if (!imageUrl) {
+    throw new Error("OpenRouter image response did not include an image URL.");
+  }
 
   return {
     imageUrl,
@@ -152,6 +284,9 @@ export async function submitVideoRender(prompt: string, imageUrls: string[]) {
       model: DEFAULT_VIDEO_MODEL,
       prompt,
       images: imageUrls,
+      duration: 1,
+      resolution: "480p",
+      aspect_ratio: "9:16",
       metadata: {
         tag: SOFTAI_METADATA_TAG,
       },
@@ -159,10 +294,14 @@ export async function submitVideoRender(prompt: string, imageUrls: string[]) {
   });
 
   const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload?.error?.message ?? payload?.error ?? `OpenRouter video request failed with status ${response.status}.`);
+  }
+
   return {
-    id: payload.id,
-    status: payload.status,
-    url: payload.url ?? null,
+    id: payload.id ?? payload.generation_id ?? `video-${Date.now()}`,
+    status: payload.status ?? "submitted",
+    url: extractVideoUrl(payload),
     provider: DEFAULT_VIDEO_MODEL,
     requestPayload: { prompt, imageUrls },
     responsePayload: payload,

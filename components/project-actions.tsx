@@ -1,56 +1,72 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Film, ImageIcon } from "lucide-react";
 
-export function ProjectActions({ projectId }: { projectId: string }) {
+type Props = {
+  projectId: string;
+  canRenderImages: boolean;
+  canRenderVideo: boolean;
+};
+
+export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<"render-images" | "render-video" | null>(null);
 
-  async function trigger(path: string) {
+  async function trigger(path: "render-images" | "render-video") {
     setError(null);
-    startTransition(async () => {
+    setPendingAction(path);
+
+    try {
       const response = await fetch(`/api/projects/${projectId}/${path}`, {
         method: "POST",
       });
-      const payload = await response.json();
+      const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
-        setError(payload.error ?? "Action failed.");
+        setError(payload?.error ?? "Action failed.");
         return;
       }
 
       router.refresh();
-    });
+    } finally {
+      setPendingAction(null);
+    }
   }
+
+  const isPending = pendingAction !== null;
 
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         <button
           type="button"
-          disabled={isPending}
+          disabled={isPending || !canRenderImages}
           onClick={() => trigger("render-images")}
-          className="rounded-[1.5rem] border border-border bg-white/70 p-5 text-left transition hover:border-accent disabled:opacity-60"
+          className="rounded-2xl border border-border bg-card p-5 text-left transition hover:border-accent hover:bg-accent-soft/35 focus-visible:shadow-[var(--focus-ring)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <ImageIcon className="h-5 w-5 text-accent-strong" />
           <h3 className="mt-4 font-semibold">Render scene images</h3>
-          <p className="mt-1 text-sm leading-6 text-muted">Creates supporting visuals for each approved scene.</p>
+          <p className="mt-1 text-sm leading-6 text-muted">
+            {canRenderImages ? "Creates supporting visuals for each approved scene." : "Approve a storyboard before rendering images."}
+          </p>
         </button>
         <button
           type="button"
-          disabled={isPending}
+          disabled={isPending || !canRenderVideo}
           onClick={() => trigger("render-video")}
-          className="rounded-[1.5rem] border border-border bg-white/70 p-5 text-left transition hover:border-accent disabled:opacity-60"
+          className="rounded-2xl border border-border bg-card p-5 text-left transition hover:border-accent hover:bg-accent-soft/35 focus-visible:shadow-[var(--focus-ring)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Film className="h-5 w-5 text-accent-strong" />
           <h3 className="mt-4 font-semibold">Render final video</h3>
-          <p className="mt-1 text-sm leading-6 text-muted">Submits the 9:16 ad to the async video pipeline.</p>
+          <p className="mt-1 text-sm leading-6 text-muted">
+            {canRenderVideo ? "Submits the 9:16 ad to the async video pipeline." : "Render scene images before the final video."}
+          </p>
         </button>
       </div>
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-danger/25 bg-[oklch(0.95_0.035_27)] px-4 py-3 text-sm text-danger">{error}</p> : null}
     </div>
   );
 }
