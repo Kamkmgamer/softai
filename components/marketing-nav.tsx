@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ButtonLink } from "@/components/ui";
+import { AuthControls } from "@/components/auth-controls";
 
 export function MarketingNav() {
   return (
@@ -21,12 +21,7 @@ export function MarketingNav() {
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/library">Library</Link>
         </nav>
-        <div className="flex items-center gap-3">
-          <ButtonLink href="/sign-in" variant="secondary">
-            Sign in
-          </ButtonLink>
-          <ButtonLink href="/dashboard">Start creating</ButtonLink>
-        </div>
+        <AuthControls />
       </div>
     </header>
   );
