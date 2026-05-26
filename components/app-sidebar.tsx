@@ -75,7 +75,7 @@ export function AppSidebar() {
       </aside>
 
       {/* Mobile bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-border bg-surface/95 backdrop-blur-md px-2 py-1.5 lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-border bg-surface/95 px-2 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_oklch(0.4_0.02_60_/_0.08)] backdrop-blur-md lg:hidden">
         {links.slice(0, 5).map((link) => {
           const Icon = link.icon;
           const active =
