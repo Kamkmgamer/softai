@@ -300,3 +300,12 @@ button, a, input, textarea, select {
   background: var(--border);
   border-radius: 2px;
 }
+
+/* Dashboard mobile drawer: native checkbox toggle, independent of JS handlers. */
+.app-mobile-menu-drawer {
+  display: none;
+}
+
+.app-mobile-menu:has(.app-mobile-menu-toggle:checked) .app-mobile-menu-drawer {
+  display: block;
+}

@@ -51,8 +51,10 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
         {/* Mobile Nav Toggle */}
         <button
           type="button"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="marketing-mobile-menu"
           className="sm:hidden -m-2 p-2 text-text-secondary hover:text-text transition-colors"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => setMobileMenuOpen((open) => !open)}
         >
           <span className="sr-only">Toggle menu</span>
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -61,7 +63,10 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
 
       {/* Mobile Nav Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-border bg-surface px-6 py-4 shadow-[var(--shadow-sm)]">
+        <div
+          id="marketing-mobile-menu"
+          className="sm:hidden border-t border-border bg-surface px-6 py-4 shadow-[var(--shadow-sm)]"
+        >
           <nav className="flex flex-col gap-4">
             <Link
               href="/pricing"
@@ -72,7 +77,11 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
             </Link>
             <div className="pt-4 border-t border-border">
               {hasAccess ? (
-                <Link href="/dashboard" className="btn-primary w-full justify-center">
+                <Link
+                  href="/dashboard"
+                  className="btn-primary w-full justify-center"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Dashboard
                 </Link>
               ) : (
@@ -84,7 +93,11 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
                   >
                     Log in
                   </Link>
-                  <Link href="/sign-up" className="btn-primary w-full justify-center">
+                  <Link
+                    href="/sign-up"
+                    className="btn-primary w-full justify-center"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Sign up
                   </Link>
                 </div>
