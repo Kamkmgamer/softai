@@ -21,11 +21,12 @@ const links = [
   { href: "/library", label: "Library", icon: LibraryBig },
   { href: "/billing", label: "Billing", icon: Wallet },
   { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/admin", label: "Admin", icon: Shield },
+  { href: "/admin", label: "Admin", icon: Shield, adminOnly: true },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const visibleLinks = links.filter((link) => !link.adminOnly || isAdmin);
 
   return (
     <>
@@ -41,7 +42,7 @@ export function AppSidebar() {
 
         {/* Nav */}
         <nav className="flex-1 space-y-0.5 px-3">
-          {links.map((link) => {
+          {visibleLinks.map((link) => {
             const Icon = link.icon;
             const active =
               pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -121,7 +122,7 @@ export function AppSidebar() {
             </div>
 
             <nav className="flex-1 space-y-0.5">
-              {links.map((link) => {
+              {visibleLinks.map((link) => {
                 const Icon = link.icon;
                 const active =
                   pathname === link.href || pathname.startsWith(`${link.href}/`);

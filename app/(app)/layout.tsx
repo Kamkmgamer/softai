@@ -23,7 +23,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-[100dvh] flex-col lg:flex-row">
-      <AppSidebar />
+      <AppSidebar isAdmin={session.isAdmin} />
       <main className="flex-1 min-w-0 px-5 pb-6 pt-24 lg:min-h-[100dvh] lg:px-8 lg:pb-8 lg:pt-24">
         <div className="mx-auto max-w-[1100px] space-y-6">
           {children}
