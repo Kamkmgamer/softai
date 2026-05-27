@@ -35,7 +35,7 @@ export default async function BillingPage() {
       <section className="space-y-4">
         <SectionHeader title="Top up credits" />
         <div className="rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var(--shadow-sm)]">
-          <PricingTable />
+          <PricingTable newSubscriptionRedirectUrl="/billing" />
         </div>
       </section>
 

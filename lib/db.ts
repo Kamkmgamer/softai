@@ -76,6 +76,17 @@ export async function ensureDatabase() {
         );
       `);
       await run(`
+        CREATE TABLE IF NOT EXISTS clerk_webhook_events (
+          id uuid PRIMARY KEY,
+          event_id varchar(255) NOT NULL UNIQUE,
+          type varchar(100) NOT NULL,
+          status varchar(30) NOT NULL,
+          error text NULL,
+          created_at timestamptz NOT NULL DEFAULT now(),
+          processed_at timestamptz NULL
+        );
+      `);
+      await run(`
         CREATE TABLE IF NOT EXISTS projects (
           id uuid PRIMARY KEY,
           user_id uuid NOT NULL,
@@ -205,6 +216,8 @@ export async function ensureDatabase() {
       await run(`ALTER TABLE outputs ADD COLUMN IF NOT EXISTS removed_at timestamptz NULL;`);
       await run(`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_payer_id varchar(255) NULL;`);
       await run(`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_subscription_id varchar(255) NULL;`);
+      await run(`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS error text NULL;`);
+      await run(`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS processed_at timestamptz NULL;`);
     })();
   }
 

@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 import * as schema from "@/db/schema";
 import { CREDIT_COSTS, DEFAULT_MONTHLY_CREDITS, DEFAULT_PLAN_NAME, SOFTAI_METADATA_TAG } from "@/lib/constants";
+import { getBillingPlanDisplayName } from "@/lib/billing";
 import { db, databaseEnabled, ensureDatabase } from "@/lib/db";
 import type {
   AbuseReportRecord,
@@ -32,6 +33,7 @@ import { formatCredits } from "@/lib/utils";
 type DatabaseState = {
   users: UserRecord[];
   subscriptions: SubscriptionRecord[];
+  clerkWebhookEvents: ClerkWebhookEventRecord[];
   creditLedger: CreditLedgerRecord[];
   projects: ProjectRecord[];
   brandAssets: BrandAssetRecord[];
@@ -45,11 +47,26 @@ type DatabaseState = {
   auditEvents: AuditEventRecord[];
 };
 
+type ClerkWebhookEventRecord = {
+  id: string;
+  eventId: string;
+  type: string;
+  status: "processing" | "processed" | "failed";
+  error: string | null;
+  createdAt: string;
+  processedAt: string | null;
+};
+
 declare global {
   var softaiStore: DatabaseState | undefined;
 }
 
 const now = () => new Date().toISOString();
+const CLERK_WEBHOOK_PROCESSING_TIMEOUT_MS = 5 * 60 * 1000;
+
+function isStaleClerkWebhookClaim(createdAt: string | Date) {
+  return Date.now() - new Date(createdAt).getTime() > CLERK_WEBHOOK_PROCESSING_TIMEOUT_MS;
+}
 
 function toIso(value: string | Date | null | undefined) {
   if (!value) return null;
@@ -85,6 +102,7 @@ function createSeedStore(): DatabaseState {
         monthlyCredits: DEFAULT_MONTHLY_CREDITS,
       },
     ],
+    clerkWebhookEvents: [],
     creditLedger: [
       {
         id: "credit_demo_1",
@@ -92,7 +110,7 @@ function createSeedStore(): DatabaseState {
         projectId: null,
         reason: "grant",
         amount: DEFAULT_MONTHLY_CREDITS,
-        note: "Starter plan monthly grant",
+        note: "Free plan monthly grant",
         createdAt,
       },
       {
@@ -1089,26 +1107,147 @@ export async function getUserSubscription(userId: string) {
   return row ? mapSubscription(row) : null;
 }
 
+export async function claimClerkWebhookEvent(eventId: string, type: string) {
+  if (!databaseEnabled() || !db) {
+    const state = getState();
+    const existing = state.clerkWebhookEvents.find((entry) => entry.eventId === eventId);
+
+    if (existing?.status === "processed") {
+      return false;
+    }
+
+    if (existing?.status === "processing" && !isStaleClerkWebhookClaim(existing.createdAt)) {
+      return false;
+    }
+
+    if (existing?.status === "failed") {
+      existing.status = "processing";
+      existing.error = null;
+      return true;
+    }
+
+    if (existing?.status === "processing") {
+      existing.error = null;
+      return true;
+    }
+
+    state.clerkWebhookEvents.push({
+      id: randomUUID(),
+      eventId,
+      type,
+      status: "processing",
+      error: null,
+      createdAt: now(),
+      processedAt: null,
+    });
+    return true;
+  }
+
+  await ensureDatabase();
+  const [inserted] = await db
+    .insert(schema.clerkWebhookEvents)
+    .values({ id: randomUUID(), eventId, type, status: "processing", createdAt: new Date() })
+    .onConflictDoNothing()
+    .returning({ id: schema.clerkWebhookEvents.id });
+
+  if (inserted) {
+    return true;
+  }
+
+  const existing = await db.query.clerkWebhookEvents.findFirst({
+    where: eq(schema.clerkWebhookEvents.eventId, eventId),
+  });
+
+  if (existing?.status === "processed") {
+    return false;
+  }
+
+  if (existing?.status === "processing" && !isStaleClerkWebhookClaim(existing.createdAt)) {
+    return false;
+  }
+
+  await db
+    .update(schema.clerkWebhookEvents)
+    .set({ status: "processing", error: null, processedAt: null })
+    .where(eq(schema.clerkWebhookEvents.eventId, eventId));
+  return true;
+}
+
+export async function markClerkWebhookEventProcessed(eventId: string) {
+  if (!databaseEnabled() || !db) {
+    const existing = getState().clerkWebhookEvents.find((entry) => entry.eventId === eventId);
+    if (existing) {
+      existing.status = "processed";
+      existing.error = null;
+      existing.processedAt = now();
+    }
+    return;
+  }
+
+  await ensureDatabase();
+  await db
+    .update(schema.clerkWebhookEvents)
+    .set({ status: "processed", error: null, processedAt: new Date() })
+    .where(eq(schema.clerkWebhookEvents.eventId, eventId));
+}
+
+export async function markClerkWebhookEventFailed(eventId: string, error: string) {
+  if (!databaseEnabled() || !db) {
+    const existing = getState().clerkWebhookEvents.find((entry) => entry.eventId === eventId);
+    if (existing) {
+      existing.status = "failed";
+      existing.error = error;
+      existing.processedAt = null;
+    }
+    return;
+  }
+
+  await ensureDatabase();
+  await db
+    .update(schema.clerkWebhookEvents)
+    .set({ status: "failed", error, processedAt: null })
+    .where(eq(schema.clerkWebhookEvents.eventId, eventId));
+}
+
 export async function upsertUserSubscription(
   userId: string,
-  input: { clerkPayerId: string | null; clerkSubscriptionId?: string | null; plan: string; status: SubscriptionRecord["status"]; currentPeriodEnd?: string | null; monthlyCredits?: number },
+  input: { clerkPayerId: string | null; clerkSubscriptionId?: string | null; plan?: string; status: SubscriptionRecord["status"]; currentPeriodEnd?: string | null; monthlyCredits?: number },
 ) {
+  const shouldGrantUpgradeCredits = (existingMonthlyCredits: number, nextStatus: SubscriptionRecord["status"]) =>
+    (nextStatus === "active" || nextStatus === "trialing") &&
+    input.monthlyCredits !== undefined &&
+    input.monthlyCredits > existingMonthlyCredits;
+
   if (!databaseEnabled() || !db) {
     const state = getState();
     const existing =
       state.subscriptions.find((entry) => input.clerkSubscriptionId !== null && entry.clerkSubscriptionId === input.clerkSubscriptionId) ??
       state.subscriptions.find((entry) => entry.userId === userId);
     if (existing) {
+      const upgradeCreditDelta = shouldGrantUpgradeCredits(existing.monthlyCredits, input.status)
+        ? (input.monthlyCredits as number) - existing.monthlyCredits
+        : 0;
       existing.clerkPayerId = input.clerkPayerId;
       existing.clerkSubscriptionId = input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId;
-      existing.plan = input.plan;
+      existing.plan = input.plan ?? existing.plan;
       existing.status = input.status;
       existing.currentPeriodEnd = input.currentPeriodEnd ?? existing.currentPeriodEnd;
       existing.monthlyCredits = input.monthlyCredits ?? existing.monthlyCredits;
+      if (upgradeCreditDelta > 0) {
+        state.creditLedger.unshift({
+          id: randomUUID(),
+          userId,
+          projectId: null,
+          reason: "grant",
+          amount: upgradeCreditDelta,
+          note: `${getBillingPlanDisplayName(input.plan ?? existing.plan)} plan credit upgrade`,
+          createdAt: now(),
+        });
+      }
       return existing;
     }
     const created: SubscriptionRecord = {
-      id: randomUUID(), userId, plan: input.plan, status: input.status, clerkPayerId: input.clerkPayerId,
+      id: randomUUID(), userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
       clerkSubscriptionId: input.clerkSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
       monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
     };
@@ -1126,19 +1265,48 @@ export async function upsertUserSubscription(
     existing = await db.query.subscriptions.findFirst({ where: eq(schema.subscriptions.userId, userId) });
   }
   if (existing) {
-    await db.update(schema.subscriptions).set({
+    const updateValues = {
       clerkPayerId: input.clerkPayerId,
       clerkSubscriptionId: input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId,
-      plan: input.plan,
+      plan: input.plan ?? existing.plan,
       status: input.status,
       currentPeriodEnd: input.currentPeriodEnd ? new Date(input.currentPeriodEnd) : existing.currentPeriodEnd,
       monthlyCredits: input.monthlyCredits ?? existing.monthlyCredits,
-    }).where(eq(schema.subscriptions.id, existing.id));
+    };
+    let upgradeCreditDelta = 0;
+
+    if (shouldGrantUpgradeCredits(existing.monthlyCredits, input.status)) {
+      const [updated] = await db
+        .update(schema.subscriptions)
+        .set(updateValues)
+        .where(and(eq(schema.subscriptions.id, existing.id), eq(schema.subscriptions.monthlyCredits, existing.monthlyCredits)))
+        .returning({ id: schema.subscriptions.id });
+
+      if (updated) {
+        upgradeCreditDelta = (input.monthlyCredits as number) - existing.monthlyCredits;
+      } else {
+        await db.update(schema.subscriptions).set(updateValues).where(eq(schema.subscriptions.id, existing.id));
+      }
+    } else {
+      await db.update(schema.subscriptions).set(updateValues).where(eq(schema.subscriptions.id, existing.id));
+    }
+
+    if (upgradeCreditDelta > 0) {
+      await db.insert(schema.creditLedger).values({
+        id: randomUUID(),
+        userId,
+        projectId: null,
+        reason: "grant",
+        amount: upgradeCreditDelta,
+        note: `${getBillingPlanDisplayName(input.plan ?? existing.plan)} plan credit upgrade`,
+        createdAt: new Date(),
+      });
+    }
     return {
       ...mapSubscription(existing),
       clerkPayerId: input.clerkPayerId,
       clerkSubscriptionId: input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId ?? null,
-      plan: input.plan,
+      plan: input.plan ?? existing.plan,
       status: input.status,
       currentPeriodEnd: input.currentPeriodEnd ?? toIso(existing.currentPeriodEnd),
       monthlyCredits: input.monthlyCredits ?? existing.monthlyCredits,
@@ -1146,13 +1314,13 @@ export async function upsertUserSubscription(
   }
   const id = randomUUID();
   await db.insert(schema.subscriptions).values({
-    id, userId, plan: input.plan, status: input.status, clerkPayerId: input.clerkPayerId,
+    id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
     clerkSubscriptionId: input.clerkSubscriptionId ?? null,
     currentPeriodEnd: input.currentPeriodEnd ? new Date(input.currentPeriodEnd) : null,
     monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
   });
   return {
-    id, userId, plan: input.plan, status: input.status, clerkPayerId: input.clerkPayerId,
+    id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
     clerkSubscriptionId: input.clerkSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
     monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
   };
@@ -1200,7 +1368,7 @@ export async function getBillingSummary(userId: string) {
     getCreditHistory(userId),
   ]);
   return {
-    plan: subscription?.plan ?? DEFAULT_PLAN_NAME,
+    plan: getBillingPlanDisplayName(subscription?.plan ?? DEFAULT_PLAN_NAME),
     status: subscription?.status ?? "trialing",
     monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
     balance,

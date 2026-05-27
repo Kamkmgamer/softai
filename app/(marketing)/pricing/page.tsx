@@ -22,7 +22,7 @@ export default async function PricingPage() {
           </div>
 
           <div className="mx-auto max-w-3xl rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var(--shadow-sm)]">
-            <PricingTable />
+            <PricingTable newSubscriptionRedirectUrl="/billing" />
           </div>
 
           <div className="mx-auto mt-20 max-w-2xl">

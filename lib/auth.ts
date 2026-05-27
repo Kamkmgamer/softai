@@ -1,5 +1,6 @@
 import { getEnv } from "@/lib/env";
-import { upsertUser } from "@/lib/store";
+import { resolveCurrentBillingPlan } from "@/lib/billing";
+import { upsertUser, upsertUserSubscription } from "@/lib/store";
 
 export type AppSession = {
   userId: string;
@@ -52,6 +53,16 @@ export async function getAppSession(): Promise<AppSession> {
       email,
       name: [user.firstName, user.lastName].filter(Boolean).join(" ") || "SoftAI User",
     });
+    const billingPlan = resolveCurrentBillingPlan(auth.has);
+
+    if (billingPlan) {
+      await upsertUserSubscription(appUser.id, {
+        clerkPayerId: auth.userId,
+        plan: billingPlan.slug,
+        status: "active",
+        monthlyCredits: billingPlan.monthlyCredits,
+      });
+    }
 
     return {
       userId: appUser.id,

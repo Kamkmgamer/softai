@@ -73,6 +73,16 @@ export const creditLedger = pgTable("credit_ledger", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const clerkWebhookEvents = pgTable("clerk_webhook_events", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  eventId: varchar("event_id", { length: 255 }).notNull().unique(),
+  type: varchar("type", { length: 100 }).notNull(),
+  status: varchar("status", { length: 30 }).notNull(),
+  error: text("error"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  processedAt: timestamp("processed_at", { withTimezone: true }),
+});
+
 export const projects = pgTable("projects", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").notNull(),
