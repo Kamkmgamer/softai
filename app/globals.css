@@ -106,6 +106,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html[lang="ar"] body {
+  font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+html[dir="rtl"] .rtl-flip-x {
+  transform: scaleX(-1);
+}
+
+html[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+html[dir="rtl"] .text-right {
+  text-align: left;
+}
+
 a {
   color: inherit;
   text-decoration: none;

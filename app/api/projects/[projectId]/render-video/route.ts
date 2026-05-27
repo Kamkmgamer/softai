@@ -45,6 +45,7 @@ export async function POST(
     const result = await submitVideoRender(
       prompt,
       bundle.scenes.map((scene) => scene.imageUrl as string),
+      bundle.project.language,
     );
 
     await updateGenerationJob(job.id, {

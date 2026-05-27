@@ -28,6 +28,7 @@ export default async function ReviewPage({
       targetAudience: bundle.project.targetAudience,
       brandVoice: bundle.project.brandVoice,
       script: bundle.project.script,
+      language: bundle.project.language,
     });
 
     await createGenerationJob(session.userId, projectId, {

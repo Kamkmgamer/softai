@@ -1,41 +1,61 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse, type NextRequest } from "next/server";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_COOKIE,
+  detectLocaleFromAcceptLanguage,
+  getLocaleFromPathname,
+  isLocale,
+  localizePath,
+} from "@/lib/i18n";
 
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/projects(.*)",
-  "/library(.*)",
-  "/billing(.*)",
-  "/settings(.*)",
-  "/admin(.*)",
-  "/api/projects(.*)",
-  "/api/me(.*)",
-  "/api/report-abuse(.*)",
-  "/api/admin(.*)",
-]);
+const PUBLIC_FILE = /\.[^/]+$/;
 
-const hasClerk =
-  Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
-  Boolean(process.env.CLERK_SECRET_KEY);
+function shouldSkipLocale(pathname: string) {
+  return (
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/uploadthing") ||
+    PUBLIC_FILE.test(pathname)
+  );
+}
 
-const clerkProxy = clerkMiddleware(async (auth, request) => {
-  if (hasClerk && isProtectedRoute(request)) {
-    await auth.protect();
-  }
-});
+function handleLocale(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-export default function proxy(request: NextRequest, event: NextFetchEvent) {
-  if (!hasClerk) {
+  if (shouldSkipLocale(pathname) || pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
-  return clerkProxy(request, event);
+  const pathnameLocale = getLocaleFromPathname(pathname);
+  const requestHeaders = new Headers(request.headers);
+
+  if (pathnameLocale) {
+    requestHeaders.set("x-softai-locale", pathnameLocale);
+    const response = NextResponse.next({ request: { headers: requestHeaders } });
+    response.cookies.set(LOCALE_COOKIE, pathnameLocale, {
+      path: "/",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+    return response;
+  }
+
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+  const locale = isLocale(cookieLocale)
+    ? cookieLocale
+    : detectLocaleFromAcceptLanguage(request.headers.get("accept-language")) || DEFAULT_LOCALE;
+
+  const url = request.nextUrl.clone();
+  url.pathname = localizePath(pathname, locale);
+  return NextResponse.redirect(url);
 }
+
+export default clerkMiddleware((_auth, request) => handleLocale(request));
 
 export const config = {
   matcher: [
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
-    "/__clerk/(.*)",
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpg|jpeg|gif|png|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
   ],
 };

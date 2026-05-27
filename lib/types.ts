@@ -83,6 +83,7 @@ export type ProjectRecord = {
   targetAudience: string;
   brandVoice: string;
   platformTarget: "tiktok" | "instagram" | "youtube";
+  language: "en" | "ar";
   script: string;
   reviewNotes: string;
   createdAt: string;

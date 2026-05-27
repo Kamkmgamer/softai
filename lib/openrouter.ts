@@ -12,6 +12,7 @@ type StoryboardInput = {
   targetAudience: string;
   brandVoice: string;
   script: string;
+  language: "en" | "ar";
 };
 
 type GeneratedScene = {
@@ -23,6 +24,37 @@ type GeneratedScene = {
 };
 
 function fallbackStoryboard(input: StoryboardInput) {
+  if (input.language === "ar") {
+    return {
+      headline: `حوّل ${input.productName} إلى إعلان جاهز بسرعة`,
+      hook: `${input.offer} ل${input.targetAudience}`,
+      cta: input.cta,
+      scenes: [
+        {
+          title: "افتتاحية لافتة",
+          narration: input.script || `${input.productName} يساعد ${input.targetAudience} على الوصول للنتيجة بسرعة ووضوح.`,
+          visualDirection: `لقطة قريبة للمنتج بأسلوب ${input.brandVoice}، مع ترك مساحة آمنة لإضافة نص عربي لاحقاً.`,
+          overlayText: input.offer,
+          durationSeconds: 5,
+        },
+        {
+          title: "المشكلة والوعد",
+          narration: `بدلاً من إضاعة الوقت في تجهيز الإعلانات من الصفر، يختصر ${input.productName} الطريق من الفكرة إلى محتوى قابل للنشر.`,
+          visualDirection: "شخص يتحدث بثقة بجانب لقطات منتج واضحة ومساحات نظيفة للنصوص العربية.",
+          overlayText: "إعلان جاهز أسرع",
+          durationSeconds: 7,
+        },
+        {
+          title: "العرض والختام",
+          narration: `جرّب ${input.productName} اليوم واستفد من ${input.offer}. ${input.cta}`,
+          visualDirection: "لقطة نهائية للمنتج بخلفية دافئة ومساحة واضحة لزر الدعوة للإجراء.",
+          overlayText: input.cta,
+          durationSeconds: 6,
+        },
+      ],
+    };
+  }
+
   return {
     headline: `Launch ${input.productName} without a camera crew`,
     hook: `${input.offer} for ${input.targetAudience}`,
@@ -169,6 +201,10 @@ export async function generateStoryboard(input: StoryboardInput) {
     };
   }
 
+  const languageInstruction = input.language === "ar"
+    ? "Write all user-facing copy in soft Modern Standard Arabic: natural, business-friendly, not stiff, not dialect-heavy. Preserve Arabic intent. Return Arabic narration, overlayText, headline, hook, and CTA."
+    : "Write clear English ad copy for SMB operators.";
+
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -184,7 +220,7 @@ export async function generateStoryboard(input: StoryboardInput) {
         {
           role: "system",
           content:
-            "You are an ad creative strategist. Return strict JSON with keys headline, hook, cta, and scenes. scenes must be an array of 3 to 6 objects with title, narration, visualDirection, overlayText, durationSeconds.",
+            `You are an ad creative strategist. ${languageInstruction} Return strict JSON with keys headline, hook, cta, and scenes. scenes must be an array of 3 to 6 objects with title, narration, visualDirection, overlayText, durationSeconds. For Arabic projects, visualDirection may describe safe negative space for RTL overlays, but do not ask image models to render exact Arabic text inside images.`,
         },
         {
           role: "user",
@@ -207,12 +243,12 @@ export async function generateStoryboard(input: StoryboardInput) {
   };
 }
 
-export async function generateSceneImage(prompt: string) {
+export async function generateSceneImage(prompt: string, language: "en" | "ar" = "en") {
   const env = getEnv();
 
   if (!env.openRouterApiKey) {
     return {
-      imageUrl: `https://placehold.co/720x1280/f6e5d4/1a1a1a.png?text=${encodeURIComponent(prompt.slice(0, 50))}`,
+      imageUrl: `https://placehold.co/720x1280/f6e5d4/1a1a1a.png?text=${encodeURIComponent(language === "ar" ? "Arabic+overlay+space" : prompt.slice(0, 50))}`,
       provider: "demo-fallback",
       requestPayload: { prompt },
       responsePayload: null,
@@ -226,7 +262,7 @@ export async function generateSceneImage(prompt: string) {
     messages: [
       {
         role: "user",
-        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image. ${prompt}`,
+        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image. ${language === "ar" ? "Do not render Arabic words or fake text in the image. Leave clean negative space for SoftAI to add RTL Arabic overlays later." : "Avoid unnecessary embedded text unless explicitly requested."} ${prompt}`,
       },
     ],
   };
@@ -276,7 +312,7 @@ export async function generateSceneImage(prompt: string) {
   };
 }
 
-export async function submitVideoRender(prompt: string, imageUrls: string[]) {
+export async function submitVideoRender(prompt: string, imageUrls: string[], language: "en" | "ar" = "en") {
   const env = getEnv();
 
   if (!env.openRouterApiKey) {
@@ -285,7 +321,7 @@ export async function submitVideoRender(prompt: string, imageUrls: string[]) {
       status: "completed",
       url: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
       provider: "demo-fallback",
-      requestPayload: { prompt, imageUrls },
+      requestPayload: { prompt, imageUrls, language },
       responsePayload: null,
     };
   }
@@ -300,7 +336,9 @@ export async function submitVideoRender(prompt: string, imageUrls: string[]) {
     },
     body: JSON.stringify({
       model: DEFAULT_VIDEO_MODEL,
-      prompt,
+      prompt: language === "ar"
+        ? `${prompt}\n\nUse soft Modern Standard Arabic for narration/captions. Preserve RTL intent. Do not generate malformed Arabic text inside frames; SoftAI will render Arabic overlays separately.`
+        : prompt,
       images: imageUrls,
       duration: 1,
       resolution: "480p",
@@ -321,7 +359,7 @@ export async function submitVideoRender(prompt: string, imageUrls: string[]) {
     status: payload.status ?? "submitted",
     url: extractVideoUrl(payload),
     provider: DEFAULT_VIDEO_MODEL,
-    requestPayload: { prompt, imageUrls },
+    requestPayload: { prompt, imageUrls, language },
     responsePayload: payload,
   };
 }

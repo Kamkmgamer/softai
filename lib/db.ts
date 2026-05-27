@@ -98,12 +98,14 @@ export async function ensureDatabase() {
           target_audience text NOT NULL,
           brand_voice text NOT NULL,
           platform_target varchar(50) NOT NULL DEFAULT 'tiktok',
+          language varchar(10) NOT NULL DEFAULT 'en',
           script text NOT NULL DEFAULT '',
           review_notes text NOT NULL DEFAULT '',
           created_at timestamptz NOT NULL DEFAULT now(),
           updated_at timestamptz NOT NULL DEFAULT now()
         );
       `);
+      await run("ALTER TABLE projects ADD COLUMN IF NOT EXISTS language varchar(10) NOT NULL DEFAULT 'en';");
       await run(`
         CREATE TABLE IF NOT EXISTS storyboards (
           id uuid PRIMARY KEY,

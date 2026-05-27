@@ -8,6 +8,7 @@ export const createProjectSchema = z.object({
   targetAudience: z.string().min(2),
   brandVoice: z.string().min(2),
   platformTarget: z.enum(["tiktok", "instagram", "youtube"]).default("tiktok"),
+  language: z.enum(["en", "ar"]).default("en"),
   script: z.string().min(2),
 });
 

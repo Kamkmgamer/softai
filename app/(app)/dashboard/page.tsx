@@ -2,10 +2,19 @@ import Link from "next/link";
 import { Folder, Film, Wallet, Sparkles } from "lucide-react";
 import { PageHeader, ButtonLink, StatusBadge, EmptyState } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
+import { getDictionary } from "@/lib/dictionaries";
+import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n";
 import { getDashboardStats, listProjects } from "@/lib/store";
 import { formatCredits, formatDate } from "@/lib/utils";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  params,
+}: {
+  params?: Promise<{ lang?: string }>;
+}) {
+  const routeParams = params ? await params : null;
+  const locale = isLocale(routeParams?.lang) ? routeParams.lang : DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
   const session = await getAppSession();
   const stats = await getDashboardStats(session.userId);
   const projects = await listProjects(session.userId);
@@ -13,10 +22,10 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Dashboard"
+        title={dictionary.app.dashboard}
         action={
           <ButtonLink href="/projects/new">
-            New project
+            {dictionary.app.newProject}
           </ButtonLink>
         }
       />
@@ -26,32 +35,32 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-2">
           <Folder className="h-4 w-4 text-text-tertiary" />
           <span className="text-[13px] text-text-secondary">
-            <strong className="font-medium text-text">{stats.activeProjects}</strong> active projects
+            <strong className="font-medium text-text">{stats.activeProjects}</strong> {dictionary.dashboard.activeProjects}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <Film className="h-4 w-4 text-text-tertiary" />
           <span className="text-[13px] text-text-secondary">
-            <strong className="font-medium text-text">{stats.completedVideos}</strong> completed videos
+            <strong className="font-medium text-text">{stats.completedVideos}</strong> {dictionary.dashboard.completedVideos}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-text-tertiary" />
           <span className="text-[13px] text-text-secondary">
-            <strong className="font-medium text-text">{formatCredits(stats.creditBalance)}</strong> credits available
+            <strong className="font-medium text-text">{formatCredits(stats.creditBalance, locale)}</strong> {dictionary.dashboard.creditsAvailable}
           </span>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-[0.9375rem] font-semibold text-text">Recent projects</h2>
+        <h2 className="text-[0.9375rem] font-semibold text-text">{dictionary.dashboard.recentProjects}</h2>
         
         {projects.length === 0 ? (
           <EmptyState
             icon={Sparkles}
-            title="No projects yet"
-            description="Create your first ad campaign project to get started."
-            action={<ButtonLink href="/projects/new">New project</ButtonLink>}
+            title={dictionary.dashboard.noProjects}
+            description={dictionary.dashboard.noProjectsDescription}
+            action={<ButtonLink href="/projects/new">{dictionary.app.newProject}</ButtonLink>}
           />
         ) : (
           <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border bg-surface">
@@ -74,7 +83,7 @@ export default async function DashboardPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-text-tertiary">
-                    Updated {formatDate(project.updatedAt)}
+                    {dictionary.dashboard.updated} {formatDate(project.updatedAt, locale)}
                   </p>
                 </div>
               </Link>

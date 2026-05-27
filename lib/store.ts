@@ -135,6 +135,7 @@ function createSeedStore(): DatabaseState {
         targetAudience: "local ecommerce owners",
         brandVoice: "bold, direct, optimistic",
         platformTarget: "tiktok",
+        language: "en",
         script: "Stop paying agencies to learn what converts. Launch a vertical ad in minutes.",
         reviewNotes: "",
         createdAt,
@@ -307,6 +308,7 @@ function mapProject(row: typeof schema.projects.$inferSelect): ProjectRecord {
     targetAudience: row.targetAudience,
     brandVoice: row.brandVoice,
     platformTarget: row.platformTarget as ProjectRecord["platformTarget"],
+    language: row.language as ProjectRecord["language"],
     script: row.script,
     reviewNotes: row.reviewNotes,
     createdAt: toIso(row.createdAt) ?? now(),
@@ -664,7 +666,7 @@ export async function getProjectBundle(userId: string, projectId: string): Promi
 
 export async function createProject(
   userId: string,
-  input: Pick<ProjectRecord, "title" | "productName" | "offer" | "cta" | "targetAudience" | "brandVoice" | "platformTarget" | "script">,
+  input: Pick<ProjectRecord, "title" | "productName" | "offer" | "cta" | "targetAudience" | "brandVoice" | "platformTarget" | "language" | "script">,
 ) {
   if (!databaseEnabled() || !db) {
     const createdAt = now();
@@ -679,6 +681,7 @@ export async function createProject(
       targetAudience: input.targetAudience,
       brandVoice: input.brandVoice,
       platformTarget: input.platformTarget,
+      language: input.language,
       script: input.script,
       reviewNotes: "",
       createdAt,
@@ -702,6 +705,7 @@ export async function createProject(
     targetAudience: input.targetAudience,
     brandVoice: input.brandVoice,
     platformTarget: input.platformTarget,
+    language: input.language,
     script: input.script,
     reviewNotes: "",
     createdAt: new Date(),

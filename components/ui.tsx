@@ -177,7 +177,7 @@ export function DataRow({
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-border py-2.5 last:border-0">
       <dt className="shrink-0 text-[0.8125rem] text-text-secondary">{label}</dt>
-      <dd className="text-right text-[0.8125rem] font-medium text-text">{children}</dd>
+      <dd className="text-end text-[0.8125rem] font-medium text-text">{children}</dd>
     </div>
   );
 }
@@ -226,7 +226,7 @@ export function FieldLabel({
     <div className="space-y-0.5">
       <label htmlFor={htmlFor} className="text-[0.8125rem] font-medium text-text">
         {label}
-        {required ? <span className="ml-0.5 text-danger">*</span> : null}
+        {required ? <span className="mx-0.5 text-danger">*</span> : null}
       </label>
       {hint ? <p className="text-xs text-text-tertiary">{hint}</p> : null}
     </div>

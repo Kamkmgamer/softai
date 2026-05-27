@@ -94,6 +94,7 @@ export const projects = pgTable("projects", {
   targetAudience: text("target_audience").notNull(),
   brandVoice: text("brand_voice").notNull(),
   platformTarget: varchar("platform_target", { length: 50 }).notNull().default("tiktok"),
+  language: varchar("language", { length: 10 }).notNull().default("en"),
   script: text("script").notNull().default(""),
   reviewNotes: text("review_notes").notNull().default(""),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

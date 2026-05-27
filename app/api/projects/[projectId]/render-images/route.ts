@@ -27,7 +27,9 @@ export async function POST(
 
     const jobs = await Promise.all(
       bundle.scenes.map(async (scene) => {
-        const prompt = `${bundle.storyboard?.headline}. ${scene.visualDirection}. Overlay text: ${scene.overlayText}. Vertical ad frame 9:16.`;
+        const prompt = bundle.project.language === "ar"
+          ? `${bundle.storyboard?.headline}. ${scene.visualDirection}. Arabic RTL overlay text will be rendered by SoftAI after image generation: ${scene.overlayText}. Leave clean safe space for the overlay. Vertical ad frame 9:16.`
+          : `${bundle.storyboard?.headline}. ${scene.visualDirection}. Overlay text: ${scene.overlayText}. Vertical ad frame 9:16.`;
         const job = await createGenerationJob(user.id, projectId, {
           type: "image",
           status: "processing",
@@ -35,7 +37,7 @@ export async function POST(
         });
         let result: Awaited<ReturnType<typeof generateSceneImage>>;
         try {
-          result = await generateSceneImage(prompt);
+          result = await generateSceneImage(prompt, bundle.project.language);
         } catch (error) {
           await updateGenerationJob(job.id, {
             status: "failed",

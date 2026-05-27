@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FieldLabel } from "@/components/ui";
+import { getDictionary } from "@/lib/dictionaries";
+import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
 
 const initialState = {
   title: "",
@@ -12,13 +14,17 @@ const initialState = {
   targetAudience: "",
   brandVoice: "",
   platformTarget: "tiktok",
+  language: "en" as "en" | "ar",
   script: "",
 };
 
 export function ProjectCreationForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
   const [isPending, startTransition] = useTransition();
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState({ ...initialState, language: locale });
   const [error, setError] = useState<string | null>(null);
 
   const update = (key: keyof typeof initialState, value: string) =>
@@ -38,11 +44,11 @@ export function ProjectCreationForm() {
       const payload = await response.json();
 
       if (!response.ok) {
-        setError(payload.error ?? "Unable to create project.");
+        setError(payload.error ?? dictionary.projectForm.unableToCreate);
         return;
       }
 
-      router.push(`/projects/${payload.project.id}`);
+      router.push(localizePath(`/projects/${payload.project.id}`, locale));
     });
   }
 
@@ -51,81 +57,81 @@ export function ProjectCreationForm() {
       <div className="space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="project-title" label="Project title" required />
+            <FieldLabel htmlFor="project-title" label={dictionary.projectForm.title} required />
             <input
               id="project-title"
               required
               value={form.title}
               onChange={(event) => update("title", event.target.value)}
               className="control-field"
-              placeholder="e.g. Summer launch push"
+              placeholder={dictionary.projectForm.titlePlaceholder}
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="product-name" label="Product name" required />
+            <FieldLabel htmlFor="product-name" label={dictionary.projectForm.productName} required />
             <input
               id="product-name"
               required
               value={form.productName}
               onChange={(event) => update("productName", event.target.value)}
               className="control-field"
-              placeholder="e.g. Glow Serum"
+              placeholder={dictionary.projectForm.productNamePlaceholder}
             />
           </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="offer" label="Offer" required />
+            <FieldLabel htmlFor="offer" label={dictionary.projectForm.offer} required />
             <input
               id="offer"
               required
               value={form.offer}
               onChange={(event) => update("offer", event.target.value)}
               className="control-field"
-              placeholder="e.g. Buy one, get one free"
+              placeholder={dictionary.projectForm.offerPlaceholder}
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="cta" label="Call to action" required />
+            <FieldLabel htmlFor="cta" label={dictionary.projectForm.cta} required />
             <input
               id="cta"
               required
               value={form.cta}
               onChange={(event) => update("cta", event.target.value)}
               className="control-field"
-              placeholder="e.g. Shop now"
+              placeholder={dictionary.projectForm.ctaPlaceholder}
             />
           </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="target-audience" label="Target audience" required />
+            <FieldLabel htmlFor="target-audience" label={dictionary.projectForm.targetAudience} required />
             <input
               id="target-audience"
               required
               value={form.targetAudience}
               onChange={(event) => update("targetAudience", event.target.value)}
               className="control-field"
-              placeholder="e.g. busy founders"
+              placeholder={dictionary.projectForm.targetAudiencePlaceholder}
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="brand-voice" label="Brand voice" required />
+            <FieldLabel htmlFor="brand-voice" label={dictionary.projectForm.brandVoice} required />
             <input
               id="brand-voice"
               required
               value={form.brandVoice}
               onChange={(event) => update("brandVoice", event.target.value)}
               className="control-field"
-              placeholder="e.g. clean, energetic"
+              placeholder={dictionary.projectForm.brandVoicePlaceholder}
             />
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <FieldLabel htmlFor="platform-target" label="Platform format" />
+          <FieldLabel htmlFor="platform-target" label={dictionary.projectForm.platformFormat} />
           <select
             id="platform-target"
             value={form.platformTarget}
@@ -141,8 +147,8 @@ export function ProjectCreationForm() {
         <div className="space-y-1.5">
           <FieldLabel
             htmlFor="script-seed"
-            label="Script seed"
-            hint="Paste your rough sales script or core message."
+            label={dictionary.projectForm.scriptSeed}
+            hint={dictionary.projectForm.scriptHint}
             required
           />
           <textarea
@@ -152,7 +158,7 @@ export function ProjectCreationForm() {
             value={form.script}
             onChange={(event) => update("script", event.target.value)}
             className="control-field resize-y"
-            placeholder="Introduce the problem, present the product, and give the offer..."
+            placeholder={dictionary.projectForm.scriptPlaceholder}
           />
         </div>
       </div>
@@ -169,7 +175,7 @@ export function ProjectCreationForm() {
           disabled={isPending}
           className="btn-primary w-full sm:w-auto"
         >
-          {isPending ? "Creating project..." : "Create project"}
+          {isPending ? dictionary.projectForm.creating : dictionary.projectForm.create}
         </button>
       </div>
     </form>

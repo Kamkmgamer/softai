@@ -45,7 +45,7 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
         onClick={() => trigger("render-images")}
         className="btn w-full justify-start border border-border bg-surface text-text hover:bg-surface-raised disabled:bg-surface-sunken"
       >
-        <span className="flex-1 text-left">
+        <span className="flex-1 text-start">
           {pendingAction === "render-images" ? "Rendering..." : "Render images"}
         </span>
       </button>
@@ -56,7 +56,7 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
         onClick={() => trigger("render-video")}
         className="btn w-full justify-start border border-border bg-text text-bg hover:bg-accent-hover disabled:border-border disabled:bg-surface-sunken disabled:text-text-tertiary"
       >
-        <span className="flex-1 text-left">
+        <span className="flex-1 text-start">
           {pendingAction === "render-video" ? "Rendering..." : "Render video"}
         </span>
       </button>

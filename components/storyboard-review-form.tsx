@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { type ProjectBundle } from "@/lib/types";
 import { FieldLabel } from "@/components/ui";
+import { getDictionary } from "@/lib/dictionaries";
+import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
 
 export function StoryboardReviewForm({
   projectId,
@@ -13,6 +15,9 @@ export function StoryboardReviewForm({
   initialBundle: ProjectBundle;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
   const [isPending, startTransition] = useTransition();
   const [scenes, setScenes] = useState(initialBundle.scenes);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +54,7 @@ export function StoryboardReviewForm({
       const payload = await response.json();
 
       if (!response.ok) {
-        setError(payload.error ?? "Failed to save storyboard.");
+        setError(payload.error ?? dictionary.storyboard.saveFailed);
         return;
       }
 
@@ -59,11 +64,11 @@ export function StoryboardReviewForm({
       const approvePayload = await approveResponse.json();
 
       if (!approveResponse.ok) {
-        setError(approvePayload.error ?? "Failed to approve storyboard.");
+        setError(approvePayload.error ?? dictionary.storyboard.approveFailed);
         return;
       }
 
-      router.push(`/projects/${projectId}`);
+      router.push(localizePath(`/projects/${projectId}`, locale));
     });
   }
 
@@ -81,50 +86,50 @@ export function StoryboardReviewForm({
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <FieldLabel htmlFor={`scene-title-${scene.id}`} label="Internal title" />
+                <FieldLabel htmlFor={`scene-title-${scene.id}`} label={dictionary.storyboard.internalTitle} />
                 <input
                   id={`scene-title-${scene.id}`}
                   value={scene.title}
                   onChange={(e) => updateScene(scene.id, "title", e.target.value)}
                   className="control-field"
-                  placeholder="e.g. Opening hook"
+                  placeholder={locale === "ar" ? "مثال: افتتاحية تشد الانتباه" : "e.g. Opening hook"}
                 />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <FieldLabel htmlFor={`scene-narration-${scene.id}`} label="Narration (TTS)" />
+                  <FieldLabel htmlFor={`scene-narration-${scene.id}`} label={dictionary.storyboard.narration} />
                   <textarea
                     id={`scene-narration-${scene.id}`}
                     rows={3}
                     value={scene.narration}
                     onChange={(e) => updateScene(scene.id, "narration", e.target.value)}
                     className="control-field resize-y text-[13px]"
-                    placeholder="What the voiceover says..."
+                    placeholder={locale === "ar" ? "ماذا سيقول الصوت؟" : "What the voiceover says..."}
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <FieldLabel htmlFor={`scene-visual-${scene.id}`} label="Visual direction" />
+                  <FieldLabel htmlFor={`scene-visual-${scene.id}`} label={dictionary.storyboard.visualDirection} />
                   <textarea
                     id={`scene-visual-${scene.id}`}
                     rows={3}
                     value={scene.visualDirection}
                     onChange={(e) => updateScene(scene.id, "visualDirection", e.target.value)}
                     className="control-field resize-y text-[13px]"
-                    placeholder="Describe the image..."
+                    placeholder={locale === "ar" ? "صف المشهد المطلوب..." : "Describe the image..."}
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <FieldLabel htmlFor={`scene-overlay-${scene.id}`} label="Text overlay (optional)" />
+                <FieldLabel htmlFor={`scene-overlay-${scene.id}`} label={dictionary.storyboard.overlayText} />
                 <input
                   id={`scene-overlay-${scene.id}`}
                   value={scene.overlayText || ""}
                   onChange={(e) => updateScene(scene.id, "overlayText", e.target.value)}
                   className="control-field"
-                  placeholder="e.g. 50% OFF TODAY"
+                  placeholder={locale === "ar" ? "مثال: العرض لفترة محدودة" : "e.g. 50% OFF TODAY"}
                 />
               </div>
             </div>
@@ -141,17 +146,17 @@ export function StoryboardReviewForm({
       <div className="flex flex-col-reverse justify-end gap-3 sm:flex-row pt-4 border-t border-border">
         <button
           type="button"
-          onClick={() => router.push(`/projects/${projectId}`)}
+          onClick={() => router.push(localizePath(`/projects/${projectId}`, locale))}
           className="btn-secondary w-full sm:w-auto"
         >
-          Cancel
+          {dictionary.storyboard.cancel}
         </button>
         <button
           type="submit"
           disabled={isPending}
           className="btn-primary w-full sm:w-auto"
         >
-          {isPending ? "Saving..." : "Approve and save"}
+          {isPending ? dictionary.storyboard.saving : dictionary.storyboard.approve}
         </button>
       </div>
     </form>

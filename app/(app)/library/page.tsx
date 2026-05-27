@@ -1,13 +1,18 @@
 import { redirect } from "next/navigation";
 import { FolderArchive, Download } from "lucide-react";
 import { getAppSession } from "@/lib/auth";
+import { getDictionary } from "@/lib/dictionaries";
+import { localizePath } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/server-locale";
 import { listProjects } from "@/lib/store";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { formatDate } from "@/lib/utils";
 
 export default async function LibraryPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
   const session = await getAppSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect(localizePath("/sign-in", locale));
 
   const projects = await listProjects(session.userId);
   const completedProjects = projects.filter((p) => p.status === "completed");
@@ -15,16 +20,16 @@ export default async function LibraryPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Library"
-        description="Your finalized campaigns and rendered exports."
+        title={dictionary.library.title}
+        description={dictionary.library.description}
       />
 
       <div className="space-y-4">
         {completedProjects.length === 0 ? (
           <EmptyState
             icon={FolderArchive}
-            title="Your library is empty"
-            description="When your video campaigns finish rendering, they will appear here for download."
+            title={dictionary.library.emptyTitle}
+            description={dictionary.library.emptyDescription}
           />
         ) : (
           <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border bg-surface">
@@ -33,19 +38,19 @@ export default async function LibraryPage() {
                 <div>
                   <h3 className="text-sm font-medium text-text">{project.title}</h3>
                   <p className="mt-0.5 text-xs text-text-secondary">
-                    {project.productName} · Completed {formatDate(project.updatedAt)}
+                    {project.productName} · {dictionary.library.completed} {formatDate(project.updatedAt, locale)}
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <a
-                    href={`/projects/${project.id}`}
+                    href={localizePath(`/projects/${project.id}`, locale)}
                     className="btn-secondary btn-sm"
                   >
-                    View
+                    {dictionary.library.view}
                   </a>
                   <button type="button" className="btn-primary btn-sm px-2">
                     <Download className="h-4 w-4" />
-                    <span className="sr-only">Download all</span>
+                    <span className="sr-only">{dictionary.library.downloadAll}</span>
                   </button>
                 </div>
               </div>
