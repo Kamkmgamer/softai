@@ -3,16 +3,42 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const VIDEO_OUTPUT_POLL_INTERVAL_MS = 5_000;
+const VIDEO_OUTPUT_POLL_ATTEMPTS = 24;
+
 type Props = {
   projectId: string;
   canRenderImages: boolean;
   canRenderVideo: boolean;
 };
 
+type OutputSummary = {
+  type?: string;
+};
+
 export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<"render-images" | "render-video" | null>(null);
+
+  async function waitForFinalVideoOutput() {
+    for (let attempt = 0; attempt < VIDEO_OUTPUT_POLL_ATTEMPTS; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, VIDEO_OUTPUT_POLL_INTERVAL_MS));
+
+      const response = await fetch(`/api/projects/${projectId}/outputs`, { cache: "no-store" });
+      if (!response.ok) continue;
+
+      const payload = await response.json().catch(() => null);
+      const outputs: OutputSummary[] = Array.isArray(payload?.outputs) ? payload.outputs : [];
+      if (outputs.some((output) => output?.type === "final_video")) {
+        router.refresh();
+      if (path === "render-video" && !payload?.url) {
+        void waitForFinalVideoOutput();
+      }
+        return;
+      }
+    }
+  }
 
   async function trigger(path: "render-images" | "render-video") {
     setError(null);
@@ -30,6 +56,9 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
       }
 
       router.refresh();
+      if (path === "render-video" && !payload?.url) {
+        void waitForFinalVideoOutput();
+      }
     } finally {
       setPendingAction(null);
     }

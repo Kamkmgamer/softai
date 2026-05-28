@@ -6,7 +6,10 @@ import {
   getProjectBundle,
   updateGenerationJob,
 } from "@/lib/store";
-import { submitVideoRender } from "@/lib/openrouter";
+import { submitVideoRender, pollVideoStatus } from "@/lib/openrouter";
+
+const POLL_INTERVAL_MS = 10_000;
+const MAX_POLL_ATTEMPTS = 12;
 
 export async function POST(
   _request: Request,
@@ -54,16 +57,65 @@ export async function POST(
       responsePayload: result.responsePayload,
     });
 
-    if (result.url) {
+    if (result.status === "completed" && result.url) {
       await createOutput(user.id, projectId, {
         type: "final_video",
         title: `${bundle.project.title} final render`,
         url: result.url,
       });
+      await settleVideoCredits(user.id, projectId);
+      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: result.url, status: "completed" });
     }
 
-    await settleVideoCredits(user.id, projectId);
-    return apiSuccess({ jobId: job.id, providerJobId: result.id, url: result.url });
+    if (!result.pollingUrl) {
+      await settleVideoCredits(user.id, projectId);
+      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: null, status: "submitted" });
+    }
+
+    // Server-side polling loop
+    let videoUrl: string | null = null;
+    let finalStatus: string = "processing";
+
+    for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+
+      const poll = await pollVideoStatus(result.pollingUrl);
+
+      if (poll.status === "completed") {
+        videoUrl = poll.url;
+        finalStatus = "completed";
+        break;
+      }
+
+      if (poll.status === "failed") {
+        finalStatus = "failed";
+        await updateGenerationJob(job.id, {
+          status: "failed",
+          errorMessage: poll.error ?? "Video generation failed",
+        });
+        await refundVideoCredits(user.id, projectId);
+        heldCredits = false;
+        return apiError(new Error(poll.error ?? "Video generation failed."));
+      }
+
+      await updateGenerationJob(job.id, {
+        status: poll.status === "in_progress" ? "processing" : "submitted",
+      });
+    }
+
+    if (finalStatus === "completed" && videoUrl) {
+      await updateGenerationJob(job.id, { status: "completed" });
+      await createOutput(user.id, projectId, {
+        type: "final_video",
+        title: `${bundle.project.title} final render`,
+        url: videoUrl,
+      });
+      await settleVideoCredits(user.id, projectId);
+      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: videoUrl, status: "completed" });
+    }
+
+    // Timeout — job remains "submitted", webhook or page refresh will complete it
+    return apiSuccess({ jobId: job.id, providerJobId: result.id, url: null, status: "processing" });
   } catch (error) {
     const { projectId } = await params;
     const user = await requireAppUser().catch(() => null);

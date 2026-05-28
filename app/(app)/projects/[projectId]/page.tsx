@@ -118,12 +118,27 @@ export default async function ProjectDetailPage({
             {bundle.outputs.length === 0 ? (
               <EmptyState title="No outputs" description="Render the video to see outputs here." />
             ) : (
-              <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border bg-surface">
-                {bundle.outputs.map((output) => (
-                  <div key={output.id} className="flex items-center justify-between p-4">
+              <div className="space-y-3">
+                {bundle.outputs.map((output) => output.type === "final_video" ? (
+                  <div key={output.id} className="overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface">
+                    <div className="aspect-[9/16] max-h-[480px] bg-black">
+                      <video src={output.url} controls preload="metadata" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex items-center justify-between p-4">
+                      <div>
+                        <p className="text-sm font-medium text-text">{output.title}</p>
+                        <p className="mt-0.5 text-[11px] uppercase tracking-wider text-text-tertiary">Final video</p>
+                      </div>
+                      <a href={output.url} target="_blank" rel="noreferrer" className="text-[13px] font-medium text-accent-text hover:underline">
+                        Open
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={output.id} className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface p-4">
                     <div>
                       <p className="text-sm font-medium text-text">{output.title}</p>
-                      <p className="text-[11px] text-text-tertiary uppercase tracking-wider mt-0.5">{output.type.replace("_", " ")}</p>
+                      <p className="mt-0.5 text-[11px] uppercase tracking-wider text-text-tertiary">{output.type.replace("_", " ")}</p>
                     </div>
                     <a href={output.url} target="_blank" rel="noreferrer" className="text-[13px] font-medium text-accent-text hover:underline">
                       View

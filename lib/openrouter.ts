@@ -1,5 +1,4 @@
 import { getEnv } from "@/lib/env";
-import { SOFTAI_METADATA_TAG } from "@/lib/constants";
 
 const DEFAULT_TEXT_MODEL = "minimax/minimax-m2.5:free";
 const FALLBACK_TEXT_MODELS = [
@@ -471,19 +470,58 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
   };
 }
 
-export async function submitVideoRender(prompt: string, imageUrls: string[], language: "en" | "ar" = "en") {
+type VideoRenderOptions = {
+  duration?: number;
+  size?: string;
+};
+
+type VideoSubmitResult = {
+  id: string;
+  status: string;
+  pollingUrl: string | null;
+  url: string | null;
+  provider: string;
+  requestPayload: unknown;
+  responsePayload: unknown;
+};
+
+function getOpenRouterCallbackUrl(appUrl: string) {
+  try {
+    const url = new URL(appUrl);
+    const hostname = url.hostname.toLowerCase();
+    if (["localhost", "127.0.0.1", "::1"].includes(hostname)) return null;
+    if (url.protocol !== "https:") return null;
+    return `${url.origin}/api/webhooks/openrouter`;
+  } catch {
+    return null;
+  }
+}
+
+export async function submitVideoRender(
+  prompt: string,
+  imageUrls: string[],
+  language: "en" | "ar" = "en",
+  options: VideoRenderOptions = {},
+): Promise<VideoSubmitResult> {
   const env = getEnv();
+  const duration = options.duration ?? 4;
+  const size = options.size ?? "720x1280";
 
   if (!env.openRouterApiKey) {
     return {
       id: `demo-video-${Date.now()}`,
       status: "completed",
+      pollingUrl: null,
       url: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
       provider: "demo-fallback",
-      requestPayload: { prompt, imageUrls, language },
+      requestPayload: { prompt, imageUrls, language, duration, size },
       responsePayload: null,
     };
   }
+
+  const firstFrame = imageUrls.find((url) => url.trim());
+
+  const callbackUrl = getOpenRouterCallbackUrl(env.appUrl);
 
   const response = await fetch("https://openrouter.ai/api/v1/videos", {
     method: "POST",
@@ -498,13 +536,10 @@ export async function submitVideoRender(prompt: string, imageUrls: string[], lan
       prompt: language === "ar"
         ? `${prompt}\n\nUse soft Modern Standard Arabic for narration/captions. Preserve RTL intent. Do not generate malformed Arabic text inside frames; SoftAI will render Arabic overlays separately.`
         : prompt,
-      images: imageUrls,
-      duration: 1,
-      resolution: "480p",
-      aspect_ratio: "9:16",
-      metadata: {
-        tag: SOFTAI_METADATA_TAG,
-      },
+      duration,
+      size,
+      first_frame: firstFrame,
+      ...(callbackUrl ? { callback_url: callbackUrl } : {}),
     }),
   });
 
@@ -515,10 +550,56 @@ export async function submitVideoRender(prompt: string, imageUrls: string[], lan
 
   return {
     id: payload.id ?? payload.generation_id ?? `video-${Date.now()}`,
-    status: payload.status ?? "submitted",
-    url: extractVideoUrl(payload),
+    status: payload.status ?? "pending",
+    pollingUrl: payload.polling_url ?? null,
+    url: extractVideoUrlFromUnsignedUrls(payload.unsigned_urls) ?? extractVideoUrl(payload),
     provider: DEFAULT_VIDEO_MODEL,
-    requestPayload: { prompt, imageUrls, language },
+    requestPayload: { prompt, imageUrls, language, duration, size },
     responsePayload: payload,
   };
+}
+
+type VideoPollResult = {
+  status: "pending" | "in_progress" | "completed" | "failed";
+  url: string | null;
+  error: string | null;
+};
+
+export async function pollVideoStatus(pollingUrl: string): Promise<VideoPollResult> {
+  const env = getEnv();
+
+  const response = await fetch(pollingUrl, {
+    headers: {
+      Authorization: `Bearer ${env.openRouterApiKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null);
+    throw new Error(payload?.error?.message ?? `Failed to poll video status: ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const status = normalizeVideoStatus(payload.status);
+  const url = extractVideoUrlFromUnsignedUrls(payload.unsigned_urls) ?? extractVideoUrl(payload);
+  const error = status === "failed" ? (payload.error ?? "Video generation failed") : null;
+
+  return { status, url, error };
+}
+
+function normalizeVideoStatus(status: unknown): VideoPollResult["status"] {
+  if (typeof status !== "string") return "pending";
+  if (["completed", "succeeded", "success"].includes(status)) return "completed";
+  if (["failed", "error", "cancelled", "canceled", "expired"].includes(status)) return "failed";
+  if (["in_progress", "processing", "running", "queued"].includes(status)) return "in_progress";
+  return "pending";
+}
+
+function extractVideoUrlFromUnsignedUrls(urls: unknown): string | null {
+  if (!Array.isArray(urls) || urls.length === 0) return null;
+  for (const item of urls) {
+    const url = getNestedImageUrl(item);
+    if (url) return url;
+  }
+  return null;
 }
