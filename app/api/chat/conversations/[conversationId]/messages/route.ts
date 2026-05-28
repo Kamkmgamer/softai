@@ -122,7 +122,11 @@ export async function POST(
 
             controller.enqueue(encoder.encode(getChatUnavailableMessage()));
           }
-          console.error("Assistant chat stream failed", error);
+          console.error("Assistant chat stream failed", {
+            conversationId,
+            projectId: conversation.projectId,
+            error: error instanceof Error ? error.message : String(error),
+          });
           controller.close();
         }
       },

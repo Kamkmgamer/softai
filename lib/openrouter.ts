@@ -2,6 +2,14 @@ import { getEnv } from "@/lib/env";
 import { SOFTAI_METADATA_TAG } from "@/lib/constants";
 
 const DEFAULT_TEXT_MODEL = "minimax/minimax-m2.5:free";
+const FALLBACK_TEXT_MODELS = [
+  "deepseek/deepseek-v4-flash:free",
+  "moonshotai/kimi-k2.6:free",
+  "openai/gpt-oss-120b:free",
+  "deepseek/deepseek-v4-flash",
+  "moonshotai/kimi-k2.6",
+  "openai/gpt-oss-120b",
+];
 const DEFAULT_IMAGE_MODEL = "google/gemini-2.5-flash-image";
 const DEFAULT_VIDEO_MODEL = "x-ai/grok-imagine-video";
 const CHAT_UNAVAILABLE_MESSAGE = "The assistant is temporarily unavailable. Please try again in a moment.";
@@ -225,21 +233,27 @@ function getOpenRouterTextModel() {
   return process.env.OPENROUTER_TEXT_MODEL ?? DEFAULT_TEXT_MODEL;
 }
 
-export function getChatUnavailableMessage() {
-  return CHAT_UNAVAILABLE_MESSAGE;
+function isRetryableError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const message = error.message.toLowerCase();
+  return (
+    message.includes("provider returned error") ||
+    message.includes("rate limit") ||
+    message.includes("overloaded") ||
+    message.includes("temporarily unavailable") ||
+    message.includes("503") ||
+    message.includes("502") ||
+    message.includes("504") ||
+    message.includes("429")
+  );
 }
 
-export async function* streamChatCompletion(messages: ChatCompletionMessage[], signal?: AbortSignal) {
-  const env = getEnv();
-
-  if (!env.openRouterApiKey) {
-    const fallback = "I can help refine this campaign. Ask for ad angles, a stronger hook, a clearer offer, CTA options, script edits, or a short summary of the current project.";
-    for (const word of fallback.split(" ")) {
-      yield `${word} `;
-    }
-    return;
-  }
-
+async function* fetchStreamCompletion(
+  model: string,
+  messages: ChatCompletionMessage[],
+  env: { openRouterApiKey?: string; appUrl: string },
+  signal?: AbortSignal,
+) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     signal,
@@ -250,7 +264,7 @@ export async function* streamChatCompletion(messages: ChatCompletionMessage[], s
       "X-Title": "SoftAI",
     },
     body: JSON.stringify({
-      model: getOpenRouterTextModel(),
+      model,
       stream: true,
       messages,
     }),
@@ -288,6 +302,50 @@ export async function* streamChatCompletion(messages: ChatCompletionMessage[], s
       if (delta) yield delta;
     }
   }
+}
+
+export function getChatUnavailableMessage() {
+  return CHAT_UNAVAILABLE_MESSAGE;
+}
+
+export async function* streamChatCompletion(messages: ChatCompletionMessage[], signal?: AbortSignal) {
+  const env = getEnv();
+
+  if (!env.openRouterApiKey) {
+    const fallback = "I can help refine this campaign. Ask for ad angles, a stronger hook, a clearer offer, CTA options, script edits, or a short summary of the current project.";
+    for (const word of fallback.split(" ")) {
+      yield `${word} `;
+    }
+    return;
+  }
+
+  const primaryModel = getOpenRouterTextModel();
+  const models = [primaryModel, ...FALLBACK_TEXT_MODELS.filter((m) => m !== primaryModel)];
+
+  let yieldedContent = false;
+
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    try {
+      for await (const chunk of fetchStreamCompletion(model, messages, env, signal)) {
+        yieldedContent = true;
+        yield chunk;
+      }
+      return;
+    } catch (error) {
+      if (yieldedContent || !isRetryableError(error)) {
+        throw error;
+      }
+
+      const isLastModel = i === models.length - 1;
+      if (!isLastModel) {
+        const delay = model.endsWith(":free") ? 1000 : 500;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw new Error("All chat models are currently unavailable.");
 }
 
 export async function generateStoryboard(input: StoryboardInput) {

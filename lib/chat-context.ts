@@ -3,7 +3,7 @@ import type { ChatMessageRecord, ProjectBundle } from "@/lib/types";
 const MAX_HISTORY_MESSAGES = 12;
 
 export function buildProjectChatSystemPrompt(bundle: ProjectBundle) {
-  const { project, storyboard, scenes, assets, outputs } = bundle;
+  const { project, scenes } = bundle;
   const languageInstruction = project.language === "ar"
     ? "Reply in natural Modern Standard Arabic unless the user explicitly asks for another language. Keep the tone practical, warm, and business-focused."
     : "Reply in clear, practical English unless the user explicitly asks for another language.";
@@ -15,21 +15,13 @@ export function buildProjectChatSystemPrompt(bundle: ProjectBundle) {
     cta: project.cta,
     targetAudience: project.targetAudience,
     brandVoice: project.brandVoice,
-    platformTarget: project.platformTarget,
     language: project.language,
     script: project.script,
-    storyboard: storyboard
-      ? { headline: storyboard.headline, hook: storyboard.hook, cta: storyboard.cta, status: storyboard.status }
-      : null,
-    scenes: scenes.slice(0, 6).map((scene) => ({
-      order: scene.order,
+    scenes: scenes.slice(0, 3).map((scene) => ({
       title: scene.title,
       narration: scene.narration,
-      visualDirection: scene.visualDirection,
       overlayText: scene.overlayText,
     })),
-    assets: assets.map((asset) => ({ type: asset.type, name: asset.name })),
-    outputs: outputs.map((output) => ({ type: output.type, title: output.title })),
   };
 
   return [
