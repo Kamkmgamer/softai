@@ -845,53 +845,43 @@ export async function getProjectBundle(userId: string, projectId: string): Promi
   }
 
   const database = db;
-  return unstable_cache(
-    async () => {
-      await ensureDatabase();
-      const [project, assets, avatar, storyboard, scenes, jobs, outputs] = await database.batch([
-        database.query.projects.findFirst({
-          where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
-        }),
-        database.query.brandAssets.findMany({
-          where: eq(schema.brandAssets.projectId, projectId),
-          orderBy: [desc(schema.brandAssets.createdAt)],
-        }),
-        database.query.avatars.findFirst({
-          where: eq(schema.avatars.projectId, projectId),
-          orderBy: [desc(schema.avatars.createdAt)],
-        }),
-        database.query.storyboards.findFirst({
-          where: eq(schema.storyboards.projectId, projectId),
-        }),
-        database.query.scenes.findMany({
-          where: eq(schema.scenes.projectId, projectId),
-          orderBy: [asc(schema.scenes.order)],
-        }),
-        database.query.generationJobs.findMany({
-          where: eq(schema.generationJobs.projectId, projectId),
-          orderBy: [desc(schema.generationJobs.createdAt)],
-        }),
-        database.query.outputs.findMany({
-          where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
-          orderBy: [desc(schema.outputs.createdAt)],
-        }),
-      ]);
+  await ensureDatabase();
+  const [project, assets, avatar, storyboard, scenes, outputs] = await database.batch([
+    database.query.projects.findFirst({
+      where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
+    }),
+    database.query.brandAssets.findMany({
+      where: eq(schema.brandAssets.projectId, projectId),
+      orderBy: [desc(schema.brandAssets.createdAt)],
+    }),
+    database.query.avatars.findFirst({
+      where: eq(schema.avatars.projectId, projectId),
+      orderBy: [desc(schema.avatars.createdAt)],
+    }),
+    database.query.storyboards.findFirst({
+      where: eq(schema.storyboards.projectId, projectId),
+    }),
+    database.query.scenes.findMany({
+      where: eq(schema.scenes.projectId, projectId),
+      orderBy: [asc(schema.scenes.order)],
+    }),
+    database.query.outputs.findMany({
+      where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
+      orderBy: [desc(schema.outputs.createdAt)],
+    }),
+  ]);
 
-      if (!project) return null;
+  if (!project) return null;
 
-      return {
-        project: mapProject(project),
-        assets: assets.map(mapAsset),
-        avatar: avatar ? mapAvatar(avatar) : null,
-        storyboard: storyboard ? mapStoryboard(storyboard) : null,
-        scenes: scenes.map(mapScene),
-        jobs: jobs.map(mapJob),
-        outputs: outputs.map(mapOutput),
-      };
-    },
-    ["project-bundle", userId, projectId],
-    { tags: [cacheTags.project(projectId), cacheTags.userProjects(userId)], revalidate: STORE_CACHE_REVALIDATE_SECONDS },
-  )();
+  return {
+    project: mapProject(project),
+    assets: assets.map(mapAsset),
+    avatar: avatar ? mapAvatar(avatar) : null,
+    storyboard: storyboard ? mapStoryboard(storyboard) : null,
+    scenes: scenes.map(mapScene),
+    jobs: [],
+    outputs: outputs.map(mapOutput),
+  };
 }
 
 export async function getProjectPageData(userId: string, projectId: string): Promise<{

@@ -90,7 +90,13 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
   }
 
   return (
-    <div className="space-y-8">
+    <section className="rounded-[28px] border border-border bg-surface p-4 shadow-[var(--shadow-sm)]">
+      <div className="mb-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">Inputs</p>
+        <h2 className="mt-1 text-base font-semibold text-text">Production assets</h2>
+      </div>
+
+      <div className="space-y-5">
       {/* Upload/Error messages at the top of the inputs column */}
       {uploadMessage && (
         <div className="rounded-[var(--radius-sm)] bg-success-soft px-3 py-2 text-xs font-medium text-success">
@@ -104,13 +110,13 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
       )}
 
       {/* Assets Section */}
-      <section className="space-y-4">
+      <div className="space-y-3">
         <SectionHeader title="Add asset" />
         <div className="space-y-3">
           <select
             value={assetForm.type}
             onChange={(event) => setAssetForm((current) => ({ ...current, type: event.target.value }))}
-            className="control-field text-[13px]"
+            className="control-field rounded-[14px] text-[13px]"
           >
             <option value="logo">Logo</option>
             <option value="product_image">Product image</option>
@@ -120,7 +126,7 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
           <input
             value={assetForm.name}
             onChange={(event) => setAssetForm((current) => ({ ...current, name: event.target.value }))}
-            className="control-field text-[13px]"
+            className="control-field rounded-[14px] text-[13px]"
             placeholder="Asset name"
           />
           
@@ -167,17 +173,17 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
             type="button"
             disabled={isSaving || !assetForm.name || !assetForm.url}
             onClick={() => run(() => request(`/api/projects/${projectId}/assets`, assetForm), "Asset saved.")}
-            className="btn-primary w-full text-[13px]"
+            className="btn btn-primary w-full text-[13px]"
           >
             {isSaving ? "Saving..." : "Save asset"}
           </button>
         </div>
-      </section>
+      </div>
 
       <hr className="divider" />
 
       {/* Avatar Section */}
-      <section className="space-y-4">
+      <div className="space-y-3">
         <SectionHeader title="Avatar policy" />
         <div className="space-y-3">
           <select
@@ -189,7 +195,7 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
                 policyState: event.target.value === "ai_person" ? "ai_generated" : current.policyState,
               }))
             }
-            className="control-field text-[13px]"
+            className="control-field rounded-[14px] text-[13px]"
           >
             <option value="single_photo">Single photo</option>
             <option value="ai_person">AI person</option>
@@ -237,11 +243,11 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
             rows={2}
             value={avatarForm.prompt}
             onChange={(event) => setAvatarForm((current) => ({ ...current, prompt: event.target.value }))}
-            className="control-field resize-y text-[13px]"
+            className="control-field resize-y rounded-[14px] text-[13px]"
             placeholder="Optional AI actor description"
           />
 
-          <label className="flex items-start gap-2.5 rounded-[var(--radius-md)] border border-border bg-surface-raised p-3">
+          <label className="flex items-start gap-2.5 rounded-[16px] bg-bg p-3 ring-1 ring-border/80">
             <input
               type="checkbox"
               checked={avatarForm.attested}
@@ -269,30 +275,30 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
                 "Avatar policy saved."
               )
             }
-            className="btn-primary w-full text-[13px]"
+            className="btn btn-primary w-full text-[13px]"
           >
             {isSaving ? "Saving..." : "Save avatar"}
           </button>
         </div>
-      </section>
+      </div>
 
       <hr className="divider" />
 
       {/* Report Section */}
-      <section className="space-y-4">
+      <div className="space-y-3">
         <SectionHeader title="Report abuse" />
         <div className="space-y-3">
           <input
             value={reportForm.reason}
             onChange={(event) => setReportForm((current) => ({ ...current, reason: event.target.value }))}
-            className="control-field text-[13px]"
+            className="control-field rounded-[14px] text-[13px]"
             placeholder="Reason"
           />
           <textarea
             rows={3}
             value={reportForm.details}
             onChange={(event) => setReportForm((current) => ({ ...current, details: event.target.value }))}
-            className="control-field resize-y text-[13px]"
+            className="control-field resize-y rounded-[14px] text-[13px]"
             placeholder="Explain the issue"
           />
           <button
@@ -309,12 +315,13 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
                 "Report submitted."
               )
             }
-            className="btn-secondary w-full text-[13px]"
+            className="btn btn-secondary w-full text-[13px]"
           >
             {isSaving ? "Submitting..." : "Submit report"}
           </button>
         </div>
-      </section>
-    </div>
+      </div>
+      </div>
+    </section>
   );
 }

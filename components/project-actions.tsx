@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Film, ImageIcon } from "lucide-react";
 
 const VIDEO_OUTPUT_POLL_INTERVAL_MS = 5_000;
 const VIDEO_OUTPUT_POLL_ATTEMPTS = 24;
@@ -64,13 +65,14 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
   const isPending = pendingAction !== null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <button
         type="button"
         disabled={isPending || !canRenderImages}
         onClick={() => trigger("render-images")}
-        className="btn w-full justify-start border border-border bg-surface text-text hover:bg-surface-raised disabled:bg-surface-sunken"
+        className="btn btn-secondary w-full justify-start disabled:bg-surface-sunken"
       >
+        <ImageIcon className="h-4 w-4 shrink-0" />
         <span className="flex-1 text-start">
           {pendingAction === "render-images" ? "Rendering..." : "Render images"}
         </span>
@@ -80,8 +82,9 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
         type="button"
         disabled={isPending || !canRenderVideo}
         onClick={() => trigger("render-video")}
-        className="btn w-full justify-start border border-border bg-text text-bg hover:bg-accent-hover disabled:border-border disabled:bg-surface-sunken disabled:text-text-tertiary"
+        className="btn btn-primary w-full justify-start disabled:border-border disabled:bg-surface-sunken disabled:text-text-tertiary"
       >
+        <Film className="h-4 w-4 shrink-0" />
         <span className="flex-1 text-start">
           {pendingAction === "render-video" ? "Generating video (this may take up to 2 minutes)..." : "Render video"}
         </span>

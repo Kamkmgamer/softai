@@ -184,22 +184,43 @@ function extractVideoUrl(payload: unknown): string | null {
   }
 
   const record = payload as Record<string, unknown>;
-  const directUrl = getNestedImageUrl(record.url) ?? getNestedImageUrl(record.video_url);
+  const directUrl = getNestedVideoUrl(record.video_url) ?? getNestedVideoUrl(record.url);
   if (directUrl) return directUrl;
 
   const videos = Array.isArray(record.videos) ? record.videos : [];
   for (const video of videos) {
-    const videoUrl = getNestedImageUrl(video);
+    const videoUrl = getNestedVideoUrl(video);
     if (videoUrl) return videoUrl;
   }
 
   const output = Array.isArray(record.output) ? record.output : [];
   for (const item of output) {
-    const videoUrl = getNestedImageUrl(item);
+    const videoUrl = getNestedVideoUrl(item);
     if (videoUrl) return videoUrl;
   }
 
   return null;
+}
+
+function getNestedVideoUrl(value: unknown): string | null {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:video/")) {
+      return trimmed;
+    }
+    return null;
+  }
+
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  return getNestedVideoUrl(record.video_url)
+    ?? getNestedVideoUrl(record.url)
+    ?? getNestedVideoUrl(record.file)
+    ?? getNestedVideoUrl(record.data);
 }
 
 function extractStreamDelta(payload: unknown) {
@@ -598,7 +619,7 @@ function normalizeVideoStatus(status: unknown): VideoPollResult["status"] {
 function extractVideoUrlFromUnsignedUrls(urls: unknown): string | null {
   if (!Array.isArray(urls) || urls.length === 0) return null;
   for (const item of urls) {
-    const url = getNestedImageUrl(item);
+    const url = getNestedVideoUrl(item);
     if (url) return url;
   }
   return null;
