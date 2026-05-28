@@ -42,5 +42,6 @@ export function apiSuccess(data: unknown, init?: ResponseInit) {
 
 export function apiError(error: unknown, status = 400) {
   const message = error instanceof Error ? error.message : "Unknown error";
-  return NextResponse.json({ error: message }, { status });
+  const responseStatus = message === "Authentication required." ? 401 : status;
+  return NextResponse.json({ error: message }, { status: responseStatus });
 }

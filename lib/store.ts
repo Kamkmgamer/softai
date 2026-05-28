@@ -630,22 +630,81 @@ export async function findUserByClerkId(clerkUserId: string) {
   return row ? mapUser(row) : null;
 }
 
-export async function getDashboardStats(userId: string): Promise<DashboardStats> {
-  const [projects, subscription, creditBalance, outputs] = await Promise.all([
-    listProjects(userId),
-    getUserSubscription(userId),
-    getCreditBalance(userId),
-    listOutputsForUser(userId),
-  ]);
-  return {
-    activeProjects: projects.filter((entry) => entry.status !== "completed").length,
-    completedVideos: outputs.filter((output) => output.type === "final_video").length,
-    creditBalance,
-    monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
-  };
+export async function getDashboardStats(userId: string, existingProjects?: ProjectRecord[]): Promise<DashboardStats> {
+  if (!databaseEnabled() || !db) {
+    const projects = existingProjects ?? await listProjects(userId);
+    const subscription = await getUserSubscription(userId);
+    const creditBalance = await getCreditBalance(userId);
+    const outputs = await listOutputsForUser(userId);
+    return {
+      activeProjects: projects.filter((entry) => entry.status !== "completed").length,
+      completedVideos: outputs.filter((output) => output.type === "final_video").length,
+      creditBalance,
+      monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+    };
+  }
+
+  await ensureDatabase();
+
+  if (existingProjects) {
+    const [subRow, balanceRow, outputRows] = await db.batch([
+      db.query.subscriptions.findFirst({
+        where: eq(schema.subscriptions.userId, userId),
+        orderBy: [desc(schema.subscriptions.currentPeriodEnd)],
+      }),
+      db
+        .select({ total: sql<number>`coalesce(sum(${schema.creditLedger.amount}), 0)` })
+        .from(schema.creditLedger)
+        .where(eq(schema.creditLedger.userId, userId)),
+      db.query.outputs.findMany({
+        where: and(eq(schema.outputs.userId, userId), isNull(schema.outputs.removedAt)),
+      }),
+    ]);
+
+    const subscription = subRow ? mapSubscription(subRow) : null;
+    const creditBalance = Number(balanceRow[0]?.total ?? 0);
+    const outputs = outputRows.map(mapOutput);
+
+    return {
+      activeProjects: existingProjects.filter((entry) => entry.status !== "completed").length,
+      completedVideos: outputs.filter((output) => output.type === "final_video").length,
+      creditBalance,
+      monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+    };
+  } else {
+    const [projectRows, subRow, balanceRow, outputRows] = await db.batch([
+      db.query.projects.findMany({
+        where: eq(schema.projects.userId, userId),
+        orderBy: [desc(schema.projects.updatedAt)],
+      }),
+      db.query.subscriptions.findFirst({
+        where: eq(schema.subscriptions.userId, userId),
+        orderBy: [desc(schema.subscriptions.currentPeriodEnd)],
+      }),
+      db
+        .select({ total: sql<number>`coalesce(sum(${schema.creditLedger.amount}), 0)` })
+        .from(schema.creditLedger)
+        .where(eq(schema.creditLedger.userId, userId)),
+      db.query.outputs.findMany({
+        where: and(eq(schema.outputs.userId, userId), isNull(schema.outputs.removedAt)),
+      }),
+    ]);
+
+    const projects = projectRows.map(mapProject);
+    const subscription = subRow ? mapSubscription(subRow) : null;
+    const creditBalance = Number(balanceRow[0]?.total ?? 0);
+    const outputs = outputRows.map(mapOutput);
+
+    return {
+      activeProjects: projects.filter((entry) => entry.status !== "completed").length,
+      completedVideos: outputs.filter((output) => output.type === "final_video").length,
+      creditBalance,
+      monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+    };
+  }
 }
 
-async function listOutputsForUser(userId: string) {
+export async function listOutputsForUser(userId: string) {
   if (!databaseEnabled() || !db) {
     return getState().outputs.filter((output) => output.userId === userId && !output.removedAt);
   }
@@ -688,22 +747,36 @@ export async function getProjectBundle(userId: string, projectId: string): Promi
   }
 
   await ensureDatabase();
-  const project = await db.query.projects.findFirst({
-    where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
-  });
-  if (!project) return null;
-
-  const [assets, avatar, storyboard, scenes, jobs, outputs] = await Promise.all([
-    db.query.brandAssets.findMany({ where: eq(schema.brandAssets.projectId, projectId), orderBy: [desc(schema.brandAssets.createdAt)] }),
-    db.query.avatars.findFirst({ where: eq(schema.avatars.projectId, projectId), orderBy: [desc(schema.avatars.createdAt)] }),
-    db.query.storyboards.findFirst({ where: eq(schema.storyboards.projectId, projectId) }),
-    db.query.scenes.findMany({ where: eq(schema.scenes.projectId, projectId), orderBy: [asc(schema.scenes.order)] }),
-    db.query.generationJobs.findMany({ where: eq(schema.generationJobs.projectId, projectId), orderBy: [desc(schema.generationJobs.createdAt)] }),
+  const [project, assets, avatar, storyboard, scenes, jobs, outputs] = await db.batch([
+    db.query.projects.findFirst({
+      where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
+    }),
+    db.query.brandAssets.findMany({
+      where: eq(schema.brandAssets.projectId, projectId),
+      orderBy: [desc(schema.brandAssets.createdAt)],
+    }),
+    db.query.avatars.findFirst({
+      where: eq(schema.avatars.projectId, projectId),
+      orderBy: [desc(schema.avatars.createdAt)],
+    }),
+    db.query.storyboards.findFirst({
+      where: eq(schema.storyboards.projectId, projectId),
+    }),
+    db.query.scenes.findMany({
+      where: eq(schema.scenes.projectId, projectId),
+      orderBy: [asc(schema.scenes.order)],
+    }),
+    db.query.generationJobs.findMany({
+      where: eq(schema.generationJobs.projectId, projectId),
+      orderBy: [desc(schema.generationJobs.createdAt)],
+    }),
     db.query.outputs.findMany({
       where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
       orderBy: [desc(schema.outputs.createdAt)],
     }),
   ]);
+
+  if (!project) return null;
 
   return {
     project: mapProject(project),
@@ -714,6 +787,110 @@ export async function getProjectBundle(userId: string, projectId: string): Promi
     jobs: jobs.map(mapJob),
     outputs: outputs.map(mapOutput),
   };
+}
+
+export async function getProjectPageData(userId: string, projectId: string): Promise<{
+  bundle: ProjectBundle | null;
+  conversation: ChatConversationRecord | null;
+  chatMessages: ChatMessageRecord[];
+}> {
+  if (!databaseEnabled() || !db) {
+    const bundle = await getProjectBundle(userId, projectId);
+    if (!bundle) return { bundle: null, conversation: null, chatMessages: [] };
+    const conversation = await getOrCreateProjectChatConversation(userId, projectId);
+    const chatMessages = conversation ? await listChatMessages(userId, conversation.id) : [];
+    return { bundle, conversation, chatMessages };
+  }
+
+  await ensureDatabase();
+
+  const [
+    project,
+    assets,
+    avatar,
+    storyboard,
+    scenes,
+    jobs,
+    outputs,
+    conversationRow,
+    chatMessageRows,
+  ] = await db.batch([
+    db.query.projects.findFirst({
+      where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
+    }),
+    db.query.brandAssets.findMany({
+      where: eq(schema.brandAssets.projectId, projectId),
+      orderBy: [desc(schema.brandAssets.createdAt)],
+    }),
+    db.query.avatars.findFirst({
+      where: eq(schema.avatars.projectId, projectId),
+      orderBy: [desc(schema.avatars.createdAt)],
+    }),
+    db.query.storyboards.findFirst({
+      where: eq(schema.storyboards.projectId, projectId),
+    }),
+    db.query.scenes.findMany({
+      where: eq(schema.scenes.projectId, projectId),
+      orderBy: [asc(schema.scenes.order)],
+    }),
+    db.query.generationJobs.findMany({
+      where: eq(schema.generationJobs.projectId, projectId),
+      orderBy: [desc(schema.generationJobs.createdAt)],
+    }),
+    db.query.outputs.findMany({
+      where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
+      orderBy: [desc(schema.outputs.createdAt)],
+    }),
+    db.query.chatConversations.findFirst({
+      where: and(
+        eq(schema.chatConversations.projectId, projectId),
+        eq(schema.chatConversations.userId, userId),
+        eq(schema.chatConversations.mode, "project_campaign")
+      ),
+      orderBy: [desc(schema.chatConversations.updatedAt)],
+    }),
+    db.query.chatMessages.findMany({
+      where: sql`${schema.chatMessages.conversationId} IN (${
+        db
+          .select({ id: schema.chatConversations.id })
+          .from(schema.chatConversations)
+          .where(
+            and(
+              eq(schema.chatConversations.projectId, projectId),
+              eq(schema.chatConversations.userId, userId),
+              eq(schema.chatConversations.mode, "project_campaign")
+            )
+          )
+      })`,
+      orderBy: [asc(schema.chatMessages.createdAt)],
+    }),
+  ]);
+
+  if (!project) {
+    return { bundle: null, conversation: null, chatMessages: [] };
+  }
+
+  const bundle: ProjectBundle = {
+    project: mapProject(project),
+    assets: assets.map(mapAsset),
+    avatar: avatar ? mapAvatar(avatar) : null,
+    storyboard: storyboard ? mapStoryboard(storyboard) : null,
+    scenes: scenes.map(mapScene),
+    jobs: jobs.map(mapJob),
+    outputs: outputs.map(mapOutput),
+  };
+
+  let conversation: ChatConversationRecord | null = null;
+  let chatMessages: ChatMessageRecord[] = [];
+
+  if (conversationRow) {
+    conversation = mapChatConversation(conversationRow);
+    chatMessages = chatMessageRows.map(mapChatMessage);
+  } else {
+    conversation = await getOrCreateProjectChatConversation(userId, projectId);
+  }
+
+  return { bundle, conversation, chatMessages };
 }
 
 export async function createProject(
@@ -1069,9 +1246,33 @@ export async function createAbuseReport(reporterUserId: string, input: Pick<Abus
   return { id, reporterUserId, ...input, projectId: input.projectId ?? null, outputId: input.outputId ?? null, createdAt: now() };
 }
 
+async function projectBelongsToUser(userId: string, projectId: string): Promise<boolean> {
+  if (!databaseEnabled() || !db) {
+    return getState().projects.some((p) => p.id === projectId && p.userId === userId);
+  }
+  await ensureDatabase();
+  const row = await db.query.projects.findFirst({
+    columns: { id: true },
+    where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
+  });
+  return Boolean(row);
+}
+
+async function getProjectTitle(userId: string, projectId: string): Promise<string | null> {
+  if (!databaseEnabled() || !db) {
+    return getState().projects.find((p) => p.id === projectId && p.userId === userId)?.title ?? null;
+  }
+  await ensureDatabase();
+  const row = await db.query.projects.findFirst({
+    columns: { title: true },
+    where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
+  });
+  return row?.title ?? null;
+}
+
 export async function getOrCreateProjectChatConversation(userId: string, projectId: string) {
-  const bundle = await getProjectBundle(userId, projectId);
-  if (!bundle) return null;
+  const ownershipValid = await projectBelongsToUser(userId, projectId);
+  if (!ownershipValid) return null;
 
   if (!databaseEnabled() || !db) {
     const state = getState();
@@ -1083,7 +1284,7 @@ export async function getOrCreateProjectChatConversation(userId: string, project
       id: randomUUID(),
       userId,
       projectId,
-      title: `${bundle.project.title} assistant`,
+      title: `${getState().projects.find((p) => p.id === projectId)?.title ?? projectId} assistant`,
       mode: "project_campaign",
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -1100,12 +1301,13 @@ export async function getOrCreateProjectChatConversation(userId: string, project
   });
   if (existing) return mapChatConversation(existing);
 
+  const title = await getProjectTitle(userId, projectId);
   const id = randomUUID();
   await db.insert(schema.chatConversations).values({
     id,
     userId,
     projectId,
-    title: `${bundle.project.title} assistant`,
+    title: `${title ?? projectId} assistant`,
     mode: "project_campaign",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -1140,9 +1342,11 @@ export async function getChatConversation(userId: string, conversationId: string
   return row ? mapChatConversation(row) : null;
 }
 
-export async function listChatMessages(userId: string, conversationId: string) {
-  const conversation = await getChatConversation(userId, conversationId);
-  if (!conversation) return [];
+export async function listChatMessages(userId: string, conversationId: string, options?: { skipOwnershipCheck?: boolean }) {
+  if (!options?.skipOwnershipCheck) {
+    const conversation = await getChatConversation(userId, conversationId);
+    if (!conversation) return [];
+  }
 
   if (!databaseEnabled() || !db) {
     return getState().chatMessages

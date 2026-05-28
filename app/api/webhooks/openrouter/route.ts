@@ -1,33 +1,45 @@
 import { apiError, apiSuccess } from "@/lib/api";
 import { getEnv } from "@/lib/env";
 import { createOutput, updateGenerationJobByProviderJobId } from "@/lib/store";
+import crypto from "crypto";
 
-function safeEqual(left: string, right: string) {
-  if (left.length !== right.length) {
-    return false;
-  }
+const FIVE_MINUTES_IN_SECONDS = 300;
 
-  let result = 0;
-  for (let index = 0; index < left.length; index += 1) {
-    result |= left.charCodeAt(index) ^ right.charCodeAt(index);
-  }
-
-  return result === 0;
-}
-
-function verifyWebhookSecret(request: Request) {
+function verifyWebhookSignature(request: Request, rawBody: string): boolean {
   const secret = getEnv().openRouterWebhookSecret;
   if (!secret) {
     return false;
   }
 
-  const headerSecret =
-    request.headers.get("x-openrouter-webhook-secret") ??
-    request.headers.get("x-webhook-secret") ??
-    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
-    "";
+  const signatureHeader = request.headers.get("x-openrouter-signature") ?? "";
+  if (!signatureHeader) {
+    return false;
+  }
 
-  return safeEqual(headerSecret, secret);
+  const parts = signatureHeader.split(",");
+  const timestamp = parts.find((p) => p.startsWith("t="))?.slice(2);
+  const hash = parts.find((p) => p.startsWith("v1="))?.slice(3);
+
+  if (!timestamp || !hash) {
+    return false;
+  }
+
+  const age = Math.floor(Date.now() / 1000) - Number(timestamp);
+  if (Number.isNaN(age) || age > FIVE_MINUTES_IN_SECONDS) {
+    return false;
+  }
+
+  const signedPayload = `${timestamp},${rawBody}`;
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(signedPayload)
+    .digest("hex");
+
+  if (expected.length !== hash.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(hash));
 }
 
 function normalizeStatus(status: string | null | undefined) {
@@ -39,11 +51,11 @@ function normalizeStatus(status: string | null | undefined) {
     return "completed" as const;
   }
 
-  if (["failed", "error", "cancelled", "canceled"].includes(status)) {
+  if (["failed", "error", "cancelled", "canceled", "expired"].includes(status)) {
     return "failed" as const;
   }
 
-  if (["processing", "running", "queued"].includes(status)) {
+  if (["processing", "running", "queued", "in_progress"].includes(status)) {
     return "processing" as const;
   }
 
@@ -52,15 +64,19 @@ function normalizeStatus(status: string | null | undefined) {
 
 export async function POST(request: Request) {
   try {
-    if (!verifyWebhookSecret(request)) {
+    const rawBody = await request.text();
+
+    if (!verifyWebhookSignature(request, rawBody)) {
       return apiError(new Error("Invalid OpenRouter webhook signature."), 401);
     }
 
-    const payload = await request.json();
+    const payload = JSON.parse(rawBody);
     const data = payload?.data ?? payload;
     const providerJobId = data?.id ?? data?.job_id ?? data?.video_id ?? null;
     const status = normalizeStatus(data?.status);
+
     const url =
+      data?.unsigned_urls?.[0] ??
       data?.url ??
       data?.video_url ??
       data?.output?.url ??

@@ -32,9 +32,6 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
       const outputs: OutputSummary[] = Array.isArray(payload?.outputs) ? payload.outputs : [];
       if (outputs.some((output) => output?.type === "final_video")) {
         router.refresh();
-      if (path === "render-video" && !payload?.url) {
-        void waitForFinalVideoOutput();
-      }
         return;
       }
     }
@@ -86,7 +83,7 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo }: P
         className="btn w-full justify-start border border-border bg-text text-bg hover:bg-accent-hover disabled:border-border disabled:bg-surface-sunken disabled:text-text-tertiary"
       >
         <span className="flex-1 text-start">
-          {pendingAction === "render-video" ? "Rendering..." : "Render video"}
+          {pendingAction === "render-video" ? "Generating video (this may take up to 2 minutes)..." : "Render video"}
         </span>
       </button>
 

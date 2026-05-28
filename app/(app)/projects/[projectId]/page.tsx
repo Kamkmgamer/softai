@@ -5,7 +5,9 @@ import { ProjectAssistantPanel } from "@/components/project-assistant-panel";
 import { ProjectInputs } from "@/components/project-inputs";
 import { PageHeader, StatusBadge, ButtonLink, SectionHeader, DataRow, EmptyState } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
-import { getOrCreateProjectChatConversation, getProjectBundle, listChatMessages } from "@/lib/store";
+import { localizePath } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/server-locale";
+import { getProjectPageData } from "@/lib/store";
 import { ImageIcon } from "lucide-react";
 
 export default async function ProjectDetailPage({
@@ -14,15 +16,14 @@ export default async function ProjectDetailPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
+  const locale = await getRequestLocale();
   const session = await getAppSession();
-  const bundle = await getProjectBundle(session.userId, projectId);
+
+  const { bundle, conversation, chatMessages } = await getProjectPageData(session.userId, projectId);
 
   if (!bundle) {
     notFound();
   }
-
-  const conversation = await getOrCreateProjectChatConversation(session.userId, projectId);
-  const chatMessages = conversation ? await listChatMessages(session.userId, conversation.id) : [];
 
   return (
     <div className="space-y-10">
@@ -38,7 +39,7 @@ export default async function ProjectDetailPage({
             <SectionHeader
               title="Project brief"
               action={
-                <Link href={`/projects/${projectId}/review`} className="text-[13px] font-medium text-accent-text hover:underline">
+                <Link href={localizePath(`/projects/${projectId}/review`, locale)} className="text-[13px] font-medium text-accent-text hover:underline">
                   Review storyboard
                 </Link>
               }
@@ -101,7 +102,7 @@ export default async function ProjectDetailPage({
           <section className="space-y-4">
             <SectionHeader title="Pipeline actions" />
             <div className="space-y-3">
-              <ButtonLink href={`/projects/${projectId}/review`} variant="secondary">
+              <ButtonLink href={localizePath(`/projects/${projectId}/review`, locale)} variant="secondary">
                 Generate storyboard
               </ButtonLink>
               <ProjectActions

@@ -70,7 +70,7 @@ export const getAppSession = cache(async function getAppSession(): Promise<AppSe
   const clerk = await import("@clerk/nextjs/server");
   const auth = await clerk.auth();
 
-  if (!auth.userId || auth.sessionStatus === "pending" || auth.isAuthenticated === false) {
+  if (!auth.userId || auth.sessionStatus === "pending") {
     throw new Error("Authentication required.");
   }
 

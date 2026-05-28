@@ -5,8 +5,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { getAppSession } from "@/lib/auth";
 import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n";
-import { currentUser } from "@clerk/nextjs/server";
-import { upsertUser } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -24,15 +22,6 @@ export default async function AppLayout({
     }
     throw error;
   });
-  const clerkUser = await currentUser().catch(() => null);
-  await upsertUser({
-    clerkUserId: session.clerkUserId,
-    email: clerkUser?.primaryEmailAddress?.emailAddress ?? session.email,
-    name:
-      [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(" ") ||
-      session.name,
-  });
-
   return (
     <div className="flex min-h-[100dvh] flex-col lg:flex-row">
       <AppSidebar isAdmin={session.isAdmin} />

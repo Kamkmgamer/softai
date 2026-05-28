@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Folder, Film, Wallet, Sparkles } from "lucide-react";
 import { PageHeader, ButtonLink, StatusBadge, EmptyState } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
+import { DEFAULT_MONTHLY_CREDITS } from "@/lib/constants";
 import { getDictionary } from "@/lib/dictionaries";
-import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n";
-import { getDashboardStats, listProjects } from "@/lib/store";
+import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n";
+import { getCreditBalance, getUserSubscription, listOutputsForUser, listProjects } from "@/lib/store";
+import type { DashboardStats } from "@/lib/types";
 import { formatCredits, formatDate } from "@/lib/utils";
 
 export default async function DashboardPage({
@@ -16,15 +18,27 @@ export default async function DashboardPage({
   const locale = isLocale(routeParams?.lang) ? routeParams.lang : DEFAULT_LOCALE;
   const dictionary = getDictionary(locale);
   const session = await getAppSession();
-  const stats = await getDashboardStats(session.userId);
-  const projects = await listProjects(session.userId);
+
+  const [projects, subscription, creditBalance, outputs] = await Promise.all([
+    listProjects(session.userId),
+    getUserSubscription(session.userId),
+    getCreditBalance(session.userId),
+    listOutputsForUser(session.userId),
+  ]);
+
+  const stats: DashboardStats = {
+    activeProjects: projects.filter((p) => p.status !== "completed").length,
+    completedVideos: outputs.filter((o) => o.type === "final_video").length,
+    creditBalance,
+    monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+  };
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={dictionary.app.dashboard}
         action={
-          <ButtonLink href="/projects/new">
+          <ButtonLink href={localizePath("/projects/new", locale)}>
             {dictionary.app.newProject}
           </ButtonLink>
         }
@@ -60,14 +74,14 @@ export default async function DashboardPage({
             icon={Sparkles}
             title={dictionary.dashboard.noProjects}
             description={dictionary.dashboard.noProjectsDescription}
-            action={<ButtonLink href="/projects/new">{dictionary.app.newProject}</ButtonLink>}
+            action={<ButtonLink href={localizePath("/projects/new", locale)}>{dictionary.app.newProject}</ButtonLink>}
           />
         ) : (
           <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border bg-surface">
             {projects.map((project) => (
               <Link
                 key={project.id}
-                href={`/projects/${project.id}`}
+                href={localizePath(`/projects/${project.id}`, locale)}
                 className="group flex flex-col gap-3 p-4 transition-colors hover:bg-surface-raised sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
