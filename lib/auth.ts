@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getEnv } from "@/lib/env";
 import { findUserByClerkId, upsertUser } from "@/lib/store";
+import type { UserRecord } from "@/lib/types";
 
 export type AppSession = {
   userId: string;
@@ -9,6 +10,7 @@ export type AppSession = {
   name: string;
   isAdmin: boolean;
   isDemo: boolean;
+  user: UserRecord;
 };
 
 const demoUser = {
@@ -57,6 +59,7 @@ async function getDemoSession(): Promise<AppSession> {
     name: user.name,
     isAdmin: true,
     isDemo: true,
+    user,
   };
 }
 
@@ -94,5 +97,6 @@ export const getAppSession = cache(async function getAppSession(): Promise<AppSe
     name: appUser.name,
     isAdmin: env.adminEmails.includes(email.toLowerCase()),
     isDemo: false,
+    user: appUser,
   };
 });

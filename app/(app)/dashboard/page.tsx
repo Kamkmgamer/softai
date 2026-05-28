@@ -2,11 +2,9 @@ import Link from "next/link";
 import { Folder, Film, Wallet, Sparkles } from "lucide-react";
 import { PageHeader, ButtonLink, StatusBadge, EmptyState } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
-import { DEFAULT_MONTHLY_CREDITS } from "@/lib/constants";
 import { getDictionary } from "@/lib/dictionaries";
 import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n";
-import { getCreditBalance, getUserSubscription, listOutputsForUser, listProjects } from "@/lib/store";
-import type { DashboardStats } from "@/lib/types";
+import { getDashboardPageData } from "@/lib/store";
 import { formatCredits, formatDate } from "@/lib/utils";
 
 export default async function DashboardPage({
@@ -19,19 +17,7 @@ export default async function DashboardPage({
   const dictionary = getDictionary(locale);
   const session = await getAppSession();
 
-  const [projects, subscription, creditBalance, outputs] = await Promise.all([
-    listProjects(session.userId),
-    getUserSubscription(session.userId),
-    getCreditBalance(session.userId),
-    listOutputsForUser(session.userId),
-  ]);
-
-  const stats: DashboardStats = {
-    activeProjects: projects.filter((p) => p.status !== "completed").length,
-    completedVideos: outputs.filter((o) => o.type === "final_video").length,
-    creditBalance,
-    monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
-  };
+  const { projects, stats } = await getDashboardPageData(session.userId);
 
   return (
     <div className="space-y-6">

@@ -250,6 +250,22 @@ export async function ensureDatabase() {
           `,
         ]);
       }
+
+      await sql.transaction([
+        sql`CREATE INDEX IF NOT EXISTS subscriptions_user_period_idx ON subscriptions (user_id, current_period_end)`,
+        sql`CREATE INDEX IF NOT EXISTS subscriptions_clerk_subscription_idx ON subscriptions (clerk_subscription_id)`,
+        sql`CREATE INDEX IF NOT EXISTS credit_ledger_user_created_idx ON credit_ledger (user_id, created_at)`,
+        sql`CREATE INDEX IF NOT EXISTS chat_messages_conversation_created_idx ON chat_messages (conversation_id, created_at)`,
+        sql`CREATE INDEX IF NOT EXISTS projects_user_updated_idx ON projects (user_id, updated_at)`,
+        sql`CREATE INDEX IF NOT EXISTS storyboards_project_idx ON storyboards (project_id)`,
+        sql`CREATE INDEX IF NOT EXISTS scenes_project_order_idx ON scenes (project_id, "order")`,
+        sql`CREATE INDEX IF NOT EXISTS generation_jobs_project_created_idx ON generation_jobs (project_id, created_at)`,
+        sql`CREATE INDEX IF NOT EXISTS generation_jobs_provider_job_idx ON generation_jobs (provider_job_id)`,
+        sql`CREATE INDEX IF NOT EXISTS outputs_user_removed_type_idx ON outputs (user_id, removed_at, type)`,
+        sql`CREATE INDEX IF NOT EXISTS outputs_project_removed_created_idx ON outputs (project_id, removed_at, created_at)`,
+        sql`CREATE INDEX IF NOT EXISTS avatars_project_created_idx ON avatars (project_id, created_at)`,
+        sql`CREATE INDEX IF NOT EXISTS brand_assets_project_created_idx ON brand_assets (project_id, created_at)`,
+      ]);
     })();
     const retryableReady = ready.catch((error) => {
       if (globalThis.softaiDbReady === retryableReady) {

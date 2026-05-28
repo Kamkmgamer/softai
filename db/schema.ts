@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -62,7 +63,10 @@ export const subscriptions = pgTable("subscriptions", {
   clerkSubscriptionId: varchar("clerk_subscription_id", { length: 255 }),
   currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
   monthlyCredits: integer("monthly_credits").notNull().default(1000),
-});
+}, (table) => [
+  index("subscriptions_user_period_idx").on(table.userId, table.currentPeriodEnd),
+  index("subscriptions_clerk_subscription_idx").on(table.clerkSubscriptionId),
+]);
 
 export const creditLedger = pgTable("credit_ledger", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -72,7 +76,9 @@ export const creditLedger = pgTable("credit_ledger", {
   amount: integer("amount").notNull(),
   note: text("note").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("credit_ledger_user_created_idx").on(table.userId, table.createdAt),
+]);
 
 export const chatConversations = pgTable("chat_conversations", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -94,7 +100,9 @@ export const chatMessages = pgTable("chat_messages", {
   content: text("content").notNull(),
   metadata: jsonb("metadata").$type<unknown>(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("chat_messages_conversation_created_idx").on(table.conversationId, table.createdAt),
+]);
 
 export const clerkWebhookEvents = pgTable("clerk_webhook_events", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -122,7 +130,9 @@ export const projects = pgTable("projects", {
   reviewNotes: text("review_notes").notNull().default(""),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("projects_user_updated_idx").on(table.userId, table.updatedAt),
+]);
 
 export const storyboards = pgTable("storyboards", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -133,7 +143,9 @@ export const storyboards = pgTable("storyboards", {
   status: varchar("status", { length: 30 }).notNull().default("draft"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("storyboards_project_idx").on(table.projectId),
+]);
 
 export const scenes = pgTable("scenes", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -146,7 +158,9 @@ export const scenes = pgTable("scenes", {
   overlayText: text("overlay_text").notNull(),
   durationSeconds: integer("duration_seconds").notNull().default(5),
   imageUrl: text("image_url"),
-});
+}, (table) => [
+  index("scenes_project_order_idx").on(table.projectId, table.order),
+]);
 
 export const generationJobs = pgTable("generation_jobs", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -160,7 +174,10 @@ export const generationJobs = pgTable("generation_jobs", {
   errorMessage: text("error_message"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("generation_jobs_project_created_idx").on(table.projectId, table.createdAt),
+  index("generation_jobs_provider_job_idx").on(table.providerJobId),
+]);
 
 export const outputs = pgTable("outputs", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -172,7 +189,10 @@ export const outputs = pgTable("outputs", {
   metadataTag: varchar("metadata_tag", { length: 255 }).notNull(),
   removedAt: timestamp("removed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("outputs_user_removed_type_idx").on(table.userId, table.removedAt, table.type),
+  index("outputs_project_removed_created_idx").on(table.projectId, table.removedAt, table.createdAt),
+]);
 
 export const avatars = pgTable("avatars", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -184,7 +204,9 @@ export const avatars = pgTable("avatars", {
   policyState: avatarPolicyStateEnum("policy_state").notNull(),
   attested: boolean("attested").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("avatars_project_created_idx").on(table.projectId, table.createdAt),
+]);
 
 export const brandAssets = pgTable("brand_assets", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -194,7 +216,9 @@ export const brandAssets = pgTable("brand_assets", {
   name: varchar("name", { length: 255 }).notNull(),
   url: text("url").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index("brand_assets_project_created_idx").on(table.projectId, table.createdAt),
+]);
 
 export const abuseReports = pgTable("abuse_reports", {
   id: uuid("id").defaultRandom().primaryKey(),

@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
+import { revalidateTag, unstable_cache } from "next/cache";
 import * as schema from "@/db/schema";
 import { CREDIT_COSTS, DEFAULT_MONTHLY_CREDITS, DEFAULT_PLAN_NAME, SOFTAI_METADATA_TAG } from "@/lib/constants";
 import { getBillingPlanDisplayName } from "@/lib/billing";
@@ -67,6 +68,34 @@ declare global {
 
 const now = () => new Date().toISOString();
 const CLERK_WEBHOOK_PROCESSING_TIMEOUT_MS = 5 * 60 * 1000;
+const STORE_CACHE_REVALIDATE_SECONDS = 60;
+
+const cacheTags = {
+  userProjects: (userId: string) => `user:${userId}:projects`,
+  userDashboard: (userId: string) => `user:${userId}:dashboard`,
+  userBilling: (userId: string) => `user:${userId}:billing`,
+  project: (projectId: string) => `project:${projectId}`,
+  conversation: (conversationId: string) => `conversation:${conversationId}`,
+};
+
+function revalidateStoreTag(tag: string) {
+  try {
+    revalidateTag(tag, { expire: 0 });
+  } catch {
+    // Some tests and scripts call store functions outside a Next request scope.
+  }
+}
+
+function revalidateUserData(userId: string) {
+  revalidateStoreTag(cacheTags.userProjects(userId));
+  revalidateStoreTag(cacheTags.userDashboard(userId));
+  revalidateStoreTag(cacheTags.userBilling(userId));
+}
+
+function revalidateProjectData(userId: string, projectId: string) {
+  revalidateUserData(userId);
+  revalidateStoreTag(cacheTags.project(projectId));
+}
 
 function isStaleClerkWebhookClaim(createdAt: string | Date) {
   return Date.now() - new Date(createdAt).getTime() > CLERK_WEBHOOK_PROCESSING_TIMEOUT_MS;
@@ -704,6 +733,68 @@ export async function getDashboardStats(userId: string, existingProjects?: Proje
   }
 }
 
+export async function getDashboardPageData(userId: string): Promise<{ projects: ProjectRecord[]; stats: DashboardStats }> {
+  if (!databaseEnabled() || !db) {
+    const projects = await listProjects(userId);
+    const subscription = await getUserSubscription(userId);
+    const creditBalance = await getCreditBalance(userId);
+    const outputs = await listOutputsForUser(userId);
+
+    return {
+      projects,
+      stats: {
+        activeProjects: projects.filter((entry) => entry.status !== "completed").length,
+        completedVideos: outputs.filter((output) => output.type === "final_video").length,
+        creditBalance,
+        monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+      },
+    };
+  }
+
+  const database = db;
+  return unstable_cache(
+    async () => {
+      await ensureDatabase();
+      const [projectRows, subRow, balanceRow, completedVideoRows] = await database.batch([
+        database.query.projects.findMany({
+          where: eq(schema.projects.userId, userId),
+          orderBy: [desc(schema.projects.updatedAt)],
+        }),
+        database.query.subscriptions.findFirst({
+          where: eq(schema.subscriptions.userId, userId),
+          orderBy: [desc(schema.subscriptions.currentPeriodEnd)],
+        }),
+        database
+          .select({ total: sql<number>`coalesce(sum(${schema.creditLedger.amount}), 0)` })
+          .from(schema.creditLedger)
+          .where(eq(schema.creditLedger.userId, userId)),
+        database
+          .select({ total: sql<number>`count(*)` })
+          .from(schema.outputs)
+          .where(and(eq(schema.outputs.userId, userId), eq(schema.outputs.type, "final_video"), isNull(schema.outputs.removedAt))),
+      ]);
+
+      const projects = projectRows.map(mapProject);
+      const subscription = subRow ? mapSubscription(subRow) : null;
+
+      return {
+        projects,
+        stats: {
+          activeProjects: projects.filter((entry) => entry.status !== "completed").length,
+          completedVideos: Number(completedVideoRows[0]?.total ?? 0),
+          creditBalance: Number(balanceRow[0]?.total ?? 0),
+          monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+        },
+      };
+    },
+    ["dashboard-page-data", userId],
+    {
+      tags: [cacheTags.userDashboard(userId), cacheTags.userProjects(userId), cacheTags.userBilling(userId)],
+      revalidate: STORE_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
+}
+
 export async function listOutputsForUser(userId: string) {
   if (!databaseEnabled() || !db) {
     return getState().outputs.filter((output) => output.userId === userId && !output.removedAt);
@@ -721,12 +812,19 @@ export async function listProjects(userId: string) {
       .projects.filter((entry) => entry.userId === userId)
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
-  await ensureDatabase();
-  const rows = await db.query.projects.findMany({
-    where: eq(schema.projects.userId, userId),
-    orderBy: [desc(schema.projects.updatedAt)],
-  });
-  return rows.map(mapProject);
+  const database = db;
+  return unstable_cache(
+    async () => {
+      await ensureDatabase();
+      const rows = await database.query.projects.findMany({
+        where: eq(schema.projects.userId, userId),
+        orderBy: [desc(schema.projects.updatedAt)],
+      });
+      return rows.map(mapProject);
+    },
+    ["user-projects", userId],
+    { tags: [cacheTags.userProjects(userId)], revalidate: STORE_CACHE_REVALIDATE_SECONDS },
+  )();
 }
 
 export async function getProjectBundle(userId: string, projectId: string): Promise<ProjectBundle | null> {
@@ -746,47 +844,54 @@ export async function getProjectBundle(userId: string, projectId: string): Promi
     };
   }
 
-  await ensureDatabase();
-  const [project, assets, avatar, storyboard, scenes, jobs, outputs] = await db.batch([
-    db.query.projects.findFirst({
-      where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
-    }),
-    db.query.brandAssets.findMany({
-      where: eq(schema.brandAssets.projectId, projectId),
-      orderBy: [desc(schema.brandAssets.createdAt)],
-    }),
-    db.query.avatars.findFirst({
-      where: eq(schema.avatars.projectId, projectId),
-      orderBy: [desc(schema.avatars.createdAt)],
-    }),
-    db.query.storyboards.findFirst({
-      where: eq(schema.storyboards.projectId, projectId),
-    }),
-    db.query.scenes.findMany({
-      where: eq(schema.scenes.projectId, projectId),
-      orderBy: [asc(schema.scenes.order)],
-    }),
-    db.query.generationJobs.findMany({
-      where: eq(schema.generationJobs.projectId, projectId),
-      orderBy: [desc(schema.generationJobs.createdAt)],
-    }),
-    db.query.outputs.findMany({
-      where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
-      orderBy: [desc(schema.outputs.createdAt)],
-    }),
-  ]);
+  const database = db;
+  return unstable_cache(
+    async () => {
+      await ensureDatabase();
+      const [project, assets, avatar, storyboard, scenes, jobs, outputs] = await database.batch([
+        database.query.projects.findFirst({
+          where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
+        }),
+        database.query.brandAssets.findMany({
+          where: eq(schema.brandAssets.projectId, projectId),
+          orderBy: [desc(schema.brandAssets.createdAt)],
+        }),
+        database.query.avatars.findFirst({
+          where: eq(schema.avatars.projectId, projectId),
+          orderBy: [desc(schema.avatars.createdAt)],
+        }),
+        database.query.storyboards.findFirst({
+          where: eq(schema.storyboards.projectId, projectId),
+        }),
+        database.query.scenes.findMany({
+          where: eq(schema.scenes.projectId, projectId),
+          orderBy: [asc(schema.scenes.order)],
+        }),
+        database.query.generationJobs.findMany({
+          where: eq(schema.generationJobs.projectId, projectId),
+          orderBy: [desc(schema.generationJobs.createdAt)],
+        }),
+        database.query.outputs.findMany({
+          where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
+          orderBy: [desc(schema.outputs.createdAt)],
+        }),
+      ]);
 
-  if (!project) return null;
+      if (!project) return null;
 
-  return {
-    project: mapProject(project),
-    assets: assets.map(mapAsset),
-    avatar: avatar ? mapAvatar(avatar) : null,
-    storyboard: storyboard ? mapStoryboard(storyboard) : null,
-    scenes: scenes.map(mapScene),
-    jobs: jobs.map(mapJob),
-    outputs: outputs.map(mapOutput),
-  };
+      return {
+        project: mapProject(project),
+        assets: assets.map(mapAsset),
+        avatar: avatar ? mapAvatar(avatar) : null,
+        storyboard: storyboard ? mapStoryboard(storyboard) : null,
+        scenes: scenes.map(mapScene),
+        jobs: jobs.map(mapJob),
+        outputs: outputs.map(mapOutput),
+      };
+    },
+    ["project-bundle", userId, projectId],
+    { tags: [cacheTags.project(projectId), cacheTags.userProjects(userId)], revalidate: STORE_CACHE_REVALIDATE_SECONDS },
+  )();
 }
 
 export async function getProjectPageData(userId: string, projectId: string): Promise<{
@@ -941,6 +1046,7 @@ export async function createProject(
     updatedAt: new Date(),
   });
   await addAuditEvent(userId, id, "project.created", input);
+  revalidateUserData(userId);
   const project = await db.query.projects.findFirst({ where: eq(schema.projects.id, id) });
   return mapProject(project!);
 }
@@ -972,6 +1078,7 @@ export async function addBrandAsset(userId: string, projectId: string, input: { 
     createdAt: new Date(),
   });
   await addAuditEvent(userId, projectId, "asset.added", input);
+  revalidateProjectData(userId, projectId);
   return {
     id,
     projectId,
@@ -1005,6 +1112,7 @@ export async function saveAvatar(
   if (existing) {
     await db.update(schema.avatars).set(input).where(eq(schema.avatars.id, existing.id));
     await addAuditEvent(userId, projectId, "avatar.saved", input);
+    revalidateProjectData(userId, projectId);
     return { ...mapAvatar(existing), ...input };
   }
   const id = randomUUID();
@@ -1020,6 +1128,7 @@ export async function saveAvatar(
     createdAt: new Date(),
   });
   await addAuditEvent(userId, projectId, "avatar.saved", input);
+  revalidateProjectData(userId, projectId);
   return { id, projectId, userId, ...input, createdAt: now() };
 }
 
@@ -1090,6 +1199,7 @@ export async function saveStoryboard(
   }
   await updateProjectStatus(projectId, "review_needed");
   await addAuditEvent(userId, projectId, "storyboard.saved", input);
+  revalidateProjectData(userId, projectId);
 }
 
 export async function approveStoryboard(userId: string, projectId: string) {
@@ -1108,6 +1218,7 @@ export async function approveStoryboard(userId: string, projectId: string) {
   await db.update(schema.storyboards).set({ status: "approved", updatedAt: new Date() }).where(eq(schema.storyboards.id, storyboard.id));
   await updateProjectStatus(projectId, "storyboard_ready");
   await addAuditEvent(userId, projectId, "storyboard.approved", {});
+  revalidateProjectData(userId, projectId);
   return { ...mapStoryboard(storyboard), status: "approved" };
 }
 
@@ -1141,6 +1252,7 @@ export async function createGenerationJob(
     createdAt: new Date(),
     updatedAt: new Date(),
   });
+  revalidateProjectData(userId, projectId);
   return {
     id, projectId, userId, type: input.type, status: input.status,
     providerJobId: input.providerJobId ?? null, requestPayload: input.requestPayload,
@@ -1163,6 +1275,7 @@ export async function updateGenerationJob(
   const existing = await db.query.generationJobs.findFirst({ where: eq(schema.generationJobs.id, jobId) });
   if (!existing) return null;
   await db.update(schema.generationJobs).set({ ...patch, updatedAt: new Date() }).where(eq(schema.generationJobs.id, jobId));
+  revalidateProjectData(existing.userId, existing.projectId);
   return { ...mapJob(existing), ...patch, updatedAt: now() };
 }
 
@@ -1182,6 +1295,7 @@ export async function updateGenerationJobByProviderJobId(
   });
   if (!existing) return null;
   await db.update(schema.generationJobs).set({ ...patch, updatedAt: new Date() }).where(eq(schema.generationJobs.id, existing.id));
+  revalidateProjectData(existing.userId, existing.projectId);
   return { ...mapJob(existing), ...patch, updatedAt: now() };
 }
 
@@ -1198,6 +1312,7 @@ export async function saveSceneImage(projectId: string, order: number, imageUrl:
   });
   if (!scene) return null;
   await db.update(schema.scenes).set({ imageUrl }).where(eq(schema.scenes.id, scene.id));
+  revalidateStoreTag(cacheTags.project(projectId));
   return { ...mapScene(scene), imageUrl };
 }
 
@@ -1226,6 +1341,7 @@ export async function createOutput(
     metadataTag: input.metadataTag ?? SOFTAI_METADATA_TAG, removedAt: null, createdAt: new Date(),
   });
   if (input.type === "final_video") await updateProjectStatus(projectId, "completed");
+  revalidateProjectData(userId, projectId);
   return { id, projectId, userId, type: input.type, title: input.title, url: input.url, metadataTag: input.metadataTag ?? SOFTAI_METADATA_TAG, removedAt: null, createdAt: now() };
 }
 
@@ -1484,6 +1600,7 @@ export async function takedownOutput(outputId: string) {
   const output = await db.query.outputs.findFirst({ where: eq(schema.outputs.id, outputId) });
   if (!output) return null;
   await db.update(schema.outputs).set({ removedAt: new Date() }).where(eq(schema.outputs.id, outputId));
+  revalidateProjectData(output.userId, output.projectId);
   return { ...mapOutput(output), removedAt: now() };
 }
 
@@ -1706,6 +1823,7 @@ export async function upsertUserSubscription(
         createdAt: new Date(),
       });
     }
+    revalidateUserData(userId);
     return {
       ...mapSubscription(existing),
       clerkPayerId: input.clerkPayerId,
@@ -1723,6 +1841,7 @@ export async function upsertUserSubscription(
     currentPeriodEnd: input.currentPeriodEnd ? new Date(input.currentPeriodEnd) : null,
     monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
   });
+  revalidateUserData(userId);
   return {
     id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
     clerkSubscriptionId: input.clerkSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
@@ -1750,6 +1869,7 @@ export async function addCreditEvent(
     note: input.note,
     createdAt: new Date(),
   });
+  revalidateUserData(userId);
   return { id, userId, projectId: input.projectId ?? null, reason: input.reason, amount: input.amount, note: input.note, createdAt: now() };
 }
 
@@ -1789,6 +1909,7 @@ export async function addCreditEventIfSufficient(
     throw new Error(`Insufficient credits. Required ${requiredCredits}, available ${balance}.`);
   }
 
+  revalidateUserData(userId);
   return { id, userId, projectId: input.projectId ?? null, reason: input.reason, amount: input.amount, note: input.note, createdAt: now() };
 }
 
@@ -1805,18 +1926,29 @@ export async function getCreditHistory(userId: string) {
 }
 
 export async function getBillingSummary(userId: string) {
-  const [subscription, balance, recentActivity] = await Promise.all([
-    getUserSubscription(userId),
-    getCreditBalance(userId),
-    getCreditHistory(userId),
-  ]);
-  return {
-    plan: getBillingPlanDisplayName(subscription?.plan ?? DEFAULT_PLAN_NAME),
-    status: subscription?.status ?? "trialing",
-    monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
-    balance,
-    currentPeriodEnd: subscription?.currentPeriodEnd ?? null,
-    recentActivity: recentActivity.slice(0, 8),
-    summaryLabel: `${formatCredits(balance)} credits available`,
+  const getSummary = async () => {
+    const [subscription, balance, recentActivity] = await Promise.all([
+      getUserSubscription(userId),
+      getCreditBalance(userId),
+      getCreditHistory(userId),
+    ]);
+    return {
+      plan: getBillingPlanDisplayName(subscription?.plan ?? DEFAULT_PLAN_NAME),
+      status: subscription?.status ?? "trialing",
+      monthlyCredits: subscription?.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
+      balance,
+      currentPeriodEnd: subscription?.currentPeriodEnd ?? null,
+      recentActivity: recentActivity.slice(0, 8),
+      summaryLabel: `${formatCredits(balance)} credits available`,
+    };
   };
+
+  if (!databaseEnabled() || !db) {
+    return getSummary();
+  }
+
+  return unstable_cache(getSummary, ["billing-summary", userId], {
+    tags: [cacheTags.userBilling(userId)],
+    revalidate: STORE_CACHE_REVALIDATE_SECONDS,
+  })();
 }

@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
 import { ZodSchema } from "zod";
 import { getAppSession } from "@/lib/auth";
-import { findUserByClerkId, upsertUser } from "@/lib/store";
 
 export async function requireAppUser() {
   const session = await getAppSession();
-  const existing =
-    (await findUserByClerkId(session.clerkUserId)) ??
-    (await upsertUser({
-      clerkUserId: session.clerkUserId,
-      email: session.email,
-      name: session.name,
-    }));
+  const existing = session.user;
 
   if (existing.bannedAt) {
     throw new Error("This account has been banned.");
