@@ -899,54 +899,23 @@ export async function getProjectPageData(userId: string, projectId: string): Pro
   conversation: ChatConversationRecord | null;
   chatMessages: ChatMessageRecord[];
 }> {
+  const bundle = await getProjectBundle(userId, projectId);
+
+  if (!bundle) {
+    return { bundle: null, conversation: null, chatMessages: [] };
+  }
+
   if (!databaseEnabled() || !db) {
-    const bundle = await getProjectBundle(userId, projectId);
-    if (!bundle) return { bundle: null, conversation: null, chatMessages: [] };
     const conversation = await getOrCreateProjectChatConversation(userId, projectId);
     const chatMessages = conversation ? await listChatMessages(userId, conversation.id) : [];
     return { bundle, conversation, chatMessages };
   }
 
+  const database = db;
   await ensureDatabase();
 
-  const [
-    project,
-    assets,
-    avatar,
-    storyboard,
-    scenes,
-    jobs,
-    outputs,
-    conversationRow,
-    chatMessageRows,
-  ] = await db.batch([
-    db.query.projects.findFirst({
-      where: and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)),
-    }),
-    db.query.brandAssets.findMany({
-      where: eq(schema.brandAssets.projectId, projectId),
-      orderBy: [desc(schema.brandAssets.createdAt)],
-    }),
-    db.query.avatars.findFirst({
-      where: eq(schema.avatars.projectId, projectId),
-      orderBy: [desc(schema.avatars.createdAt)],
-    }),
-    db.query.storyboards.findFirst({
-      where: eq(schema.storyboards.projectId, projectId),
-    }),
-    db.query.scenes.findMany({
-      where: eq(schema.scenes.projectId, projectId),
-      orderBy: [asc(schema.scenes.order)],
-    }),
-    db.query.generationJobs.findMany({
-      where: eq(schema.generationJobs.projectId, projectId),
-      orderBy: [desc(schema.generationJobs.createdAt)],
-    }),
-    db.query.outputs.findMany({
-      where: and(eq(schema.outputs.projectId, projectId), isNull(schema.outputs.removedAt)),
-      orderBy: [desc(schema.outputs.createdAt)],
-    }),
-    db.query.chatConversations.findFirst({
+  const [conversationRow, chatMessageRows] = await database.batch([
+    database.query.chatConversations.findFirst({
       where: and(
         eq(schema.chatConversations.projectId, projectId),
         eq(schema.chatConversations.userId, userId),
@@ -954,9 +923,9 @@ export async function getProjectPageData(userId: string, projectId: string): Pro
       ),
       orderBy: [desc(schema.chatConversations.updatedAt)],
     }),
-    db.query.chatMessages.findMany({
+    database.query.chatMessages.findMany({
       where: sql`${schema.chatMessages.conversationId} IN (${
-        db
+        database
           .select({ id: schema.chatConversations.id })
           .from(schema.chatConversations)
           .where(
@@ -970,20 +939,6 @@ export async function getProjectPageData(userId: string, projectId: string): Pro
       orderBy: [asc(schema.chatMessages.createdAt)],
     }),
   ]);
-
-  if (!project) {
-    return { bundle: null, conversation: null, chatMessages: [] };
-  }
-
-  const bundle: ProjectBundle = {
-    project: mapProject(project),
-    assets: assets.map(mapAsset),
-    avatar: avatar ? mapAvatar(avatar) : null,
-    storyboard: storyboard ? mapStoryboard(storyboard) : null,
-    scenes: scenes.map(mapScene),
-    jobs: jobs.map(mapJob),
-    outputs: outputs.map(mapOutput),
-  };
 
   let conversation: ChatConversationRecord | null = null;
   let chatMessages: ChatMessageRecord[] = [];

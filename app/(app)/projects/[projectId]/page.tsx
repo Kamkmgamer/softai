@@ -15,9 +15,11 @@ export default async function ProjectDetailPage({
 }: {
   params: Promise<{ projectId: string }>;
 }) {
-  const { projectId } = await params;
-  const locale = await getRequestLocale();
-  const session = await getAppSession();
+  const [{ projectId }, locale, session] = await Promise.all([
+    params,
+    getRequestLocale(),
+    getAppSession(),
+  ]);
 
   const { bundle, conversation, chatMessages } = await getProjectPageData(session.userId, projectId);
 
