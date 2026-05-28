@@ -1,7 +1,7 @@
 import { apiError, apiSuccess, requireAppUser } from "@/lib/api";
 import { holdImageCredits, refundImageCredits, settleImageCredits } from "@/lib/credits";
 import { createGenerationJob, createOutput, getProjectBundle, saveSceneImage, updateGenerationJob } from "@/lib/store";
-import { generateSceneImage } from "@/lib/openrouter";
+import { buildSceneImagePrompt, generateSceneImage } from "@/lib/openrouter";
 
 export async function POST(
   _request: Request,
@@ -27,9 +27,11 @@ export async function POST(
 
     const jobs = await Promise.all(
       bundle.scenes.map(async (scene) => {
-        const prompt = bundle.project.language === "ar"
-          ? `${bundle.storyboard?.headline}. ${scene.visualDirection}. Arabic RTL overlay text will be rendered by SoftAI after image generation: ${scene.overlayText}. Leave clean safe space for the overlay. Vertical ad frame 9:16.`
-          : `${bundle.storyboard?.headline}. ${scene.visualDirection}. Overlay text: ${scene.overlayText}. Vertical ad frame 9:16.`;
+        const prompt = buildSceneImagePrompt({
+          headline: bundle.storyboard?.headline ?? bundle.project.title,
+          visualDirection: scene.visualDirection,
+          language: bundle.project.language,
+        });
         const job = await createGenerationJob(user.id, projectId, {
           type: "image",
           status: "processing",

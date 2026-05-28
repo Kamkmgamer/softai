@@ -36,6 +36,21 @@ type GeneratedScene = {
   durationSeconds: number;
 };
 
+type SceneImagePromptInput = {
+  headline: string;
+  visualDirection: string;
+  language: "en" | "ar";
+};
+
+type VideoScenePromptInput = {
+  order: number;
+  title: string;
+  narration: string;
+  visualDirection: string;
+  overlayText: string;
+  durationSeconds: number;
+};
+
 function fallbackStoryboard(input: StoryboardInput) {
   if (input.language === "ar") {
     return {
@@ -46,21 +61,21 @@ function fallbackStoryboard(input: StoryboardInput) {
         {
           title: "افتتاحية لافتة",
           narration: input.script || `${input.productName} يساعد ${input.targetAudience} على الوصول للنتيجة بسرعة ووضوح.`,
-          visualDirection: `لقطة قريبة للمنتج بأسلوب ${input.brandVoice}، مع ترك مساحة آمنة لإضافة نص عربي لاحقاً.`,
+          visualDirection: `لقطة قريبة للمنتج بأسلوب ${input.brandVoice}، مع ترك مساحة آمنة نظيفة لإضافة النص لاحقاً خارج نموذج الصورة.`,
           overlayText: input.offer,
           durationSeconds: 5,
         },
         {
           title: "المشكلة والوعد",
           narration: `بدلاً من إضاعة الوقت في تجهيز الإعلانات من الصفر، يختصر ${input.productName} الطريق من الفكرة إلى محتوى قابل للنشر.`,
-          visualDirection: "شخص يتحدث بثقة بجانب لقطات منتج واضحة ومساحات نظيفة للنصوص العربية.",
+          visualDirection: "شخص يتحدث بثقة بجانب لقطات منتج واضحة ومساحات نظيفة لإضافة النص لاحقاً خارج نموذج الصورة.",
           overlayText: "إعلان جاهز أسرع",
           durationSeconds: 7,
         },
         {
           title: "العرض والختام",
           narration: `جرّب ${input.productName} اليوم واستفد من ${input.offer}. ${input.cta}`,
-          visualDirection: "لقطة نهائية للمنتج بخلفية دافئة ومساحة واضحة لزر الدعوة للإجراء.",
+          visualDirection: "لقطة نهائية للمنتج بخلفية دافئة ومساحة واضحة لإضافة الدعوة للإجراء لاحقاً خارج نموذج الصورة.",
           overlayText: input.cta,
           durationSeconds: 6,
         },
@@ -76,21 +91,21 @@ function fallbackStoryboard(input: StoryboardInput) {
       {
         title: "Thumbstopper opener",
         narration: input.script || `Stop scrolling. ${input.productName} is built for ${input.targetAudience}.`,
-        visualDirection: `Fast close-up of product with bold ${input.brandVoice} typography.`,
+        visualDirection: `Fast close-up of product with bold ${input.brandVoice} lighting, composition, and motion-ready negative space.`,
         overlayText: input.offer,
         durationSeconds: 5,
       },
       {
         title: "Problem and promise",
         narration: `Most teams waste time creating ads. ${input.productName} gets you from idea to publishable creative faster.`,
-        visualDirection: "Talking-head avatar beside kinetic product visuals and before/after frames.",
+        visualDirection: "Talking-head avatar beside kinetic product visuals and before/after frames, with clean areas reserved for later overlays.",
         overlayText: "Fast ad production",
         durationSeconds: 7,
       },
       {
         title: "Offer close",
         narration: `Try ${input.productName} today and claim ${input.offer}. ${input.cta}`,
-        visualDirection: "Product hero shot with warm gradient background and direct CTA treatment.",
+        visualDirection: "Product hero shot with warm gradient background and clean lower-third space reserved for a later CTA overlay.",
         overlayText: input.cta,
         durationSeconds: 6,
       },
@@ -126,6 +141,54 @@ function normalizeStoryboard(value: unknown, input: StoryboardInput) {
     cta: textOrFallback(parsed.cta, fallback.cta),
     scenes: normalizedScenes.length >= 3 ? normalizedScenes.slice(0, 6) : fallback.scenes,
   };
+}
+
+export function buildSceneImagePrompt(input: SceneImagePromptInput) {
+  const languageConstraint = input.language === "ar"
+    ? "Arabic RTL copy will be added later by SoftAI. Do not render Arabic letters, pseudo-Arabic, English words, subtitles, captions, signs, labels, logos, UI text, watermarks, or any readable text inside the image."
+    : "Copy will be added later by SoftAI. Do not render English words, subtitles, captions, signs, labels, logos, UI text, watermarks, or any readable text inside the image.";
+
+  return [
+    "Create a polished vertical 9:16 advertising scene plate for a short-form video.",
+    `Campaign headline context: ${input.headline}.`,
+    `Scene visual direction: ${input.visualDirection}.`,
+    "Make it photorealistic or premium commercial-style, motion-ready, and suitable as a reference frame for video generation.",
+    "Leave intentional clean negative space where SoftAI can composite text overlays after generation.",
+    languageConstraint,
+  ].join(" ");
+}
+
+export function buildFinalVideoPrompt(input: {
+  headline: string;
+  hook: string;
+  cta: string;
+  language: "en" | "ar";
+  scenes: VideoScenePromptInput[];
+}) {
+  const sceneInstructions = input.scenes
+    .map((scene) => [
+      `Scene ${scene.order} (${scene.durationSeconds}s): ${scene.title}.`,
+      `Visual: ${scene.visualDirection}.`,
+      `Voiceover/narration intent: ${scene.narration}.`,
+      scene.overlayText ? `Post-production overlay copy, not to be baked into frames: ${scene.overlayText}.` : null,
+    ].filter(Boolean).join(" "))
+    .join("\n");
+
+  const languageInstruction = input.language === "ar"
+    ? "Use soft Modern Standard Arabic intent for narration/captions if audio or captions are generated, but do not render malformed Arabic text inside frames."
+    : "Use natural English ad pacing if audio or captions are generated, but do not render baked-in text inside frames.";
+
+  return [
+    "Create a polished vertical 9:16 short-form ad video using the provided scene images as ordered visual references.",
+    `Campaign headline: ${input.headline}.`,
+    `Hook: ${input.hook}.`,
+    `CTA: ${input.cta}.`,
+    "Follow the scene order and preserve the product/brand visual continuity from the reference images.",
+    "Use smooth commercial camera motion, clean transitions, realistic lighting, and ad-ready pacing.",
+    "Do not generate subtitles, captions, readable words, signage, labels, UI text, watermarks, or fake text inside video frames; SoftAI will add all overlays after rendering.",
+    languageInstruction,
+    sceneInstructions,
+  ].join("\n");
 }
 
 function getNestedImageUrl(value: unknown): string | null {
@@ -427,7 +490,7 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
 
   if (!env.openRouterApiKey) {
     return {
-      imageUrl: `https://placehold.co/720x1280/f6e5d4/1a1a1a.png?text=${encodeURIComponent(language === "ar" ? "Arabic+overlay+space" : prompt.slice(0, 50))}`,
+      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(`softai-${language}-${prompt.slice(0, 80)}`)}/720/1280`,
       provider: "demo-fallback",
       requestPayload: { prompt },
       responsePayload: null,
@@ -441,7 +504,7 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
     messages: [
       {
         role: "user",
-        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image. ${language === "ar" ? "Do not render Arabic words or fake text in the image. Leave clean negative space for SoftAI to add RTL Arabic overlays later." : "Avoid unnecessary embedded text unless explicitly requested."} ${prompt}`,
+        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image only. This is a clean scene plate for later video and overlay compositing. Absolutely no embedded text, typography, captions, subtitles, readable signs, labels, logos, UI text, watermarks, or fake letters. ${language === "ar" ? "Do not render Arabic words, pseudo-Arabic, or English words in the image. Leave clean negative space for SoftAI to add RTL Arabic overlays later." : "Leave clean negative space for SoftAI to add overlays later."} ${prompt}`,
       },
     ],
   };
@@ -540,7 +603,13 @@ export async function submitVideoRender(
     };
   }
 
-  const firstFrame = imageUrls.find((url) => url.trim());
+  const inputReferences = imageUrls
+    .map((url) => url.trim())
+    .filter(Boolean)
+    .map((url) => ({
+      type: "image_url" as const,
+      image_url: { url },
+    }));
 
   const callbackUrl = getOpenRouterCallbackUrl(env.appUrl);
 
@@ -554,12 +623,10 @@ export async function submitVideoRender(
     },
     body: JSON.stringify({
       model: DEFAULT_VIDEO_MODEL,
-      prompt: language === "ar"
-        ? `${prompt}\n\nUse soft Modern Standard Arabic for narration/captions. Preserve RTL intent. Do not generate malformed Arabic text inside frames; SoftAI will render Arabic overlays separately.`
-        : prompt,
+      prompt,
       duration,
       size,
-      first_frame: firstFrame,
+      input_references: inputReferences,
       ...(callbackUrl ? { callback_url: callbackUrl } : {}),
     }),
   });

@@ -1,5 +1,46 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { pollVideoStatus, streamChatCompletion, submitVideoRender } from "@/lib/openrouter";
+import { buildFinalVideoPrompt, buildSceneImagePrompt, pollVideoStatus, streamChatCompletion, submitVideoRender } from "@/lib/openrouter";
+
+describe("buildSceneImagePrompt", () => {
+  it("keeps overlay copy out of scene image prompts and forbids embedded text", () => {
+    const prompt = buildSceneImagePrompt({
+      headline: "Launch faster",
+      visualDirection: "Product close-up on a warm kitchen counter with space on the right",
+      language: "en",
+    });
+
+    expect(prompt).toContain("Product close-up");
+    expect(prompt).toContain("Do not render English words");
+    expect(prompt).toContain("subtitles");
+    expect(prompt).toContain("watermarks");
+    expect(prompt).not.toContain("Overlay text");
+  });
+});
+
+describe("buildFinalVideoPrompt", () => {
+  it("marks overlay text as post-production copy instead of baked-in frame text", () => {
+    const prompt = buildFinalVideoPrompt({
+      headline: "Launch faster",
+      hook: "20% off",
+      cta: "Start today",
+      language: "en",
+      scenes: [
+        {
+          order: 1,
+          title: "Opener",
+          narration: "Stop waiting on creative.",
+          visualDirection: "Product hero shot",
+          overlayText: "Launch in minutes",
+          durationSeconds: 4,
+        },
+      ],
+    });
+
+    expect(prompt).toContain("using the provided scene images as ordered visual references");
+    expect(prompt).toContain("Post-production overlay copy, not to be baked into frames: Launch in minutes.");
+    expect(prompt).toContain("Do not generate subtitles");
+  });
+});
 
 describe("streamChatCompletion", () => {
   afterEach(() => {
@@ -34,7 +75,7 @@ describe("submitVideoRender", () => {
     vi.unstubAllGlobals();
   });
 
-  it("uses OpenRouter's supported vertical video request shape without localhost callbacks", async () => {
+  it("uses OpenRouter's supported vertical video request shape with ordered scene references and without localhost callbacks", async () => {
     vi.stubEnv("OPENROUTER_API_KEY", "test-key");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
 
@@ -44,7 +85,7 @@ describe("submitVideoRender", () => {
     ));
     vi.stubGlobal("fetch", fetchMock);
 
-    await submitVideoRender("Make a polished vertical ad", ["https://example.com/scene.png"]);
+    await submitVideoRender("Make a polished vertical ad", ["https://example.com/scene-1.png", "https://example.com/scene-2.png"]);
 
     const [, init] = fetchMock.mock.calls[0];
     const body = JSON.parse(init?.body as string);
@@ -54,12 +95,15 @@ describe("submitVideoRender", () => {
       prompt: "Make a polished vertical ad",
       duration: 4,
       size: "720x1280",
-      first_frame: "https://example.com/scene.png",
+      input_references: [
+        { type: "image_url", image_url: { url: "https://example.com/scene-1.png" } },
+        { type: "image_url", image_url: { url: "https://example.com/scene-2.png" } },
+      ],
     });
     expect(body).not.toHaveProperty("callback_url");
     expect(body).not.toHaveProperty("resolution");
     expect(body).not.toHaveProperty("aspect_ratio");
-    expect(body).not.toHaveProperty("input_references");
+    expect(body).not.toHaveProperty("first_frame");
   });
 
   it("sends callback_url for public HTTPS app URLs", async () => {

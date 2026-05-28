@@ -6,7 +6,7 @@ import {
   getProjectBundle,
   updateGenerationJob,
 } from "@/lib/store";
-import { submitVideoRender, pollVideoStatus } from "@/lib/openrouter";
+import { buildFinalVideoPrompt, submitVideoRender, pollVideoStatus } from "@/lib/openrouter";
 
 const POLL_INTERVAL_MS = 10_000;
 const MAX_POLL_ATTEMPTS = 12;
@@ -32,17 +32,25 @@ export async function POST(
 
     await holdVideoCredits(user.id, projectId);
     heldCredits = true;
-    const prompt = [
-      bundle.storyboard.headline,
-      bundle.storyboard.hook,
-      ...bundle.scenes.map((scene) => scene.narration),
-      bundle.storyboard.cta,
-    ].join(" ");
+    const prompt = buildFinalVideoPrompt({
+      headline: bundle.storyboard.headline,
+      hook: bundle.storyboard.hook,
+      cta: bundle.storyboard.cta,
+      language: bundle.project.language,
+      scenes: bundle.scenes.map((scene) => ({
+        order: scene.order,
+        title: scene.title,
+        narration: scene.narration,
+        visualDirection: scene.visualDirection,
+        overlayText: scene.overlayText,
+        durationSeconds: scene.durationSeconds,
+      })),
+    });
 
     const job = await createGenerationJob(user.id, projectId, {
       type: "video",
       status: "processing",
-      requestPayload: { prompt },
+      requestPayload: { prompt, imageUrls: bundle.scenes.map((scene) => scene.imageUrl as string) },
     });
 
     const result = await submitVideoRender(
