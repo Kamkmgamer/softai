@@ -32,9 +32,10 @@ export default async function ProjectDetailPage({
   const finalVideos = bundle.outputs.filter((output) => output.type === "final_video");
   const assetOutputs = bundle.outputs.filter((output) => output.type !== "final_video");
   const totalDuration = bundle.scenes.reduce((total, scene) => total + scene.durationSeconds, 0);
+  const posterUrl = bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ?? null;
 
   return (
-    <div className="relative left-1/2 w-[min(1480px,calc(100vw-2.5rem))] -translate-x-1/2 space-y-5 lg:w-[min(1480px,calc(100vw-18rem))]">
+    <div className="w-full space-y-5 overflow-hidden">
       <header className="rounded-[28px] border border-border bg-surface px-5 py-5 shadow-[var(--shadow-sm)] lg:px-6">
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-end">
           <div className="min-w-0">
@@ -111,21 +112,55 @@ export default async function ProjectDetailPage({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">Delivery</p>
-                <h2 className="mt-1 text-lg font-semibold tracking-tight text-text">Final outputs</h2>
+                <h2 className="mt-1 text-lg font-semibold tracking-tight text-text">Final videos</h2>
               </div>
-              <span className="rounded-full bg-surface-raised px-2 py-0.5 text-xs tabular-nums text-text-tertiary">{bundle.outputs.length}</span>
+              <span className="rounded-full bg-surface-raised px-2 py-0.5 text-xs tabular-nums text-text-tertiary">{finalVideos.length}</span>
             </div>
 
-            {bundle.outputs.length === 0 ? (
-              <EmptyState title="No outputs" description="Render the video to see deliverables here." />
+            {finalVideos.length === 0 ? (
+              <EmptyState title="No final videos" description="Render the campaign video to see it here." />
             ) : (
-              <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {finalVideos.map((output) => (
-                  <OutputTile key={output.id} title={output.title} type="Final video" url={getRenderableOutputUrl(output.url)} video />
+                  <OutputTile
+                    key={output.id}
+                    outputId={output.id}
+                    projectId={projectId}
+                    title={output.title}
+                    type="Final video"
+                    url=""
+                    posterUrl={posterUrl}
+                    sourceAvailable={Boolean(output.url)}
+                    video
+                  />
                 ))}
+              </div>
+            )}
+          </section>
 
+          <section className="rounded-[28px] border border-border bg-surface p-4 shadow-[var(--shadow-sm)] lg:p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">Assets</p>
+                <h2 className="mt-1 text-lg font-semibold tracking-tight text-text">Scene images</h2>
+              </div>
+              <span className="rounded-full bg-surface-raised px-2 py-0.5 text-xs tabular-nums text-text-tertiary">{assetOutputs.length}</span>
+            </div>
+
+            {assetOutputs.length === 0 ? (
+              <EmptyState title="No scene images" description="Render images to see campaign assets here." />
+            ) : (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {assetOutputs.map((output) => (
-                  <OutputTile key={output.id} title={output.title} type={output.type.replace("_", " ")} url={getRenderableOutputUrl(output.url)} />
+                  <OutputTile
+                    key={output.id}
+                    outputId={output.id}
+                    projectId={projectId}
+                    title={output.title}
+                    type={output.type.replace("_", " ")}
+                    url={getRenderableOutputUrl(output.url)}
+                    posterUrl={getScenePosterForOutput(output.title, bundle.scenes)}
+                  />
                 ))}
               </div>
             )}
@@ -176,16 +211,18 @@ export default async function ProjectDetailPage({
         </aside>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[380px_minmax(0,1fr)]">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
           <ProjectInputs projectId={projectId} />
 
           {conversation ? (
+            <div className="min-w-0">
             <ProjectAssistantPanel
               key={conversation.id}
               conversationId={conversation.id}
               projectLanguage={bundle.project.language}
               initialMessages={chatMessages}
             />
+            </div>
           ) : null}
       </div>
     </div>
@@ -224,23 +261,47 @@ function BriefItem({ label, value }: { label: string; value: string }) {
 }
 
 function OutputTile({
+  outputId,
+  projectId,
   title,
   type,
   url,
+  posterUrl,
+  sourceAvailable = false,
   video = false,
 }: {
+  outputId: string;
+  projectId: string;
   title: string;
   type: string;
   url: string;
+  posterUrl?: string | null;
+  sourceAvailable?: boolean;
   video?: boolean;
 }) {
-  const canPreviewVideo = video && isBrowserVideoUrl(url);
+  const mediaUrl = video ? `/api/projects/${projectId}/outputs/${outputId}/media` : url;
+  const canPreviewVideo = video && sourceAvailable;
+  const canPreviewImage = !video && isBrowserImageUrl(url);
 
   return (
-    <div className="w-[220px] shrink-0 overflow-hidden rounded-[22px] bg-bg shadow-[var(--shadow-sm)] ring-1 ring-border/80">
+    <div className="min-w-0 overflow-hidden rounded-[22px] bg-bg shadow-[var(--shadow-sm)] ring-1 ring-border/80">
       <div className="relative aspect-[4/5] bg-[oklch(0.18_0.015_58)]">
         {canPreviewVideo ? (
-          <video src={url} controls preload="metadata" className="h-full w-full object-contain" />
+          <video src={mediaUrl} poster={posterUrl ?? undefined} controls preload="metadata" className="h-full w-full object-contain" />
+        ) : canPreviewImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={url} alt={title} className="h-full w-full object-cover" />
+        ) : posterUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={posterUrl} alt="Video poster" className="h-full w-full object-cover opacity-80" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[oklch(0.18_0.015_58_/_0.45)] px-5 text-center text-bg">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-bg/18">
+                <Film className="h-5 w-5" />
+              </span>
+              <p className="text-xs font-medium leading-relaxed">Open render in a new tab.</p>
+            </div>
+          </>
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-3 px-5 text-center text-bg/80">
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-bg/10">
@@ -257,7 +318,7 @@ function OutputTile({
           <p className="truncate text-sm font-semibold text-text">{title}</p>
           <p className="mt-0.5 text-[11px] uppercase tracking-[0.14em] text-text-tertiary">{type}</p>
         </div>
-        <a href={url || undefined} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm shrink-0 aria-disabled:pointer-events-none aria-disabled:opacity-50" aria-disabled={!url}>
+        <a href={mediaUrl || undefined} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm shrink-0 aria-disabled:pointer-events-none aria-disabled:opacity-50" aria-disabled={!mediaUrl}>
           {video ? "Open" : "View"}
           {video ? <ArrowUpRight className="h-3.5 w-3.5" /> : null}
         </a>
@@ -266,13 +327,24 @@ function OutputTile({
   );
 }
 
-function isBrowserVideoUrl(url: string) {
-  if (url.startsWith("data:")) return url.startsWith("data:video/");
+function isBrowserImageUrl(url: string) {
+  if (url.startsWith("data:")) return url.startsWith("data:image/");
   if (!url.startsWith("http://") && !url.startsWith("https://")) return false;
-  return true;
+  return /\.(avif|gif|jpe?g|png|webp)(\?|#|$)/i.test(url);
 }
 
 function getRenderableOutputUrl(url: string) {
   if (url.startsWith("data:") && url.length > 2_000) return "";
   return url;
+}
+
+function getScenePosterForOutput(title: string, scenes: Array<{ title: string; imageUrl: string | null }>) {
+  const normalizedOutputTitle = normalizeOutputTitle(title);
+  return scenes.find((scene) => normalizeOutputTitle(scene.title) === normalizedOutputTitle)?.imageUrl
+    ?? scenes.find((scene) => normalizedOutputTitle.includes(normalizeOutputTitle(scene.title)))?.imageUrl
+    ?? null;
+}
+
+function normalizeOutputTitle(title: string) {
+  return title.toLowerCase().replace(/\b(image|final|render|video)\b/g, "").replace(/[^a-z0-9]+/g, " ").trim();
 }

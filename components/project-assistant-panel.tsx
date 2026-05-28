@@ -143,7 +143,7 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
           >
             <div
               className={cn(
-                "max-w-[88%] whitespace-pre-wrap rounded-[14px] px-3.5 py-2.5 text-[13px] leading-relaxed",
+                "max-w-[88%] break-words whitespace-pre-wrap rounded-[14px] px-3.5 py-2.5 text-[13px] leading-relaxed",
                 message.role === "user"
                   ? "bg-text text-bg"
                   : "border border-border bg-bg text-text-secondary",
