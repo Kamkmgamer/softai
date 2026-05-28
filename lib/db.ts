@@ -6,7 +6,6 @@ import * as schema from "@/db/schema";
 
 declare global {
   var softaiDbReady: Promise<void> | undefined;
-  var softaiChatDbReady: Promise<void> | undefined;
 }
 
 const env = getEnv();
@@ -20,41 +19,34 @@ async function run(statement: string) {
   await db.execute(drizzleSql.raw(statement));
 }
 
+async function runAll(statements: string[]) {
+  for (const statement of statements) {
+    await run(statement);
+  }
+}
+
 export async function ensureDatabase() {
   if (!db) {
     return;
   }
 
   if (!globalThis.softaiDbReady) {
-    globalThis.softaiDbReady = (async () => {
-      await run(
-        "DO $$ BEGIN CREATE TYPE project_status AS ENUM ('draft','storyboard_ready','review_needed','rendering','completed','failed','blocked'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;",
-      );
-      await run(
-        "DO $$ BEGIN CREATE TYPE job_type AS ENUM ('storyboard','image','video'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;",
-      );
-      await run(
-        "DO $$ BEGIN CREATE TYPE job_status AS ENUM ('queued','submitted','processing','completed','failed','refunded'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;",
-      );
-      await run(
-        "DO $$ BEGIN CREATE TYPE output_type AS ENUM ('scene_image','final_video','thumbnail'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;",
-      );
-      await run(
-        "DO $$ BEGIN CREATE TYPE avatar_policy_state AS ENUM ('self_declared','third_party_declared','ai_generated','flagged'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;",
-      );
-
-      await run(`
-        CREATE TABLE IF NOT EXISTS users (
+    const ready = (async () => {
+      await runAll([
+        "DO $$ BEGIN CREATE TYPE project_status AS ENUM ('draft','storyboard_ready','review_needed','rendering','completed','failed','blocked'); EXCEPTION WHEN duplicate_object THEN NULL; END $$",
+        "DO $$ BEGIN CREATE TYPE job_type AS ENUM ('storyboard','image','video'); EXCEPTION WHEN duplicate_object THEN NULL; END $$",
+        "DO $$ BEGIN CREATE TYPE job_status AS ENUM ('queued','submitted','processing','completed','failed','refunded'); EXCEPTION WHEN duplicate_object THEN NULL; END $$",
+        "DO $$ BEGIN CREATE TYPE output_type AS ENUM ('scene_image','final_video','thumbnail'); EXCEPTION WHEN duplicate_object THEN NULL; END $$",
+        "DO $$ BEGIN CREATE TYPE avatar_policy_state AS ENUM ('self_declared','third_party_declared','ai_generated','flagged'); EXCEPTION WHEN duplicate_object THEN NULL; END $$",
+        `CREATE TABLE IF NOT EXISTS users (
           id uuid PRIMARY KEY,
           clerk_user_id varchar(255) NOT NULL UNIQUE,
           email varchar(255) NOT NULL,
           name varchar(255) NOT NULL,
           banned_at timestamptz NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS subscriptions (
+        )`,
+        `CREATE TABLE IF NOT EXISTS subscriptions (
           id uuid PRIMARY KEY,
           user_id uuid NOT NULL,
           plan varchar(100) NOT NULL,
@@ -63,10 +55,8 @@ export async function ensureDatabase() {
           clerk_subscription_id varchar(255) NULL,
           current_period_end timestamptz NULL,
           monthly_credits integer NOT NULL DEFAULT 1000
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS credit_ledger (
+        )`,
+        `CREATE TABLE IF NOT EXISTS credit_ledger (
           id uuid PRIMARY KEY,
           user_id uuid NOT NULL,
           project_id uuid NULL,
@@ -74,10 +64,8 @@ export async function ensureDatabase() {
           amount integer NOT NULL,
           note text NOT NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS chat_conversations (
+        )`,
+        `CREATE TABLE IF NOT EXISTS chat_conversations (
           id uuid PRIMARY KEY,
           user_id uuid NOT NULL,
           project_id uuid NULL,
@@ -85,10 +73,8 @@ export async function ensureDatabase() {
           mode varchar(50) NOT NULL DEFAULT 'project_campaign',
           created_at timestamptz NOT NULL DEFAULT now(),
           updated_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS chat_messages (
+        )`,
+        `CREATE TABLE IF NOT EXISTS chat_messages (
           id uuid PRIMARY KEY,
           conversation_id uuid NOT NULL,
           user_id uuid NOT NULL,
@@ -96,42 +82,8 @@ export async function ensureDatabase() {
           content text NOT NULL,
           metadata jsonb NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        WITH ranked AS (
-          SELECT
-            id,
-            first_value(id) OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS keep_id,
-            row_number() OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS duplicate_rank
-          FROM chat_conversations
-          WHERE project_id IS NOT NULL
-        )
-        UPDATE chat_messages
-        SET conversation_id = ranked.keep_id
-        FROM ranked
-        WHERE chat_messages.conversation_id = ranked.id
-          AND ranked.duplicate_rank > 1;
-      `);
-      await run(`
-        WITH ranked AS (
-          SELECT
-            id,
-            row_number() OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS duplicate_rank
-          FROM chat_conversations
-          WHERE project_id IS NOT NULL
-        )
-        DELETE FROM chat_conversations
-        USING ranked
-        WHERE chat_conversations.id = ranked.id
-          AND ranked.duplicate_rank > 1;
-      `);
-      await run(`
-        CREATE UNIQUE INDEX IF NOT EXISTS chat_conversations_user_project_mode_unique
-        ON chat_conversations (user_id, project_id, mode);
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS clerk_webhook_events (
+        )`,
+        `CREATE TABLE IF NOT EXISTS clerk_webhook_events (
           id uuid PRIMARY KEY,
           event_id varchar(255) NOT NULL UNIQUE,
           type varchar(100) NOT NULL,
@@ -139,10 +91,8 @@ export async function ensureDatabase() {
           error text NULL,
           created_at timestamptz NOT NULL DEFAULT now(),
           processed_at timestamptz NULL
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS projects (
+        )`,
+        `CREATE TABLE IF NOT EXISTS projects (
           id uuid PRIMARY KEY,
           user_id uuid NOT NULL,
           status project_status NOT NULL DEFAULT 'draft',
@@ -158,11 +108,8 @@ export async function ensureDatabase() {
           review_notes text NOT NULL DEFAULT '',
           created_at timestamptz NOT NULL DEFAULT now(),
           updated_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run("ALTER TABLE projects ADD COLUMN IF NOT EXISTS language varchar(10) NOT NULL DEFAULT 'en';");
-      await run(`
-        CREATE TABLE IF NOT EXISTS storyboards (
+        )`,
+        `CREATE TABLE IF NOT EXISTS storyboards (
           id uuid PRIMARY KEY,
           project_id uuid NOT NULL,
           headline text NOT NULL,
@@ -171,10 +118,8 @@ export async function ensureDatabase() {
           status varchar(30) NOT NULL DEFAULT 'draft',
           created_at timestamptz NOT NULL DEFAULT now(),
           updated_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS scenes (
+        )`,
+        `CREATE TABLE IF NOT EXISTS scenes (
           id uuid PRIMARY KEY,
           storyboard_id uuid NOT NULL,
           project_id uuid NOT NULL,
@@ -185,10 +130,8 @@ export async function ensureDatabase() {
           overlay_text text NOT NULL,
           duration_seconds integer NOT NULL DEFAULT 5,
           image_url text NULL
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS generation_jobs (
+        )`,
+        `CREATE TABLE IF NOT EXISTS generation_jobs (
           id uuid PRIMARY KEY,
           project_id uuid NOT NULL,
           user_id uuid NOT NULL,
@@ -200,10 +143,8 @@ export async function ensureDatabase() {
           error_message text NULL,
           created_at timestamptz NOT NULL DEFAULT now(),
           updated_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS outputs (
+        )`,
+        `CREATE TABLE IF NOT EXISTS outputs (
           id uuid PRIMARY KEY,
           project_id uuid NOT NULL,
           user_id uuid NOT NULL,
@@ -213,10 +154,8 @@ export async function ensureDatabase() {
           metadata_tag varchar(255) NOT NULL,
           removed_at timestamptz NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS avatars (
+        )`,
+        `CREATE TABLE IF NOT EXISTS avatars (
           id uuid PRIMARY KEY,
           project_id uuid NOT NULL,
           user_id uuid NOT NULL,
@@ -226,10 +165,8 @@ export async function ensureDatabase() {
           policy_state avatar_policy_state NOT NULL,
           attested boolean NOT NULL DEFAULT false,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS brand_assets (
+        )`,
+        `CREATE TABLE IF NOT EXISTS brand_assets (
           id uuid PRIMARY KEY,
           project_id uuid NOT NULL,
           user_id uuid NOT NULL,
@@ -237,10 +174,8 @@ export async function ensureDatabase() {
           name varchar(255) NOT NULL,
           url text NOT NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS abuse_reports (
+        )`,
+        `CREATE TABLE IF NOT EXISTS abuse_reports (
           id uuid PRIMARY KEY,
           reporter_user_id uuid NOT NULL,
           project_id uuid NULL,
@@ -248,62 +183,33 @@ export async function ensureDatabase() {
           reason text NOT NULL,
           details text NOT NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS admin_actions (
+        )`,
+        `CREATE TABLE IF NOT EXISTS admin_actions (
           id uuid PRIMARY KEY,
           admin_user_id uuid NOT NULL,
           target_user_id uuid NOT NULL,
           action varchar(50) NOT NULL,
           details text NOT NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS audit_events (
+        )`,
+        `CREATE TABLE IF NOT EXISTS audit_events (
           id uuid PRIMARY KEY,
           user_id uuid NULL,
           project_id uuid NULL,
           event varchar(100) NOT NULL,
           payload jsonb NULL,
           created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`ALTER TABLE outputs ADD COLUMN IF NOT EXISTS removed_at timestamptz NULL;`);
-      await run(`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_payer_id varchar(255) NULL;`);
-      await run(`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_subscription_id varchar(255) NULL;`);
-      await run(`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS error text NULL;`);
-      await run(`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS processed_at timestamptz NULL;`);
-    })();
-  }
+        )`,
+        "ALTER TABLE projects ADD COLUMN IF NOT EXISTS language varchar(10) NOT NULL DEFAULT 'en'",
+        "ALTER TABLE outputs ADD COLUMN IF NOT EXISTS removed_at timestamptz NULL",
+        "ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_payer_id varchar(255) NULL",
+        "ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_subscription_id varchar(255) NULL",
+        "ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS error text NULL",
+        "ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS processed_at timestamptz NULL",
+      ]);
 
-  await globalThis.softaiDbReady;
-
-  if (!globalThis.softaiChatDbReady) {
-    globalThis.softaiChatDbReady = (async () => {
-      await run(`
-        CREATE TABLE IF NOT EXISTS chat_conversations (
-          id uuid PRIMARY KEY,
-          user_id uuid NOT NULL,
-          project_id uuid NULL,
-          title varchar(255) NOT NULL,
-          mode varchar(50) NOT NULL DEFAULT 'project_campaign',
-          created_at timestamptz NOT NULL DEFAULT now(),
-          updated_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
-      await run(`
-        CREATE TABLE IF NOT EXISTS chat_messages (
-          id uuid PRIMARY KEY,
-          conversation_id uuid NOT NULL,
-          user_id uuid NOT NULL,
-          role varchar(20) NOT NULL,
-          content text NOT NULL,
-          metadata jsonb NULL,
-          created_at timestamptz NOT NULL DEFAULT now()
-        );
-      `);
+      // The Neon HTTP driver rejects multiple commands in a prepared statement,
+      // so keep each schema migration statement as a separate execution.
       await run(`
         WITH ranked AS (
           SELECT
@@ -337,9 +243,16 @@ export async function ensureDatabase() {
         ON chat_conversations (user_id, project_id, mode);
       `);
     })();
+    const retryableReady = ready.catch((error) => {
+      if (globalThis.softaiDbReady === retryableReady) {
+        delete globalThis.softaiDbReady;
+      }
+      throw error;
+    });
+    globalThis.softaiDbReady = retryableReady;
   }
 
-  await globalThis.softaiChatDbReady;
+  await globalThis.softaiDbReady;
 }
 
 export function databaseEnabled() {
