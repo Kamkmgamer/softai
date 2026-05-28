@@ -3,7 +3,7 @@ import { getEnv } from "@/lib/env";
 import { getProjectBundle } from "@/lib/store";
 
 type ResolvedVideo =
-  | { kind: "data"; contentType: string; body: Uint8Array }
+  | { kind: "data"; contentType: string; body: Buffer }
   | { kind: "remote"; url: string };
 
 export async function GET(
@@ -26,7 +26,7 @@ export async function GET(
     }
 
     if (resolved.kind === "data") {
-      return new Response(resolved.body, {
+      return new Response(resolved.body as BodyInit, {
         headers: {
           "Content-Type": resolved.contentType,
           "Cache-Control": "private, max-age=300",
