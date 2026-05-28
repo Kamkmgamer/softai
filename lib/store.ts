@@ -3,7 +3,7 @@ import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 import * as schema from "@/db/schema";
 import { CREDIT_COSTS, DEFAULT_MONTHLY_CREDITS, DEFAULT_PLAN_NAME, SOFTAI_METADATA_TAG } from "@/lib/constants";
 import { getBillingPlanDisplayName } from "@/lib/billing";
-import { db, databaseEnabled, ensureDatabase } from "@/lib/db";
+import { db, databaseEnabled, ensureDatabase, neonSql } from "@/lib/db";
 import type {
   AbuseReportRecord,
   AdminActionRecord,
@@ -13,6 +13,8 @@ import type {
   AvatarRecord,
   AvatarSource,
   BrandAssetRecord,
+  ChatConversationRecord,
+  ChatMessageRecord,
   CreditLedgerRecord,
   DashboardStats,
   GenerationJobRecord,
@@ -35,6 +37,8 @@ type DatabaseState = {
   subscriptions: SubscriptionRecord[];
   clerkWebhookEvents: ClerkWebhookEventRecord[];
   creditLedger: CreditLedgerRecord[];
+  chatConversations: ChatConversationRecord[];
+  chatMessages: ChatMessageRecord[];
   projects: ProjectRecord[];
   brandAssets: BrandAssetRecord[];
   avatars: AvatarRecord[];
@@ -120,6 +124,28 @@ function createSeedStore(): DatabaseState {
         reason: "storyboard_burn",
         amount: -CREDIT_COSTS.storyboard,
         note: "Generated starter storyboard",
+        createdAt,
+      },
+    ],
+    chatConversations: [
+      {
+        id: "chat_demo_1",
+        userId,
+        projectId,
+        title: "Launch Week Ad assistant",
+        mode: "project_campaign",
+        createdAt,
+        updatedAt: createdAt,
+      },
+    ],
+    chatMessages: [
+      {
+        id: "chat_message_demo_1",
+        conversationId: "chat_demo_1",
+        userId,
+        role: "assistant",
+        content: "Ask me to improve the hook, rewrite the offer, generate ad angles, or tighten the script for this campaign.",
+        metadata: null,
         createdAt,
       },
     ],
@@ -237,6 +263,8 @@ function getState() {
   if (!globalThis.softaiStore) {
     globalThis.softaiStore = createSeedStore();
   }
+  globalThis.softaiStore.chatConversations ??= [];
+  globalThis.softaiStore.chatMessages ??= [];
   return globalThis.softaiStore;
 }
 
@@ -292,6 +320,30 @@ function mapCredit(row: typeof schema.creditLedger.$inferSelect): CreditLedgerRe
     reason: row.reason as CreditLedgerRecord["reason"],
     amount: row.amount,
     note: row.note,
+    createdAt: toIso(row.createdAt) ?? now(),
+  };
+}
+
+function mapChatConversation(row: typeof schema.chatConversations.$inferSelect): ChatConversationRecord {
+  return {
+    id: row.id,
+    userId: row.userId,
+    projectId: row.projectId,
+    title: row.title,
+    mode: row.mode as ChatConversationRecord["mode"],
+    createdAt: toIso(row.createdAt) ?? now(),
+    updatedAt: toIso(row.updatedAt) ?? now(),
+  };
+}
+
+function mapChatMessage(row: typeof schema.chatMessages.$inferSelect): ChatMessageRecord {
+  return {
+    id: row.id,
+    conversationId: row.conversationId,
+    userId: row.userId,
+    role: row.role as ChatMessageRecord["role"],
+    content: row.content,
+    metadata: row.metadata,
     createdAt: toIso(row.createdAt) ?? now(),
   };
 }
@@ -1017,6 +1069,150 @@ export async function createAbuseReport(reporterUserId: string, input: Pick<Abus
   return { id, reporterUserId, ...input, projectId: input.projectId ?? null, outputId: input.outputId ?? null, createdAt: now() };
 }
 
+export async function getOrCreateProjectChatConversation(userId: string, projectId: string) {
+  const bundle = await getProjectBundle(userId, projectId);
+  if (!bundle) return null;
+
+  if (!databaseEnabled() || !db) {
+    const state = getState();
+    const existing = state.chatConversations.find((entry) => entry.userId === userId && entry.projectId === projectId && entry.mode === "project_campaign");
+    if (existing) return existing;
+
+    const timestamp = now();
+    const conversation: ChatConversationRecord = {
+      id: randomUUID(),
+      userId,
+      projectId,
+      title: `${bundle.project.title} assistant`,
+      mode: "project_campaign",
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+    state.chatConversations.unshift(conversation);
+    await addAuditEvent(userId, projectId, "chat.conversation.created", { conversationId: conversation.id });
+    return conversation;
+  }
+
+  await ensureDatabase();
+  const existing = await db.query.chatConversations.findFirst({
+    where: and(eq(schema.chatConversations.userId, userId), eq(schema.chatConversations.projectId, projectId), eq(schema.chatConversations.mode, "project_campaign")),
+    orderBy: [desc(schema.chatConversations.updatedAt)],
+  });
+  if (existing) return mapChatConversation(existing);
+
+  const id = randomUUID();
+  await db.insert(schema.chatConversations).values({
+    id,
+    userId,
+    projectId,
+    title: `${bundle.project.title} assistant`,
+    mode: "project_campaign",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }).onConflictDoNothing({
+    target: [schema.chatConversations.userId, schema.chatConversations.projectId, schema.chatConversations.mode],
+  });
+
+  const conversation = await db.query.chatConversations.findFirst({
+    where: and(eq(schema.chatConversations.userId, userId), eq(schema.chatConversations.projectId, projectId), eq(schema.chatConversations.mode, "project_campaign")),
+  });
+
+  if (!conversation) {
+    throw new Error("Failed to create project chat conversation.");
+  }
+
+  if (conversation.id === id) {
+    await addAuditEvent(userId, projectId, "chat.conversation.created", { conversationId: id });
+  }
+
+  return mapChatConversation(conversation);
+}
+
+export async function getChatConversation(userId: string, conversationId: string) {
+  if (!databaseEnabled() || !db) {
+    return getState().chatConversations.find((entry) => entry.id === conversationId && entry.userId === userId) ?? null;
+  }
+
+  await ensureDatabase();
+  const row = await db.query.chatConversations.findFirst({
+    where: and(eq(schema.chatConversations.id, conversationId), eq(schema.chatConversations.userId, userId)),
+  });
+  return row ? mapChatConversation(row) : null;
+}
+
+export async function listChatMessages(userId: string, conversationId: string) {
+  const conversation = await getChatConversation(userId, conversationId);
+  if (!conversation) return [];
+
+  if (!databaseEnabled() || !db) {
+    return getState().chatMessages
+      .filter((entry) => entry.conversationId === conversationId)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
+  await ensureDatabase();
+  const rows = await db.query.chatMessages.findMany({
+    where: eq(schema.chatMessages.conversationId, conversationId),
+    orderBy: [asc(schema.chatMessages.createdAt)],
+  });
+  return rows.map(mapChatMessage);
+}
+
+export async function createChatMessage(
+  userId: string,
+  input: Pick<ChatMessageRecord, "conversationId" | "role" | "content"> & { metadata?: unknown },
+) {
+  const conversation = await getChatConversation(userId, input.conversationId);
+  if (!conversation) return null;
+
+  if (!databaseEnabled() || !db) {
+    const timestamp = now();
+    const message: ChatMessageRecord = {
+      id: randomUUID(),
+      conversationId: input.conversationId,
+      userId,
+      role: input.role,
+      content: input.content,
+      metadata: input.metadata ?? null,
+      createdAt: timestamp,
+    };
+    getState().chatMessages.push(message);
+    conversation.updatedAt = timestamp;
+    return message;
+  }
+
+  await ensureDatabase();
+  const id = randomUUID();
+  await db.insert(schema.chatMessages).values({
+    id,
+    conversationId: input.conversationId,
+    userId,
+    role: input.role,
+    content: input.content,
+    metadata: input.metadata ?? null,
+    createdAt: new Date(),
+  });
+  await db.update(schema.chatConversations).set({ updatedAt: new Date() }).where(eq(schema.chatConversations.id, input.conversationId));
+  return { id, conversationId: input.conversationId, userId, role: input.role, content: input.content, metadata: input.metadata ?? null, createdAt: now() };
+}
+
+export async function deleteChatMessage(userId: string, messageId: string) {
+  if (!databaseEnabled() || !db) {
+    const state = getState();
+    const initialLength = state.chatMessages.length;
+    state.chatMessages = state.chatMessages.filter((entry) => entry.id !== messageId || entry.userId !== userId);
+    return state.chatMessages.length !== initialLength;
+  }
+
+  await ensureDatabase();
+  const deleted = await db
+    .delete(schema.chatMessages)
+    .where(and(eq(schema.chatMessages.id, messageId), eq(schema.chatMessages.userId, userId)))
+    .returning({ id: schema.chatMessages.id });
+
+  return deleted.length > 0;
+}
+
 export async function createAdminAction(adminUserId: string, input: Pick<AdminActionRecord, "targetUserId" | "action" | "details">) {
   if (!databaseEnabled() || !db) {
     const record: AdminActionRecord = { id: randomUUID(), adminUserId, ...input, createdAt: now() };
@@ -1350,6 +1546,45 @@ export async function addCreditEvent(
     note: input.note,
     createdAt: new Date(),
   });
+  return { id, userId, projectId: input.projectId ?? null, reason: input.reason, amount: input.amount, note: input.note, createdAt: now() };
+}
+
+export async function addCreditEventIfSufficient(
+  userId: string,
+  input: { projectId?: string | null; reason: CreditLedgerRecord["reason"]; amount: number; note: string },
+) {
+  if (input.amount >= 0) {
+    return addCreditEvent(userId, input);
+  }
+
+  if (!databaseEnabled() || !db || !neonSql) {
+    const balance = await getCreditBalance(userId);
+    if (balance + input.amount < 0) {
+      throw new Error(`Insufficient credits. Required ${Math.abs(input.amount)}, available ${balance}.`);
+    }
+    const record: CreditLedgerRecord = { id: randomUUID(), userId, projectId: input.projectId ?? null, reason: input.reason, amount: input.amount, note: input.note, createdAt: now() };
+    getState().creditLedger.unshift(record);
+    return record;
+  }
+
+  await ensureDatabase();
+  const id = randomUUID();
+  const requiredCredits = Math.abs(input.amount);
+  const [, insertedRows] = await neonSql.transaction((tx) => [
+    tx`select pg_advisory_xact_lock(hashtext(${userId}))`,
+    tx`
+      insert into credit_ledger (id, user_id, project_id, reason, amount, note, created_at)
+      select ${id}::uuid, ${userId}::uuid, ${input.projectId ?? null}::uuid, ${input.reason}, ${input.amount}, ${input.note}, now()
+      where (select coalesce(sum(amount), 0) from credit_ledger where user_id = ${userId}::uuid) >= ${requiredCredits}
+      returning id
+    `,
+  ]);
+
+  if (insertedRows.length === 0) {
+    const balance = await getCreditBalance(userId);
+    throw new Error(`Insufficient credits. Required ${requiredCredits}, available ${balance}.`);
+  }
+
   return { id, userId, projectId: input.projectId ?? null, reason: input.reason, amount: input.amount, note: input.note, createdAt: now() };
 }
 

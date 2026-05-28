@@ -35,6 +35,8 @@ export type AvatarSource = "single_photo" | "ai_person";
 export type CreditReason =
   | "grant"
   | "storyboard_burn"
+  | "chat_hold"
+  | "chat_burn"
   | "image_hold"
   | "image_burn"
   | "video_hold"
@@ -69,6 +71,28 @@ export type CreditLedgerRecord = {
   reason: CreditReason;
   amount: number;
   note: string;
+  createdAt: string;
+};
+
+export type ChatRole = "user" | "assistant" | "system";
+
+export type ChatConversationRecord = {
+  id: string;
+  userId: string;
+  projectId: string | null;
+  title: string;
+  mode: "project_campaign" | "general";
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ChatMessageRecord = {
+  id: string;
+  conversationId: string;
+  userId: string;
+  role: ChatRole;
+  content: string;
+  metadata: unknown;
   createdAt: string;
 };
 

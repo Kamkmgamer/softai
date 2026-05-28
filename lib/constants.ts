@@ -1,5 +1,6 @@
 export const CREDIT_COSTS = {
   storyboard: 25,
+  chatResponse: 10,
   imageBatch: 120,
   videoRender: 300,
 } as const;

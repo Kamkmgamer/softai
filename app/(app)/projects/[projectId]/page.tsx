@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectActions } from "@/components/project-actions";
+import { ProjectAssistantPanel } from "@/components/project-assistant-panel";
 import { ProjectInputs } from "@/components/project-inputs";
 import { PageHeader, StatusBadge, ButtonLink, SectionHeader, DataRow, EmptyState } from "@/components/ui";
 import { getAppSession } from "@/lib/auth";
-import { getProjectBundle } from "@/lib/store";
+import { getOrCreateProjectChatConversation, getProjectBundle, listChatMessages } from "@/lib/store";
 import { ImageIcon } from "lucide-react";
 
 export default async function ProjectDetailPage({
@@ -19,6 +20,9 @@ export default async function ProjectDetailPage({
   if (!bundle) {
     notFound();
   }
+
+  const conversation = await getOrCreateProjectChatConversation(session.userId, projectId);
+  const chatMessages = conversation ? await listChatMessages(session.userId, conversation.id) : [];
 
   return (
     <div className="space-y-10">
@@ -131,6 +135,15 @@ export default async function ProjectDetailPage({
           </section>
           
           <ProjectInputs projectId={projectId} />
+
+          {conversation ? (
+            <ProjectAssistantPanel
+              key={conversation.id}
+              conversationId={conversation.id}
+              projectLanguage={bundle.project.language}
+              initialMessages={chatMessages}
+            />
+          ) : null}
         </div>
       </div>
     </div>

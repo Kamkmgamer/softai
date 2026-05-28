@@ -6,13 +6,14 @@ import * as schema from "@/db/schema";
 
 declare global {
   var softaiDbReady: Promise<void> | undefined;
+  var softaiChatDbReady: Promise<void> | undefined;
 }
 
 const env = getEnv();
 const hasDatabase = Boolean(env.databaseUrl);
 
-const client = hasDatabase ? neon(env.databaseUrl as string) : null;
-export const db = hasDatabase && client ? drizzle(client, { schema }) : null;
+export const neonSql = hasDatabase ? neon(env.databaseUrl as string) : null;
+export const db = hasDatabase && neonSql ? drizzle(neonSql, { schema }) : null;
 
 async function run(statement: string) {
   if (!db) return;
@@ -74,6 +75,60 @@ export async function ensureDatabase() {
           note text NOT NULL,
           created_at timestamptz NOT NULL DEFAULT now()
         );
+      `);
+      await run(`
+        CREATE TABLE IF NOT EXISTS chat_conversations (
+          id uuid PRIMARY KEY,
+          user_id uuid NOT NULL,
+          project_id uuid NULL,
+          title varchar(255) NOT NULL,
+          mode varchar(50) NOT NULL DEFAULT 'project_campaign',
+          created_at timestamptz NOT NULL DEFAULT now(),
+          updated_at timestamptz NOT NULL DEFAULT now()
+        );
+      `);
+      await run(`
+        CREATE TABLE IF NOT EXISTS chat_messages (
+          id uuid PRIMARY KEY,
+          conversation_id uuid NOT NULL,
+          user_id uuid NOT NULL,
+          role varchar(20) NOT NULL,
+          content text NOT NULL,
+          metadata jsonb NULL,
+          created_at timestamptz NOT NULL DEFAULT now()
+        );
+      `);
+      await run(`
+        WITH ranked AS (
+          SELECT
+            id,
+            first_value(id) OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS keep_id,
+            row_number() OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS duplicate_rank
+          FROM chat_conversations
+          WHERE project_id IS NOT NULL
+        )
+        UPDATE chat_messages
+        SET conversation_id = ranked.keep_id
+        FROM ranked
+        WHERE chat_messages.conversation_id = ranked.id
+          AND ranked.duplicate_rank > 1;
+      `);
+      await run(`
+        WITH ranked AS (
+          SELECT
+            id,
+            row_number() OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS duplicate_rank
+          FROM chat_conversations
+          WHERE project_id IS NOT NULL
+        )
+        DELETE FROM chat_conversations
+        USING ranked
+        WHERE chat_conversations.id = ranked.id
+          AND ranked.duplicate_rank > 1;
+      `);
+      await run(`
+        CREATE UNIQUE INDEX IF NOT EXISTS chat_conversations_user_project_mode_unique
+        ON chat_conversations (user_id, project_id, mode);
       `);
       await run(`
         CREATE TABLE IF NOT EXISTS clerk_webhook_events (
@@ -224,6 +279,67 @@ export async function ensureDatabase() {
   }
 
   await globalThis.softaiDbReady;
+
+  if (!globalThis.softaiChatDbReady) {
+    globalThis.softaiChatDbReady = (async () => {
+      await run(`
+        CREATE TABLE IF NOT EXISTS chat_conversations (
+          id uuid PRIMARY KEY,
+          user_id uuid NOT NULL,
+          project_id uuid NULL,
+          title varchar(255) NOT NULL,
+          mode varchar(50) NOT NULL DEFAULT 'project_campaign',
+          created_at timestamptz NOT NULL DEFAULT now(),
+          updated_at timestamptz NOT NULL DEFAULT now()
+        );
+      `);
+      await run(`
+        CREATE TABLE IF NOT EXISTS chat_messages (
+          id uuid PRIMARY KEY,
+          conversation_id uuid NOT NULL,
+          user_id uuid NOT NULL,
+          role varchar(20) NOT NULL,
+          content text NOT NULL,
+          metadata jsonb NULL,
+          created_at timestamptz NOT NULL DEFAULT now()
+        );
+      `);
+      await run(`
+        WITH ranked AS (
+          SELECT
+            id,
+            first_value(id) OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS keep_id,
+            row_number() OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS duplicate_rank
+          FROM chat_conversations
+          WHERE project_id IS NOT NULL
+        )
+        UPDATE chat_messages
+        SET conversation_id = ranked.keep_id
+        FROM ranked
+        WHERE chat_messages.conversation_id = ranked.id
+          AND ranked.duplicate_rank > 1;
+      `);
+      await run(`
+        WITH ranked AS (
+          SELECT
+            id,
+            row_number() OVER (PARTITION BY user_id, project_id, mode ORDER BY updated_at DESC, created_at DESC, id) AS duplicate_rank
+          FROM chat_conversations
+          WHERE project_id IS NOT NULL
+        )
+        DELETE FROM chat_conversations
+        USING ranked
+        WHERE chat_conversations.id = ranked.id
+          AND ranked.duplicate_rank > 1;
+      `);
+      await run(`
+        CREATE UNIQUE INDEX IF NOT EXISTS chat_conversations_user_project_mode_unique
+        ON chat_conversations (user_id, project_id, mode);
+      `);
+    })();
+  }
+
+  await globalThis.softaiChatDbReady;
 }
 
 export function databaseEnabled() {

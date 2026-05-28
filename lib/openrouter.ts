@@ -4,6 +4,12 @@ import { SOFTAI_METADATA_TAG } from "@/lib/constants";
 const DEFAULT_TEXT_MODEL = "minimax/minimax-m2.5:free";
 const DEFAULT_IMAGE_MODEL = "google/gemini-2.5-flash-image";
 const DEFAULT_VIDEO_MODEL = "x-ai/grok-imagine-video";
+const CHAT_UNAVAILABLE_MESSAGE = "The assistant is temporarily unavailable. Please try again in a moment.";
+
+export type ChatCompletionMessage = {
+  role: "system" | "user" | "assistant";
+  content: string;
+};
 
 type StoryboardInput = {
   productName: string;
@@ -189,6 +195,101 @@ function extractVideoUrl(payload: unknown): string | null {
   return null;
 }
 
+function extractStreamDelta(payload: unknown) {
+  if (!payload || typeof payload !== "object") return "";
+  const choices = Array.isArray((payload as Record<string, unknown>).choices)
+    ? (payload as Record<string, unknown>).choices as unknown[]
+    : [];
+  const firstChoice = choices[0];
+  if (!firstChoice || typeof firstChoice !== "object") return "";
+  const delta = (firstChoice as Record<string, unknown>).delta;
+  if (!delta || typeof delta !== "object") return "";
+  const content = (delta as Record<string, unknown>).content;
+  return typeof content === "string" ? content : "";
+}
+
+function extractProviderErrorMessage(payload: unknown) {
+  if (!payload || typeof payload !== "object") return null;
+
+  const error = (payload as Record<string, unknown>).error;
+  if (typeof error === "string" && error.trim()) return error;
+  if (error && typeof error === "object") {
+    const message = (error as Record<string, unknown>).message;
+    if (typeof message === "string" && message.trim()) return message;
+  }
+
+  return null;
+}
+
+function getOpenRouterTextModel() {
+  return process.env.OPENROUTER_TEXT_MODEL ?? DEFAULT_TEXT_MODEL;
+}
+
+export function getChatUnavailableMessage() {
+  return CHAT_UNAVAILABLE_MESSAGE;
+}
+
+export async function* streamChatCompletion(messages: ChatCompletionMessage[], signal?: AbortSignal) {
+  const env = getEnv();
+
+  if (!env.openRouterApiKey) {
+    const fallback = "I can help refine this campaign. Ask for ad angles, a stronger hook, a clearer offer, CTA options, script edits, or a short summary of the current project.";
+    for (const word of fallback.split(" ")) {
+      yield `${word} `;
+    }
+    return;
+  }
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    signal,
+    headers: {
+      Authorization: `Bearer ${env.openRouterApiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": env.appUrl,
+      "X-Title": "SoftAI",
+    },
+    body: JSON.stringify({
+      model: getOpenRouterTextModel(),
+      stream: true,
+      messages,
+    }),
+  });
+
+  if (!response.ok || !response.body) {
+    const payload = await response.json().catch(() => null);
+    throw new Error(payload?.error?.message ?? payload?.error ?? `OpenRouter chat request failed with status ${response.status}.`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
+      const data = trimmed.slice(5).trim();
+      if (!data || data === "[DONE]") continue;
+      const payload = JSON.parse(data);
+      const providerErrorMessage = extractProviderErrorMessage(payload);
+      if (providerErrorMessage) {
+        throw new Error(providerErrorMessage);
+      }
+
+      const delta = extractStreamDelta(payload);
+      if (delta) yield delta;
+    }
+  }
+}
+
 export async function generateStoryboard(input: StoryboardInput) {
   const env = getEnv();
 
@@ -214,7 +315,7 @@ export async function generateStoryboard(input: StoryboardInput) {
       "X-Title": "SoftAI",
     },
     body: JSON.stringify({
-      model: DEFAULT_TEXT_MODEL,
+      model: getOpenRouterTextModel(),
       response_format: { type: "json_object" },
       messages: [
         {
@@ -237,7 +338,7 @@ export async function generateStoryboard(input: StoryboardInput) {
 
   return {
     ...storyboard,
-    provider: DEFAULT_TEXT_MODEL,
+    provider: getOpenRouterTextModel(),
     requestPayload: input,
     responsePayload: payload,
   };

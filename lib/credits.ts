@@ -1,5 +1,5 @@
 import { CREDIT_COSTS } from "@/lib/constants";
-import { addCreditEvent, getCreditBalance } from "@/lib/store";
+import { addCreditEvent, addCreditEventIfSufficient, getCreditBalance } from "@/lib/store";
 
 export async function requireCredits(userId: string, amount: number) {
   const balance = await getCreditBalance(userId);
@@ -16,6 +16,33 @@ export async function burnStoryboardCredits(userId: string, projectId: string) {
     reason: "storyboard_burn",
     amount: -CREDIT_COSTS.storyboard,
     note: "Storyboard generation",
+  });
+}
+
+export async function holdChatCredits(userId: string, projectId: string | null) {
+  return addCreditEventIfSufficient(userId, {
+    projectId,
+    reason: "chat_hold",
+    amount: -CREDIT_COSTS.chatResponse,
+    note: "Assistant response hold",
+  });
+}
+
+export function settleChatCredits(userId: string, projectId: string | null) {
+  return addCreditEvent(userId, {
+    projectId,
+    reason: "chat_burn",
+    amount: 0,
+    note: "Assistant response hold converted to burn",
+  });
+}
+
+export function refundChatCredits(userId: string, projectId: string | null) {
+  return addCreditEvent(userId, {
+    projectId,
+    reason: "refund",
+    amount: CREDIT_COSTS.chatResponse,
+    note: "Assistant response refund",
   });
 }
 

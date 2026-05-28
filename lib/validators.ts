@@ -72,3 +72,7 @@ export const adminCreditAdjustmentSchema = z.object({
   amount: z.number().int(),
   details: z.string().min(4),
 });
+
+export const chatMessageSchema = z.object({
+  content: z.string().trim().min(1).max(4000),
+});
