@@ -1,41 +1,36 @@
-import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
-import { Clock3, ImagePlus, Layers3, Play, Volume2 } from "lucide-react";
-import { MultiShotVideoProject } from "@/components/project-detail/multi-shot-video-project";
+import { Clock3, Layers3, Play, Volume2 } from "lucide-react";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
-import { getAppSession } from "@/lib/auth";
-import { localizePath } from "@/lib/i18n";
-import { getRequestLocale } from "@/lib/server-locale";
-import { getProjectPageData } from "@/lib/store";
+import type { ProjectBundle } from "@/lib/types";
 
-export default async function ProjectDetailPage({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) {
-  const [{ projectId }, locale, session] = await Promise.all([
-    params,
-    getRequestLocale(),
-    getAppSession(),
-  ]);
+type Props = {
+  projectId: string;
+  bundle: ProjectBundle;
+};
 
-  const { bundle } = await getProjectPageData(session.userId, projectId);
+type MultiShotMetadata = {
+  mode?: "auto" | "custom";
+  aspectRatio?: string;
+  resolution?: string;
+  duration?: string;
+  audioOn?: boolean;
+  firstFrameUrl?: string | null;
+};
 
-  if (!bundle) {
-    notFound();
-  }
+function getMultiShotMetadata(value: unknown): MultiShotMetadata {
+  if (!value || typeof value !== "object") return {};
+  return value as MultiShotMetadata;
+}
 
-  if (bundle.project.kind === "multi_shot_video") {
-    return <MultiShotVideoProject projectId={projectId} bundle={bundle} />;
-  }
-
+export function MultiShotVideoProject({ projectId, bundle }: Props) {
+  const metadata = getMultiShotMetadata(bundle.project.metadata);
   const storyboardReady = Boolean(bundle.storyboard && bundle.scenes.length > 0);
   const imagesReady = storyboardReady && bundle.scenes.every((scene) => scene.imageUrl);
   const finalVideo = bundle.outputs.find((output) => output.type === "final_video");
-  const posterUrl = bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ?? "/rendering-feature.png";
+  const firstFrameUrl = metadata.firstFrameUrl ?? bundle.assets.find((asset) => asset.name === "First frame reference")?.url ?? null;
+  const posterUrl = bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ?? firstFrameUrl ?? "/rendering-feature.png";
   const totalDuration = bundle.scenes.reduce((total, scene) => total + scene.durationSeconds, 0);
 
   return (
@@ -44,42 +39,55 @@ export default async function ProjectDetailPage({
         <div className="flex items-center justify-between gap-3 px-1">
           <div className="text-sm text-text-secondary">
             Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">Campaign Ad</strong>
+            <strong className="font-semibold text-text">Multi-Shot Video</strong>
           </div>
           <StatusBadge status={bundle.project.status} />
         </div>
 
         <div className="mt-5 space-y-2 px-1">
-          <p className="text-[13px] font-medium text-text">Describe your story</p>
-          <div className="flex min-h-[420px] flex-col rounded-xl border border-border bg-bg-subtle p-3">
+          <p className="text-[13px] font-medium text-text">Your prompt</p>
+          <div className="flex min-h-[260px] flex-col rounded-xl border border-border bg-bg-subtle p-3">
             <p className="flex-1 whitespace-pre-wrap text-[15px] leading-relaxed text-text-secondary">
               {bundle.project.script}
             </p>
-            <span className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-lg border border-border bg-surface px-2 py-1 text-xs font-medium text-text-secondary">
-              <ImagePlus className="h-3.5 w-3.5" />
-              First frame of video
-            </span>
           </div>
         </div>
 
         <div className="thin-scrollbar mt-4 flex-1 space-y-3 overflow-y-auto px-1 pr-2">
-          <BriefRow label="Product" value={bundle.project.productName} />
-          <BriefRow label="Offer" value={bundle.project.offer} />
-          <BriefRow label="CTA" value={bundle.project.cta} />
-          <BriefRow label="Audience" value={bundle.project.targetAudience} />
-          <BriefRow label="Voice" value={bundle.project.brandVoice} />
+          <BriefRow label="Mode" value={metadata.mode === "custom" ? "Custom shots" : "Auto"} />
+          <BriefRow label="Aspect" value={metadata.aspectRatio ?? "16:9"} />
+          <BriefRow label="Resolution" value={metadata.resolution ?? "720p"} />
+          <BriefRow label="Duration" value={metadata.duration ?? `${totalDuration || 10}s`} />
+          {bundle.storyboard ? (
+            <>
+              <BriefRow label="Headline" value={bundle.storyboard.headline} />
+              <BriefRow label="Hook" value={bundle.storyboard.hook} />
+            </>
+          ) : null}
+          {firstFrameUrl ? (
+            <div className="overflow-hidden rounded-xl border border-border bg-bg">
+              <Image src={firstFrameUrl} alt="First frame reference" width={640} height={360} className="h-32 w-full object-cover" />
+              <p className="px-3 py-2 text-xs font-medium text-text-secondary">First frame reference</p>
+            </div>
+          ) : null}
         </div>
 
         <div className="-mx-4 mt-4 border-t border-border bg-surface px-4 pt-3">
           <div className="mb-3 flex flex-wrap justify-end gap-2 text-xs font-semibold text-text-secondary">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><Volume2 className="h-3.5 w-3.5" />On</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><Layers3 className="h-3.5 w-3.5" />{bundle.scenes.length || 3} shots</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><Clock3 className="h-3.5 w-3.5" />{totalDuration || 10}s</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+              <Layers3 className="h-3.5 w-3.5" />
+              {bundle.scenes.length || 3} shots
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+              <Clock3 className="h-3.5 w-3.5" />
+              {metadata.duration ?? `${totalDuration || 10}s`}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+              <Volume2 className="h-3.5 w-3.5" />
+              {metadata.audioOn ? "On" : "Off"}
+            </span>
           </div>
-          <Link href={localizePath(`/projects/${projectId}/review`, locale)} className="btn btn-secondary mb-2 w-full">
-            Generate storyboard
-          </Link>
-          <ProjectActions projectId={projectId} canRenderImages={storyboardReady} canRenderVideo={imagesReady} />
+          <ProjectActions projectId={projectId} canRenderImages={storyboardReady} canRenderVideo={imagesReady} mode="multi-shot" />
         </div>
       </aside>
 
@@ -90,7 +98,7 @@ export default async function ProjectDetailPage({
               {bundle.project.title}
             </h1>
             <p className="mt-2 text-sm text-text-secondary">
-              Generate the storyboard, render images, then create the final video.
+              {finalVideo ? "Your generated video is ready." : "Generate the connected shots as one video."}
             </p>
           </div>
 

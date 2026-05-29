@@ -96,10 +96,13 @@ export type ChatMessageRecord = {
   createdAt: string;
 };
 
+export type ProjectKind = "campaign_ad" | "multi_shot_video";
+
 export type ProjectRecord = {
   id: string;
   userId: string;
   status: ProjectStatus;
+  kind: ProjectKind;
   title: string;
   productName: string;
   offer: string;
@@ -109,6 +112,7 @@ export type ProjectRecord = {
   platformTarget: "tiktok" | "instagram" | "youtube";
   language: "en" | "ar";
   script: string;
+  metadata: unknown;
   reviewNotes: string;
   createdAt: string;
   updatedAt: string;

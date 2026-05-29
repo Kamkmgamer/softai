@@ -24,6 +24,7 @@ import type {
   OutputRecord,
   OutputType,
   ProjectBundle,
+  ProjectKind,
   ProjectRecord,
   ProjectStatus,
   SceneRecord,
@@ -183,6 +184,7 @@ function createSeedStore(): DatabaseState {
         id: projectId,
         userId,
         status: "storyboard_ready",
+        kind: "campaign_ad",
         title: "Launch Week Ad",
         productName: "SoftAI Studio",
         offer: "20% off first campaign",
@@ -192,6 +194,7 @@ function createSeedStore(): DatabaseState {
         platformTarget: "tiktok",
         language: "en",
         script: "Stop paying agencies to learn what converts. Launch a vertical ad in minutes.",
+        metadata: null,
         reviewNotes: "",
         createdAt,
         updatedAt: createdAt,
@@ -382,6 +385,7 @@ function mapProject(row: typeof schema.projects.$inferSelect): ProjectRecord {
     id: row.id,
     userId: row.userId,
     status: row.status,
+    kind: (row.kind as ProjectRecord["kind"]) ?? "campaign_ad",
     title: row.title,
     productName: row.productName,
     offer: row.offer,
@@ -391,6 +395,7 @@ function mapProject(row: typeof schema.projects.$inferSelect): ProjectRecord {
     platformTarget: row.platformTarget as ProjectRecord["platformTarget"],
     language: row.language as ProjectRecord["language"],
     script: row.script,
+    metadata: row.metadata ?? null,
     reviewNotes: row.reviewNotes,
     createdAt: toIso(row.createdAt) ?? now(),
     updatedAt: toIso(row.updatedAt) ?? now(),
@@ -949,14 +954,18 @@ export async function getProjectPageData(userId: string, projectId: string): Pro
 
 export async function createProject(
   userId: string,
-  input: Pick<ProjectRecord, "title" | "productName" | "offer" | "cta" | "targetAudience" | "brandVoice" | "platformTarget" | "language" | "script">,
+  input: Pick<ProjectRecord, "title" | "productName" | "offer" | "cta" | "targetAudience" | "brandVoice" | "platformTarget" | "language" | "script"> & { kind?: ProjectKind; metadata?: unknown },
 ) {
+  const kind = input.kind ?? "campaign_ad";
+  const metadata = input.metadata ?? null;
+
   if (!databaseEnabled() || !db) {
     const createdAt = now();
     const project: ProjectRecord = {
       id: randomUUID(),
       userId,
       status: "draft",
+      kind,
       title: input.title,
       productName: input.productName,
       offer: input.offer,
@@ -966,6 +975,7 @@ export async function createProject(
       platformTarget: input.platformTarget,
       language: input.language,
       script: input.script,
+      metadata,
       reviewNotes: "",
       createdAt,
       updatedAt: createdAt,
@@ -981,6 +991,7 @@ export async function createProject(
     id,
     userId,
     status: "draft",
+    kind,
     title: input.title,
     productName: input.productName,
     offer: input.offer,
@@ -990,6 +1001,7 @@ export async function createProject(
     platformTarget: input.platformTarget,
     language: input.language,
     script: input.script,
+    metadata,
     reviewNotes: "",
     createdAt: new Date(),
     updatedAt: new Date(),

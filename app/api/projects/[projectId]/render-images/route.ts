@@ -36,6 +36,15 @@ export async function POST(
 
     const jobs = await Promise.all(
       bundle.scenes.map(async (scene) => {
+        if (scene.imageUrl) {
+          return {
+            imageUrl: scene.imageUrl,
+            provider: "existing-scene-image",
+            requestPayload: { sceneId: scene.id, skipped: true },
+            responsePayload: null,
+          };
+        }
+
         const route = getProviderRoute("image");
         const prompt = buildSceneImagePrompt({
           headline: bundle.storyboard?.headline ?? bundle.project.title,

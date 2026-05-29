@@ -9,7 +9,7 @@ export async function requireCredits(userId: string, amount: number) {
   }
 }
 
-export async function burnStoryboardCredits(userId: string, projectId: string) {
+export async function burnStoryboardCredits(userId: string, projectId: string | null) {
   await requireCredits(userId, CREDIT_COSTS.storyboard);
   return addCreditEvent(userId, {
     projectId,

@@ -73,6 +73,35 @@ export const adminCreditAdjustmentSchema = z.object({
   details: z.string().min(4),
 });
 
+export const multiShotVideoSchema = z.discriminatedUnion("mode", [
+  z.object({
+    mode: z.literal("auto"),
+    prompt: z.string().min(10).max(4000),
+    firstFrameUrl: z.string().url().nullable().optional(),
+    aspectRatio: z.enum(["16:9", "9:16", "1:1"]).default("16:9"),
+    duration: z.enum(["10s", "15s", "20s"]).default("10s"),
+    resolution: z.enum(["720p", "1080p"]).default("720p"),
+    audioOn: z.boolean().default(false),
+  }),
+  z.object({
+    mode: z.literal("custom"),
+    shots: z
+      .array(
+        z.object({
+          order: z.number().int().min(1).max(5),
+          prompt: z.string().min(4).max(2000),
+        }),
+      )
+      .min(2)
+      .max(5),
+    firstFrameUrl: z.string().url().nullable().optional(),
+    aspectRatio: z.enum(["16:9", "9:16", "1:1"]).default("16:9"),
+    duration: z.enum(["10s", "15s", "20s"]).default("10s"),
+    resolution: z.enum(["720p", "1080p"]).default("720p"),
+    audioOn: z.boolean().default(false),
+  }),
+]);
+
 export const chatMessageSchema = z.object({
   content: z.string().trim().min(1).max(4000),
 });

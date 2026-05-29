@@ -401,6 +401,130 @@ export async function* streamChatCompletion(messages: ChatCompletionMessage[], s
   throw new Error("All chat models are currently unavailable.");
 }
 
+type MultiShotAutoInput = {
+  prompt: string;
+  language: "en" | "ar";
+};
+
+function fallbackMultiShotFromPrompt(input: MultiShotAutoInput) {
+  if (input.language === "ar") {
+    return {
+      headline: input.prompt.slice(0, 100),
+      hook: input.prompt,
+      cta: "شاهد النتيجة",
+      scenes: Array.from({ length: 5 }, (_, i) => ({
+        title: `مشهد ${i + 1}`,
+        narration: "",
+        visualDirection: input.prompt,
+        overlayText: "",
+        durationSeconds: 5,
+      })),
+    };
+  }
+
+  return {
+    headline: input.prompt.slice(0, 100),
+    hook: input.prompt,
+    cta: "Watch the result",
+    scenes: Array.from({ length: 5 }, (_, i) => ({
+      title: `Shot ${i + 1}`,
+      narration: "",
+      visualDirection: input.prompt,
+      overlayText: "",
+      durationSeconds: 5,
+    })),
+  };
+}
+
+function normalizeMultiShotStoryboard(value: unknown, fallback: ReturnType<typeof fallbackMultiShotFromPrompt>) {
+  const parsed = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const scenes = Array.isArray(parsed.scenes) ? parsed.scenes : [];
+  const normalizedScenes = scenes
+    .map((scene): GeneratedScene | null => {
+      if (!scene || typeof scene !== "object") return null;
+      const record = scene as Record<string, unknown>;
+      return {
+        title: textOrFallback(record.title, "Shot"),
+        narration: textOrFallback(record.narration, ""),
+        visualDirection: textOrFallback(record.visualDirection, fallback.hook),
+        overlayText: textOrFallback(record.overlayText, ""),
+        durationSeconds: typeof record.durationSeconds === "number" ? Math.min(Math.max(Math.round(record.durationSeconds), 3), 15) : 5,
+      };
+    })
+    .filter((scene): scene is GeneratedScene => Boolean(scene));
+
+  return {
+    headline: textOrFallback(parsed.headline, fallback.headline),
+    hook: textOrFallback(parsed.hook, fallback.hook),
+    cta: textOrFallback(parsed.cta, fallback.cta),
+    scenes: normalizedScenes.length >= 2 ? normalizedScenes.slice(0, 5) : fallback.scenes,
+  };
+}
+
+export async function generateMultiShotStoryboard(input: MultiShotAutoInput) {
+  const env = getEnv();
+  const fallback = fallbackMultiShotFromPrompt(input);
+
+  if (!env.openRouterApiKey) {
+    return {
+      ...fallback,
+      provider: "demo-fallback",
+      requestPayload: input,
+      responsePayload: null,
+    };
+  }
+
+  const languageInstruction = input.language === "ar"
+    ? "Write all user-facing copy in soft Modern Standard Arabic. Return Arabic narration, overlayText, headline, hook, and CTA."
+    : "Write clear English copy.";
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.openRouterApiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": env.appUrl,
+      "X-Title": "SoftAI",
+    },
+    body: JSON.stringify({
+      model: getConfiguredTextModel(),
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `You are a multi-shot video director. ${languageInstruction} Plan a sequence of up to 5 connected shots from the user's prompt. Each shot should have visual direction describing camera, movement, composition, and subject, not dialogue. The shots must feel like one cohesive sequence with continuity. Return strict JSON with keys headline, hook, cta, and scenes. scenes must be an array of 2 to 5 objects with title, narration, visualDirection, overlayText, durationSeconds.`,
+        },
+        {
+          role: "user",
+          content: `Sequence prompt: ${input.prompt}`,
+        },
+      ],
+    }),
+  });
+
+  const payload = await response.json();
+  const content = payload.choices?.[0]?.message?.content;
+  const parsed = typeof content === "string" ? JSON.parse(content) : content;
+  const storyboard = normalizeMultiShotStoryboard(parsed, fallback);
+
+  return {
+    ...storyboard,
+    provider: getConfiguredTextModel(),
+    requestPayload: input,
+    responsePayload: payload,
+  };
+}
+
+export function buildMultiShotScenesFromCustom(shots: Array<{ order: number; prompt: string }>) {
+  return shots.map((shot) => ({
+    title: `Shot ${shot.order}`,
+    narration: "",
+    visualDirection: shot.prompt,
+    overlayText: "",
+    durationSeconds: 5,
+  }));
+}
+
 export async function generateStoryboard(input: StoryboardInput) {
   const env = getEnv();
 

@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { StoryboardReviewForm } from "@/components/storyboard-review-form";
 import { PageHeader } from "@/components/ui";
 import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
@@ -19,6 +19,11 @@ export default async function ReviewPage({
 
   if (!bundle) {
     notFound();
+  }
+
+  // Multi-shot projects have storyboard pre-approved at creation; skip review
+  if (bundle.project.kind === "multi_shot_video") {
+    redirect(`/projects/${projectId}`);
   }
 
   if (!bundle.storyboard || bundle.scenes.length === 0) {
@@ -63,7 +68,7 @@ export default async function ReviewPage({
         title={`Review: ${bundle.project.title}`}
         description="Tighten the hook, narration, and visual direction before rendering."
       />
-      
+
       <StoryboardReviewForm projectId={projectId} initialBundle={bundle} />
     </div>
   );

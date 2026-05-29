@@ -3,186 +3,27 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  BookOpen,
-  Brush,
-  Clapperboard,
-  Megaphone,
-  Search,
-  Share2,
-  Wand2,
-} from "lucide-react";
+import { Search, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  type FeatureCategory,
+  type FeatureTile,
+  type StarterKit,
+  categories,
+  features,
+  modelOptions,
+  starterKits,
+  getDefaultFeatureForCategory,
+} from "@/lib/features";
 
-type FeatureCategory = "Starter Kits" | "Custom" | "Image" | "Video" | "Audio" | "Models";
-type StarterKit = "Film or shorts" | "Marketing" | "Social" | "Educational content" | "Experimental art";
-
-type FeatureTile = {
-  title: string;
-  description: string;
-  image: string;
-  category: Exclude<FeatureCategory, "Starter Kits">;
-  starterKit?: StarterKit;
-  implemented: boolean;
-  href?: string;
-  badge?: string;
-};
-
-const categories: FeatureCategory[] = ["Starter Kits", "Custom", "Image", "Video", "Audio", "Models"];
-
-const starterKits: Array<{
-  title: StarterKit;
-  description: string;
-  icon: typeof Clapperboard;
-}> = [
-  {
-    title: "Film or shorts",
-    description: "Scenes, characters, VFX & Narrative",
-    icon: Clapperboard,
-  },
-  {
-    title: "Marketing",
-    description: "Product, campaign & brand content",
-    icon: Megaphone,
-  },
-  {
-    title: "Social",
-    description: "Reels, TikToks & platform-ready content",
-    icon: Share2,
-  },
-  {
-    title: "Educational content",
-    description: "Animation & storytelling",
-    icon: BookOpen,
-  },
-  {
-    title: "Experimental art",
-    description: "Visual variations & new methods to create",
-    icon: Brush,
-  },
-];
-
-const features: FeatureTile[] = [
-  {
-    title: "Edit Studio",
-    description: "Use Aleph 2.0 to edit videos with natural language. Preview before you generate.",
-    image: "/hero-mockup.png",
-    category: "Video",
-    starterKit: "Film or shorts",
-    implemented: false,
-    badge: "New",
-  },
-  {
-    title: "Multi-Shot Video",
-    description: "Generate multi-shot videos from a single prompt.",
-    image: "/rendering-feature.png",
-    category: "Video",
-    starterKit: "Film or shorts",
-    implemented: true,
-  },
-  {
-    title: "Scene Builder",
-    description: "Craft your multi-shot scene step by step, see the look, then bring it to life.",
-    image: "/storyboard-feature.png",
-    category: "Video",
-    starterKit: "Film or shorts",
-    implemented: false,
-  },
-  {
-    title: "Upscale Video",
-    description: "Upscale video with Topaz AI.",
-    image: "/storyboard-feature.png",
-    category: "Video",
-    starterKit: "Film or shorts",
-    implemented: false,
-  },
-  {
-    title: "Performance Capture with Act-Two",
-    description: "Animate characters using driving performance videos.",
-    image: "/rendering-feature.png",
-    category: "Video",
-    starterKit: "Film or shorts",
-    implemented: false,
-  },
-  {
-    title: "Remove from Video",
-    description: "Remove objects without reshooting.",
-    image: "/hero-mockup.png",
-    category: "Video",
-    starterKit: "Film or shorts",
-    implemented: false,
-  },
-  {
-    title: "Product Shot Video Builder",
-    description: "Turn a product photo into a polished video ad.",
-    image: "/rendering-feature.png",
-    category: "Video",
-    starterKit: "Marketing",
-    implemented: false,
-  },
-  {
-    title: "Text to Image",
-    description: "Generate images from a prompt.",
-    image: "/storyboard-feature.png",
-    category: "Image",
-    implemented: false,
-  },
-  {
-    title: "Image to Video",
-    description: "Generate video from a starting image.",
-    image: "/rendering-feature.png",
-    category: "Image",
-    implemented: false,
-  },
-  {
-    title: "Expand Image",
-    description: "Extend an image beyond its original frame.",
-    image: "/hero-mockup.png",
-    category: "Image",
-    implemented: false,
-  },
-  {
-    title: "Text to Speech",
-    description: "Generate spoken audio from text.",
-    image: "/hero-mockup.png",
-    category: "Audio",
-    implemented: false,
-  },
-  {
-    title: "Lip Sync",
-    description: "Sync speech to a character or performance.",
-    image: "/storyboard-feature.png",
-    category: "Audio",
-    implemented: false,
-  },
-  {
-    title: "Custom Agent",
-    description: "Create a custom assistant for repeatable creative workflows.",
-    image: "/rendering-feature.png",
-    category: "Custom",
-    implemented: false,
-  },
-  {
-    title: "Model Library",
-    description: "Choose generation models and compare capabilities.",
-    image: "/storyboard-feature.png",
-    category: "Models",
-    implemented: false,
-  },
-];
-
-const modelOptions = ["Aleph 2.0", "Seedance 2.0", "Multi-Shot Video", "Runway Characters", "Gen-4.5", "Kling 3.0"];
-
-export function DashboardFeatureBrowser({
-  newProjectHref,
-}: {
-  newProjectHref: string;
-}) {
+export function DashboardFeatureBrowser() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState<FeatureCategory>("Starter Kits");
-  const [activeStarterKit, setActiveStarterKit] = useState<StarterKit>("Film or shorts");
+  const [activeCategory, setActiveCategory] =
+    useState<FeatureCategory>("Starter Kits");
+  const [activeStarterKit, setActiveStarterKit] =
+    useState<StarterKit>("Film or shorts");
   const [query, setQuery] = useState("");
-  const [selectedFeature, setSelectedFeature] = useState("Multi-Shot Video");
+  const [selectedFeature, setSelectedFeature] = useState("multi-shot-video");
   const [selectedModel, setSelectedModel] = useState("Multi-Shot Video");
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -204,27 +45,31 @@ export function DashboardFeatureBrowser({
   }, [activeCategory, activeStarterKit, query]);
 
   const activeFeature =
-    visibleFeatures.find((feature) => feature.title === selectedFeature) ??
-    visibleFeatures.find((feature) => feature.implemented) ??
+    visibleFeatures.find((f) => f.slug === selectedFeature) ??
+    visibleFeatures.find((f) => f.status === "implemented") ??
     visibleFeatures[0] ??
-    features.find((feature) => feature.title === "Multi-Shot Video")!;
+    features.find((f) => f.slug === "multi-shot-video")!;
 
   function openFeature(feature: FeatureTile) {
-    setSelectedFeature(feature.title);
+    setSelectedFeature(feature.slug);
 
-    if (feature.implemented) {
+    if (feature.status === "implemented") {
       setNotice(null);
-      router.push(feature.href ?? newProjectHref);
+      router.push(feature.appRoute);
       return;
     }
 
-    setNotice(`${feature.title} is not implemented yet. Multi-Shot Video is available now.`);
+    setNotice(
+      `${feature.title} is not implemented yet. Multi-Shot Video is available now.`,
+    );
   }
 
   function chooseModel(model: string) {
     setSelectedModel(model);
     if (model !== "Multi-Shot Video") {
-      setNotice(`${model} is not implemented yet. Multi-Shot Video is available now.`);
+      setNotice(
+        `${model} is not implemented yet. Multi-Shot Video is available now.`,
+      );
       return;
     }
     setNotice(null);
@@ -259,6 +104,11 @@ export function DashboardFeatureBrowser({
                   aria-pressed={active}
                   onClick={() => {
                     setActiveCategory(category);
+                    const next = getDefaultFeatureForCategory(
+                      category,
+                      activeStarterKit,
+                    );
+                    setSelectedFeature(next.slug);
                     setNotice(null);
                   }}
                   className={cn(
@@ -288,13 +138,17 @@ export function DashboardFeatureBrowser({
               starterKits.map((kit) => {
                 const Icon = kit.icon;
                 const active = kit.title === activeStarterKit;
+                const defaultFeature = getDefaultFeatureForCategory(
+                  "Starter Kits",
+                  kit.title,
+                );
                 return (
                   <button
                     key={kit.title}
                     type="button"
                     onClick={() => {
                       setActiveStarterKit(kit.title);
-                      setSelectedFeature(features.find((feature) => feature.starterKit === kit.title)?.title ?? "Multi-Shot Video");
+                      setSelectedFeature(defaultFeature.slug);
                       setNotice(null);
                     }}
                     className={cn(
@@ -320,10 +174,10 @@ export function DashboardFeatureBrowser({
               })
             ) : visibleFeatures.length ? (
               visibleFeatures.map((feature) => {
-                const active = feature.title === activeFeature.title;
+                const active = feature.slug === activeFeature.slug;
                 return (
                   <button
-                    key={feature.title}
+                    key={feature.slug}
                     type="button"
                     onClick={() => openFeature(feature)}
                     className={cn(
@@ -352,7 +206,7 @@ export function DashboardFeatureBrowser({
                       <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
                         {feature.description}
                       </span>
-                      {!feature.implemented ? (
+                      {feature.status !== "implemented" ? (
                         <span className="mt-2 inline-flex rounded-full border border-border px-2 py-0.5 text-[11px] font-semibold text-text-tertiary">
                           Not implemented
                         </span>
@@ -423,7 +277,9 @@ export function DashboardFeatureBrowser({
               <span className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" />
               <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full bg-bg/80 px-3 py-2 text-xs font-medium text-text backdrop-blur">
                 <Wand2 className="h-3.5 w-3.5" />
-                {activeFeature.implemented ? "Open generator" : "Not implemented yet"}
+                {activeFeature.status === "implemented"
+                  ? "Open generator"
+                  : "Not implemented yet"}
               </span>
             </span>
           </button>
@@ -434,7 +290,9 @@ export function DashboardFeatureBrowser({
               onClick={() => openFeature(activeFeature)}
               className="btn btn-primary"
             >
-              {activeFeature.implemented ? `Open ${activeFeature.title}` : "Not implemented yet"}
+              {activeFeature.status === "implemented"
+                ? `Open ${activeFeature.title}`
+                : "Not implemented yet"}
             </button>
           </div>
         </div>

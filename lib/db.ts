@@ -5,10 +5,12 @@ import * as schema from "@/db/schema";
 
 declare global {
   var softaiDbReady: Promise<void> | undefined;
+  var softaiDbReadyVersion: number | undefined;
 }
 
 const env = getEnv();
 const hasDatabase = Boolean(env.databaseUrl);
+const DB_BOOTSTRAP_VERSION = 2;
 
 export const neonSql = hasDatabase ? neon(env.databaseUrl as string) : null;
 export const db = hasDatabase && neonSql ? drizzle(neonSql, { schema }) : null;
@@ -16,6 +18,10 @@ export const db = hasDatabase && neonSql ? drizzle(neonSql, { schema }) : null;
 export async function ensureDatabase() {
   if (!db || !neonSql) {
     return;
+  }
+
+  if (globalThis.softaiDbReadyVersion !== DB_BOOTSTRAP_VERSION) {
+    delete globalThis.softaiDbReady;
   }
 
   if (!globalThis.softaiDbReady) {
@@ -99,6 +105,7 @@ export async function ensureDatabase() {
             id uuid PRIMARY KEY,
             user_id uuid NOT NULL,
             status project_status NOT NULL DEFAULT 'draft',
+            kind varchar(50) NOT NULL DEFAULT 'campaign_ad',
             title varchar(255) NOT NULL,
             product_name varchar(255) NOT NULL,
             offer text NOT NULL,
@@ -108,6 +115,7 @@ export async function ensureDatabase() {
             platform_target varchar(50) NOT NULL DEFAULT 'tiktok',
             language varchar(10) NOT NULL DEFAULT 'en',
             script text NOT NULL DEFAULT '',
+            metadata jsonb NULL,
             review_notes text NOT NULL DEFAULT '',
             created_at timestamptz NOT NULL DEFAULT now(),
             updated_at timestamptz NOT NULL DEFAULT now()
@@ -274,7 +282,9 @@ export async function ensureDatabase() {
             error_code varchar(100) NULL,
             created_at timestamptz NOT NULL DEFAULT now()
           )`,
+          sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS kind varchar(50) NOT NULL DEFAULT 'campaign_ad'`,
           sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS language varchar(10) NOT NULL DEFAULT 'en'`,
+          sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS metadata jsonb NULL`,
           sql`ALTER TABLE outputs ADD COLUMN IF NOT EXISTS removed_at timestamptz NULL`,
           sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_payer_id varchar(255) NULL`,
           sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_subscription_id varchar(255) NULL`,
@@ -356,6 +366,8 @@ export async function ensureDatabase() {
           error_code varchar(100) NULL,
           created_at timestamptz NOT NULL DEFAULT now()
         )`,
+        sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS kind varchar(50) NOT NULL DEFAULT 'campaign_ad'`,
+        sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS metadata jsonb NULL`,
         sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS provider_key varchar(100) NULL`,
         sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS model_key varchar(255) NULL`,
         sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS cost_estimate integer NULL`,
@@ -389,6 +401,7 @@ export async function ensureDatabase() {
       throw error;
     });
     globalThis.softaiDbReady = retryableReady;
+    globalThis.softaiDbReadyVersion = DB_BOOTSTRAP_VERSION;
   }
 
   await globalThis.softaiDbReady;

@@ -13,6 +13,44 @@ import { buildFinalVideoPrompt, submitVideoRender, pollVideoStatus } from "@/lib
 const POLL_INTERVAL_MS = 10_000;
 const MAX_POLL_ATTEMPTS = 12;
 
+type ProjectRenderMetadata = {
+  aspectRatio?: string;
+  duration?: string;
+  resolution?: string;
+};
+
+function getRenderMetadata(value: unknown): ProjectRenderMetadata {
+  if (!value || typeof value !== "object") return {};
+  return value as ProjectRenderMetadata;
+}
+
+function getVideoRenderOptions(metadata: ProjectRenderMetadata) {
+  const duration = Number.parseInt(metadata.duration ?? "10s", 10);
+  const shortEdge = metadata.resolution === "1080p" ? 1080 : 720;
+  const longEdge = metadata.resolution === "1080p" ? 1920 : 1280;
+  const size = metadata.aspectRatio === "16:9"
+    ? `${longEdge}x${shortEdge}`
+    : metadata.aspectRatio === "1:1"
+      ? `${shortEdge}x${shortEdge}`
+      : `${shortEdge}x${longEdge}`;
+
+  return {
+    duration: Number.isFinite(duration) ? duration : 10,
+    size,
+  };
+}
+
+function distributeSceneDurations<T extends { durationSeconds: number }>(scenes: T[], totalDurationSeconds: number) {
+  if (scenes.length === 0) return scenes;
+  const baseSeconds = Math.floor(totalDurationSeconds / scenes.length);
+  const remainder = totalDurationSeconds % scenes.length;
+
+  return scenes.map((scene, index) => ({
+    ...scene,
+    durationSeconds: baseSeconds + (index < remainder ? 1 : 0),
+  }));
+}
+
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ projectId: string }> },
@@ -42,12 +80,14 @@ export async function POST(
     await holdVideoCredits(user.id, projectId);
     heldCredits = true;
     const route = getProviderRoute("video");
+    const renderOptions = getVideoRenderOptions(getRenderMetadata(bundle.project.metadata));
+    const renderScenes = distributeSceneDurations(bundle.scenes, renderOptions.duration);
     const prompt = buildFinalVideoPrompt({
       headline: bundle.storyboard.headline,
       hook: bundle.storyboard.hook,
       cta: bundle.storyboard.cta,
       language: bundle.project.language,
-      scenes: bundle.scenes.map((scene) => ({
+      scenes: renderScenes.map((scene) => ({
         order: scene.order,
         title: scene.title,
         narration: scene.narration,
@@ -61,13 +101,14 @@ export async function POST(
       type: "video",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, imageUrls: bundle.scenes.map((scene) => scene.imageUrl as string) },
+      requestPayload: { prompt, imageUrls: bundle.scenes.map((scene) => scene.imageUrl as string), options: renderOptions },
     });
 
     const result = await submitVideoRender(
       prompt,
       bundle.scenes.map((scene) => scene.imageUrl as string),
       bundle.project.language,
+      renderOptions,
     );
 
     await updateGenerationJob(job.id, {
