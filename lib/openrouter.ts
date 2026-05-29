@@ -1,16 +1,6 @@
 import { getEnv } from "@/lib/env";
+import { getConfiguredTextModel, getProviderRoute, getTextFallbackModels, isRetryableProviderError } from "@/lib/ai-provider-router";
 
-const DEFAULT_TEXT_MODEL = "minimax/minimax-m2.5:free";
-const FALLBACK_TEXT_MODELS = [
-  "deepseek/deepseek-v4-flash:free",
-  "moonshotai/kimi-k2.6:free",
-  "openai/gpt-oss-120b:free",
-  "deepseek/deepseek-v4-flash",
-  "moonshotai/kimi-k2.6",
-  "openai/gpt-oss-120b",
-];
-const DEFAULT_IMAGE_MODEL = "google/gemini-2.5-flash-image";
-const DEFAULT_VIDEO_MODEL = "x-ai/grok-imagine-video";
 const CHAT_UNAVAILABLE_MESSAGE = "The assistant is temporarily unavailable. Please try again in a moment.";
 
 export type ChatCompletionMessage = {
@@ -312,25 +302,6 @@ function extractProviderErrorMessage(payload: unknown) {
   return null;
 }
 
-function getOpenRouterTextModel() {
-  return process.env.OPENROUTER_TEXT_MODEL ?? DEFAULT_TEXT_MODEL;
-}
-
-function isRetryableError(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
-  const message = error.message.toLowerCase();
-  return (
-    message.includes("provider returned error") ||
-    message.includes("rate limit") ||
-    message.includes("overloaded") ||
-    message.includes("temporarily unavailable") ||
-    message.includes("503") ||
-    message.includes("502") ||
-    message.includes("504") ||
-    message.includes("429")
-  );
-}
-
 async function* fetchStreamCompletion(
   model: string,
   messages: ChatCompletionMessage[],
@@ -402,8 +373,7 @@ export async function* streamChatCompletion(messages: ChatCompletionMessage[], s
     return;
   }
 
-  const primaryModel = getOpenRouterTextModel();
-  const models = [primaryModel, ...FALLBACK_TEXT_MODELS.filter((m) => m !== primaryModel)];
+  const models = getTextFallbackModels();
 
   let yieldedContent = false;
 
@@ -416,7 +386,7 @@ export async function* streamChatCompletion(messages: ChatCompletionMessage[], s
       }
       return;
     } catch (error) {
-      if (yieldedContent || !isRetryableError(error)) {
+      if (yieldedContent || !isRetryableProviderError(error)) {
         throw error;
       }
 
@@ -456,7 +426,7 @@ export async function generateStoryboard(input: StoryboardInput) {
       "X-Title": "SoftAI",
     },
     body: JSON.stringify({
-      model: getOpenRouterTextModel(),
+        model: getConfiguredTextModel(),
       response_format: { type: "json_object" },
       messages: [
         {
@@ -479,7 +449,7 @@ export async function generateStoryboard(input: StoryboardInput) {
 
   return {
     ...storyboard,
-    provider: getOpenRouterTextModel(),
+    provider: getConfiguredTextModel(),
     requestPayload: input,
     responsePayload: payload,
   };
@@ -487,18 +457,19 @@ export async function generateStoryboard(input: StoryboardInput) {
 
 export async function generateSceneImage(prompt: string, language: "en" | "ar" = "en") {
   const env = getEnv();
+  const route = getProviderRoute("image");
 
-  if (!env.openRouterApiKey) {
+  if (route.isDemo) {
     return {
       imageUrl: `https://picsum.photos/seed/${encodeURIComponent(`softai-${language}-${prompt.slice(0, 80)}`)}/720/1280`,
-      provider: "demo-fallback",
+      provider: route.modelKey,
       requestPayload: { prompt },
       responsePayload: null,
     };
   }
 
   const requestPayload = {
-    model: DEFAULT_IMAGE_MODEL,
+    model: route.modelKey,
     modalities: ["image", "text"],
     image_config: { aspect_ratio: "9:16" },
     messages: [
@@ -548,7 +519,7 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
 
   return {
     imageUrl,
-    provider: DEFAULT_IMAGE_MODEL,
+    provider: route.modelKey,
     requestPayload,
     responsePayload: payload,
   };
@@ -588,16 +559,17 @@ export async function submitVideoRender(
   options: VideoRenderOptions = {},
 ): Promise<VideoSubmitResult> {
   const env = getEnv();
+  const route = getProviderRoute("video");
   const duration = options.duration ?? 4;
   const size = options.size ?? "720x1280";
 
-  if (!env.openRouterApiKey) {
+  if (route.isDemo) {
     return {
       id: `demo-video-${Date.now()}`,
       status: "completed",
       pollingUrl: null,
       url: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
-      provider: "demo-fallback",
+      provider: route.modelKey,
       requestPayload: { prompt, imageUrls, language, duration, size },
       responsePayload: null,
     };
@@ -622,7 +594,7 @@ export async function submitVideoRender(
       "X-Title": "SoftAI",
     },
     body: JSON.stringify({
-      model: DEFAULT_VIDEO_MODEL,
+      model: route.modelKey,
       prompt,
       duration,
       size,
@@ -641,7 +613,7 @@ export async function submitVideoRender(
     status: payload.status ?? "pending",
     pollingUrl: payload.polling_url ?? null,
     url: extractVideoUrlFromUnsignedUrls(payload.unsigned_urls) ?? extractVideoUrl(payload),
-    provider: DEFAULT_VIDEO_MODEL,
+    provider: route.modelKey,
     requestPayload: { prompt, imageUrls, language, duration, size },
     responsePayload: payload,
   };

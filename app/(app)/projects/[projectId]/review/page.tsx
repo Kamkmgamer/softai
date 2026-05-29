@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { StoryboardReviewForm } from "@/components/storyboard-review-form";
 import { PageHeader } from "@/components/ui";
+import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
 import { getAppSession } from "@/lib/auth";
 import { burnStoryboardCredits } from "@/lib/credits";
+import { assertPromptAllowed, buildProjectModerationText } from "@/lib/moderation";
 import { generateStoryboard } from "@/lib/openrouter";
 import { createGenerationJob, getProjectBundle, saveStoryboard } from "@/lib/store";
 
@@ -20,7 +22,9 @@ export default async function ReviewPage({
   }
 
   if (!bundle.storyboard || bundle.scenes.length === 0) {
+    assertPromptAllowed(buildProjectModerationText(bundle.project));
     await burnStoryboardCredits(session.userId, projectId);
+    const route = getProviderRoute("text");
     const generated = await generateStoryboard({
       productName: bundle.project.productName,
       offer: bundle.project.offer,
@@ -34,6 +38,8 @@ export default async function ReviewPage({
     await createGenerationJob(session.userId, projectId, {
       type: "storyboard",
       status: "completed",
+      ...getProviderJobMetadata(route),
+      modelKey: generated.provider,
       requestPayload: generated.requestPayload,
       responsePayload: generated.responsePayload,
     });

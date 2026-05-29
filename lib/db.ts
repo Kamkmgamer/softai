@@ -39,6 +39,7 @@ export async function ensureDatabase() {
           sql`DO $$ BEGIN CREATE TYPE job_status AS ENUM ('queued','submitted','processing','completed','failed','refunded'); EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
           sql`DO $$ BEGIN CREATE TYPE output_type AS ENUM ('scene_image','final_video','thumbnail'); EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
           sql`DO $$ BEGIN CREATE TYPE avatar_policy_state AS ENUM ('self_declared','third_party_declared','ai_generated','flagged'); EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
+          sql`DO $$ BEGIN CREATE TYPE provider_status AS ENUM ('active','degraded','disabled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
 
           sql`CREATE TABLE IF NOT EXISTS users (
             id uuid PRIMARY KEY,
@@ -139,12 +140,47 @@ export async function ensureDatabase() {
             user_id uuid NOT NULL,
             type job_type NOT NULL,
             status job_status NOT NULL DEFAULT 'queued',
+            provider_key varchar(100) NULL,
+            model_key varchar(255) NULL,
             provider_job_id varchar(255) NULL,
+            cost_estimate integer NULL,
+            attempts integer NOT NULL DEFAULT 0,
             request_payload jsonb NULL,
             response_payload jsonb NULL,
             error_message text NULL,
             created_at timestamptz NOT NULL DEFAULT now(),
             updated_at timestamptz NOT NULL DEFAULT now()
+          )`,
+          sql`CREATE TABLE IF NOT EXISTS ai_providers (
+            id uuid PRIMARY KEY,
+            provider_key varchar(100) NOT NULL UNIQUE,
+            status provider_status NOT NULL DEFAULT 'active',
+            supported_capabilities jsonb NOT NULL DEFAULT '[]'::jsonb,
+            config jsonb NULL,
+            created_at timestamptz NOT NULL DEFAULT now(),
+            updated_at timestamptz NOT NULL DEFAULT now()
+          )`,
+          sql`CREATE TABLE IF NOT EXISTS ai_models (
+            id uuid PRIMARY KEY,
+            provider_key varchar(100) NOT NULL,
+            model_key varchar(255) NOT NULL,
+            capability varchar(50) NOT NULL,
+            cost_unit varchar(50) NULL,
+            max_duration_seconds integer NULL,
+            max_resolution varchar(50) NULL,
+            created_at timestamptz NOT NULL DEFAULT now()
+          )`,
+          sql`CREATE TABLE IF NOT EXISTS provider_events (
+            id uuid PRIMARY KEY,
+            provider_key varchar(100) NOT NULL,
+            model_key varchar(255) NULL,
+            generation_job_id uuid NULL,
+            capability varchar(50) NOT NULL,
+            status varchar(50) NOT NULL,
+            latency_ms integer NULL,
+            retry_count integer NOT NULL DEFAULT 0,
+            error_code varchar(100) NULL,
+            created_at timestamptz NOT NULL DEFAULT now()
           )`,
           sql`CREATE TABLE IF NOT EXISTS outputs (
             id uuid PRIMARY KEY,
@@ -206,12 +242,48 @@ export async function ensureDatabase() {
 
         // ALTER TABLE and migration queries — batch into a second transaction
         await sql.transaction([
+          sql`DO $$ BEGIN CREATE TYPE provider_status AS ENUM ('active','degraded','disabled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
+          sql`CREATE TABLE IF NOT EXISTS ai_providers (
+            id uuid PRIMARY KEY,
+            provider_key varchar(100) NOT NULL UNIQUE,
+            status provider_status NOT NULL DEFAULT 'active',
+            supported_capabilities jsonb NOT NULL DEFAULT '[]'::jsonb,
+            config jsonb NULL,
+            created_at timestamptz NOT NULL DEFAULT now(),
+            updated_at timestamptz NOT NULL DEFAULT now()
+          )`,
+          sql`CREATE TABLE IF NOT EXISTS ai_models (
+            id uuid PRIMARY KEY,
+            provider_key varchar(100) NOT NULL,
+            model_key varchar(255) NOT NULL,
+            capability varchar(50) NOT NULL,
+            cost_unit varchar(50) NULL,
+            max_duration_seconds integer NULL,
+            max_resolution varchar(50) NULL,
+            created_at timestamptz NOT NULL DEFAULT now()
+          )`,
+          sql`CREATE TABLE IF NOT EXISTS provider_events (
+            id uuid PRIMARY KEY,
+            provider_key varchar(100) NOT NULL,
+            model_key varchar(255) NULL,
+            generation_job_id uuid NULL,
+            capability varchar(50) NOT NULL,
+            status varchar(50) NOT NULL,
+            latency_ms integer NULL,
+            retry_count integer NOT NULL DEFAULT 0,
+            error_code varchar(100) NULL,
+            created_at timestamptz NOT NULL DEFAULT now()
+          )`,
           sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS language varchar(10) NOT NULL DEFAULT 'en'`,
           sql`ALTER TABLE outputs ADD COLUMN IF NOT EXISTS removed_at timestamptz NULL`,
           sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_payer_id varchar(255) NULL`,
           sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_subscription_id varchar(255) NULL`,
           sql`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS error text NULL`,
           sql`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS processed_at timestamptz NULL`,
+          sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS provider_key varchar(100) NULL`,
+          sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS model_key varchar(255) NULL`,
+          sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS cost_estimate integer NULL`,
+          sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0`,
         ]);
 
         // Deduplicate chat conversations and create unique constraint
@@ -252,6 +324,45 @@ export async function ensureDatabase() {
       }
 
       await sql.transaction([
+        sql`DO $$ BEGIN CREATE TYPE provider_status AS ENUM ('active','degraded','disabled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$`,
+        sql`CREATE TABLE IF NOT EXISTS ai_providers (
+          id uuid PRIMARY KEY,
+          provider_key varchar(100) NOT NULL UNIQUE,
+          status provider_status NOT NULL DEFAULT 'active',
+          supported_capabilities jsonb NOT NULL DEFAULT '[]'::jsonb,
+          config jsonb NULL,
+          created_at timestamptz NOT NULL DEFAULT now(),
+          updated_at timestamptz NOT NULL DEFAULT now()
+        )`,
+        sql`CREATE TABLE IF NOT EXISTS ai_models (
+          id uuid PRIMARY KEY,
+          provider_key varchar(100) NOT NULL,
+          model_key varchar(255) NOT NULL,
+          capability varchar(50) NOT NULL,
+          cost_unit varchar(50) NULL,
+          max_duration_seconds integer NULL,
+          max_resolution varchar(50) NULL,
+          created_at timestamptz NOT NULL DEFAULT now()
+        )`,
+        sql`CREATE TABLE IF NOT EXISTS provider_events (
+          id uuid PRIMARY KEY,
+          provider_key varchar(100) NOT NULL,
+          model_key varchar(255) NULL,
+          generation_job_id uuid NULL,
+          capability varchar(50) NOT NULL,
+          status varchar(50) NOT NULL,
+          latency_ms integer NULL,
+          retry_count integer NOT NULL DEFAULT 0,
+          error_code varchar(100) NULL,
+          created_at timestamptz NOT NULL DEFAULT now()
+        )`,
+        sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS provider_key varchar(100) NULL`,
+        sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS model_key varchar(255) NULL`,
+        sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS cost_estimate integer NULL`,
+        sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0`,
+      ]);
+
+      await sql.transaction([
         sql`CREATE INDEX IF NOT EXISTS subscriptions_user_period_idx ON subscriptions (user_id, current_period_end)`,
         sql`CREATE INDEX IF NOT EXISTS subscriptions_clerk_subscription_idx ON subscriptions (clerk_subscription_id)`,
         sql`CREATE INDEX IF NOT EXISTS credit_ledger_user_created_idx ON credit_ledger (user_id, created_at)`,
@@ -261,6 +372,10 @@ export async function ensureDatabase() {
         sql`CREATE INDEX IF NOT EXISTS scenes_project_order_idx ON scenes (project_id, "order")`,
         sql`CREATE INDEX IF NOT EXISTS generation_jobs_project_created_idx ON generation_jobs (project_id, created_at)`,
         sql`CREATE INDEX IF NOT EXISTS generation_jobs_provider_job_idx ON generation_jobs (provider_job_id)`,
+        sql`CREATE UNIQUE INDEX IF NOT EXISTS ai_models_provider_model_unique ON ai_models (provider_key, model_key)`,
+        sql`CREATE INDEX IF NOT EXISTS ai_models_capability_idx ON ai_models (capability)`,
+        sql`CREATE INDEX IF NOT EXISTS provider_events_provider_created_idx ON provider_events (provider_key, created_at)`,
+        sql`CREATE INDEX IF NOT EXISTS provider_events_job_idx ON provider_events (generation_job_id)`,
         sql`CREATE INDEX IF NOT EXISTS outputs_user_removed_type_idx ON outputs (user_id, removed_at, type)`,
         sql`CREATE INDEX IF NOT EXISTS outputs_project_removed_created_idx ON outputs (project_id, removed_at, created_at)`,
         sql`CREATE INDEX IF NOT EXISTS avatars_project_created_idx ON avatars (project_id, created_at)`,

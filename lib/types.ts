@@ -166,7 +166,11 @@ export type GenerationJobRecord = {
   userId: string;
   type: JobType;
   status: JobStatus;
+  providerKey: string | null;
+  modelKey: string | null;
   providerJobId: string | null;
+  costEstimate: number | null;
+  attempts: number;
   requestPayload: unknown;
   responsePayload: unknown;
   errorMessage: string | null;

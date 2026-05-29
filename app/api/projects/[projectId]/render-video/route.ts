@@ -1,5 +1,7 @@
 import { apiError, apiSuccess, requireAppUser } from "@/lib/api";
+import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
 import { holdVideoCredits, refundVideoCredits, settleVideoCredits } from "@/lib/credits";
+import { assertPromptAllowed } from "@/lib/moderation";
 import {
   createGenerationJob,
   createOutput,
@@ -30,8 +32,16 @@ export async function POST(
       return apiError(new Error("Render scene images before the final video."), 409);
     }
 
+    assertPromptAllowed([
+      bundle.storyboard.headline,
+      bundle.storyboard.hook,
+      bundle.storyboard.cta,
+      ...bundle.scenes.map((scene) => `${scene.narration}\n${scene.visualDirection}`),
+    ].join("\n"));
+
     await holdVideoCredits(user.id, projectId);
     heldCredits = true;
+    const route = getProviderRoute("video");
     const prompt = buildFinalVideoPrompt({
       headline: bundle.storyboard.headline,
       hook: bundle.storyboard.hook,
@@ -50,6 +60,7 @@ export async function POST(
     const job = await createGenerationJob(user.id, projectId, {
       type: "video",
       status: "processing",
+      ...getProviderJobMetadata(route),
       requestPayload: { prompt, imageUrls: bundle.scenes.map((scene) => scene.imageUrl as string) },
     });
 
@@ -61,6 +72,7 @@ export async function POST(
 
     await updateGenerationJob(job.id, {
       status: result.status === "completed" ? "completed" : "submitted",
+      modelKey: result.provider,
       providerJobId: result.id,
       responsePayload: result.responsePayload,
     });

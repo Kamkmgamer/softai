@@ -4,7 +4,7 @@ import type { ComponentType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  FolderKanban,
+  Blocks,
   LibraryBig,
   Menu,
   Settings,
@@ -22,15 +22,16 @@ import { cn } from "@/lib/utils";
 const links: Array<{
   href: string;
   labelKey: keyof ReturnType<typeof getDictionary>["app"];
+  runwayLabel: string;
   icon: ComponentType<{ className?: string }>;
   adminOnly?: boolean;
 }> = [
-  { href: "/dashboard", labelKey: "dashboard", icon: FolderKanban },
-  { href: "/projects/new", labelKey: "newProject", icon: Sparkles },
-  { href: "/library", labelKey: "library", icon: LibraryBig },
-  { href: "/billing", labelKey: "billing", icon: Wallet },
-  { href: "/settings", labelKey: "settings", icon: Settings },
-  { href: "/admin", labelKey: "admin", icon: Shield, adminOnly: true },
+  { href: "/dashboard", labelKey: "dashboard", runwayLabel: "Apps", icon: Blocks },
+  { href: "/projects/new", labelKey: "newProject", runwayLabel: "Custom", icon: Sparkles },
+  { href: "/library", labelKey: "library", runwayLabel: "Agent", icon: LibraryBig },
+  { href: "/billing", labelKey: "billing", runwayLabel: "Workflow", icon: Wallet },
+  { href: "/settings", labelKey: "settings", runwayLabel: "Characters", icon: Settings },
+  { href: "/admin", labelKey: "admin", runwayLabel: "Admin", icon: Shield, adminOnly: true },
 ];
 
 export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
@@ -43,17 +44,20 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:sticky lg:top-16 lg:flex lg:h-[calc(100dvh-4rem)] lg:w-[220px] lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:py-5">
+      <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-[100dvh] lg:w-16 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:py-2">
         {/* Logo */}
-        <Link href={localizePath("/dashboard", locale)} className="flex items-center gap-2.5 px-5 mb-6">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-text text-[11px] font-bold text-bg">
-            S
+        <Link href={localizePath("/dashboard", locale)} className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-border-strong bg-surface-raised text-text transition-colors hover:bg-accent-soft">
+          <div className="grid grid-cols-2 gap-0.5">
+            <span className="h-2 w-2 rounded-[2px] border border-current" />
+            <span className="h-2 w-2 rounded-[2px] border border-current" />
+            <span className="h-2 w-2 rounded-[2px] border border-current" />
+            <span className="h-2 w-2 rounded-[2px] bg-accent" />
           </div>
-          <span className="text-sm font-semibold tracking-tight text-text">SoftAI</span>
+          <span className="sr-only">SoftAI</span>
         </Link>
 
         {/* Nav */}
-        <nav className="flex-1 space-y-0.5 px-3">
+        <nav className="flex-1 space-y-2 px-1.5">
           {visibleLinks.map((link) => {
               const Icon = link.icon;
               const active =
@@ -63,22 +67,24 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
               <Link
                 key={link.href}
                 href={localizePath(link.href, locale)}
+                title={dictionary.app[link.labelKey]}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-[var(--radius-md)] px-2.5 py-[7px] text-[13px] font-medium transition-colors",
+                  "group relative flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold leading-none transition-colors",
                   active
-                    ? "bg-accent-soft text-accent-text"
+                    ? "bg-surface-raised text-text"
                     : "text-text-secondary hover:bg-surface-raised hover:text-text",
                 )}
               >
-                <Icon className="h-[15px] w-[15px] shrink-0" />
-                {dictionary.app[link.labelKey]}
+                {active ? <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" /> : null}
+                <Icon className="h-[17px] w-[17px] shrink-0" />
+                {link.runwayLabel}
               </Link>
             );
           })}
         </nav>
 
         {/* User */}
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-border px-5 pt-4">
+        <div className="mt-auto flex flex-col items-center gap-3 border-t border-border px-2 pt-3">
           <UserButton
             appearance={{
               elements: {
@@ -91,10 +97,10 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
       </aside>
 
       {/* Viewport-wide top bar and drawer */}
-      <div className="app-mobile-menu fixed inset-x-0 top-0 z-[1000]">
+      <div className="app-mobile-menu fixed inset-x-0 top-0 z-[1000] lg:hidden">
         <div className="flex h-16 items-center justify-between border-b border-border bg-surface/95 px-5 backdrop-blur-md">
           <Link href={localizePath("/dashboard", locale)} className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-text text-[11px] font-bold text-bg">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-[11px] font-bold text-text">
               S
             </div>
             <span className="text-sm font-semibold tracking-tight text-text">SoftAI</span>

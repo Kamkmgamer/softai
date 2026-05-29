@@ -458,7 +458,11 @@ function mapJob(row: typeof schema.generationJobs.$inferSelect): GenerationJobRe
     userId: row.userId,
     type: row.type,
     status: row.status,
+    providerKey: row.providerKey,
+    modelKey: row.modelKey,
     providerJobId: row.providerJobId,
+    costEstimate: row.costEstimate,
+    attempts: row.attempts,
     requestPayload: row.requestPayload,
     responsePayload: row.responsePayload,
     errorMessage: row.errorMessage,
@@ -1170,12 +1174,25 @@ export async function approveStoryboard(userId: string, projectId: string) {
 export async function createGenerationJob(
   userId: string,
   projectId: string,
-  input: { type: JobType; status: JobStatus; providerJobId?: string | null; requestPayload: unknown; responsePayload?: unknown; errorMessage?: string | null },
+  input: {
+    type: JobType;
+    status: JobStatus;
+    providerKey?: string | null;
+    modelKey?: string | null;
+    providerJobId?: string | null;
+    costEstimate?: number | null;
+    attempts?: number;
+    requestPayload: unknown;
+    responsePayload?: unknown;
+    errorMessage?: string | null;
+  },
 ) {
   if (!databaseEnabled() || !db) {
     const job: GenerationJobRecord = {
       id: randomUUID(), projectId, userId, type: input.type, status: input.status,
-      providerJobId: input.providerJobId ?? null, requestPayload: input.requestPayload,
+      providerKey: input.providerKey ?? null, modelKey: input.modelKey ?? null,
+      providerJobId: input.providerJobId ?? null, costEstimate: input.costEstimate ?? null,
+      attempts: input.attempts ?? 0, requestPayload: input.requestPayload,
       responsePayload: input.responsePayload ?? null, errorMessage: input.errorMessage ?? null,
       createdAt: now(), updatedAt: now(),
     };
@@ -1190,7 +1207,11 @@ export async function createGenerationJob(
     userId,
     type: input.type,
     status: input.status,
+    providerKey: input.providerKey ?? null,
+    modelKey: input.modelKey ?? null,
     providerJobId: input.providerJobId ?? null,
+    costEstimate: input.costEstimate ?? null,
+    attempts: input.attempts ?? 0,
     requestPayload: input.requestPayload,
     responsePayload: input.responsePayload ?? null,
     errorMessage: input.errorMessage ?? null,
@@ -1200,7 +1221,9 @@ export async function createGenerationJob(
   revalidateProjectData(userId, projectId);
   return {
     id, projectId, userId, type: input.type, status: input.status,
-    providerJobId: input.providerJobId ?? null, requestPayload: input.requestPayload,
+    providerKey: input.providerKey ?? null, modelKey: input.modelKey ?? null,
+    providerJobId: input.providerJobId ?? null, costEstimate: input.costEstimate ?? null,
+    attempts: input.attempts ?? 0, requestPayload: input.requestPayload,
     responsePayload: input.responsePayload ?? null, errorMessage: input.errorMessage ?? null,
     createdAt: now(), updatedAt: now(),
   };
@@ -1208,7 +1231,7 @@ export async function createGenerationJob(
 
 export async function updateGenerationJob(
   jobId: string,
-  patch: Partial<Pick<GenerationJobRecord, "status" | "responsePayload" | "errorMessage" | "providerJobId">>,
+  patch: Partial<Pick<GenerationJobRecord, "status" | "responsePayload" | "errorMessage" | "providerJobId" | "providerKey" | "modelKey" | "costEstimate" | "attempts">>,
 ) {
   if (!databaseEnabled() || !db) {
     const job = getState().generationJobs.find((entry) => entry.id === jobId);

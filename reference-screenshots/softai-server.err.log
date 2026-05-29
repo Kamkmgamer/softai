@@ -1,0 +1,124 @@
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)
+Error: @clerk/nextjs: Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.
+    at Object.throwMissingSecretKeyError (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:26:1581)
+    at l (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13477)
+    at <unknown> (D:\projects\softai\.next\server\chunks\[root-of-the-server]__07oosts._.js:74:13509)

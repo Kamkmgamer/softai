@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { ImagePlus, SlidersHorizontal, Volume2 } from "lucide-react";
 import { FieldLabel } from "@/components/ui";
 import { getDictionary } from "@/lib/dictionaries";
 import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
@@ -53,9 +54,44 @@ export function ProjectCreationForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-8">
-      <div className="space-y-5">
-        <div className="grid gap-5 sm:grid-cols-2">
+    <form onSubmit={onSubmit} className="flex min-h-[calc(100dvh-2rem)] flex-col gap-4">
+      <div className="flex items-center justify-between gap-3 px-1">
+        <div className="text-sm text-text-secondary">
+          Apps <span className="text-text-tertiary">/</span> <strong className="font-semibold text-text">Multi-Shot Video</strong>
+        </div>
+        <div className="rounded-full bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
+          <span className="inline-flex rounded-full bg-surface-raised px-3 py-1.5 text-text">Auto</span>
+          <span className="inline-flex px-3 py-1.5">Custom</span>
+        </div>
+      </div>
+
+      <div className="space-y-2 px-1">
+        <FieldLabel
+          htmlFor="script-seed"
+          label="Describe your story"
+          required
+        />
+        <div className="flex min-h-[360px] flex-col rounded-xl border border-border bg-bg-subtle p-3 transition-colors focus-within:border-border-strong focus-within:shadow-[var(--focus-ring)]">
+          <textarea
+            id="script-seed"
+            required
+            value={form.script}
+            onChange={(event) => update("script", event.target.value)}
+            className="min-h-[300px] flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-text placeholder:text-text-tertiary"
+            placeholder="A lone astronaut walks across a vast red desert under a pink sky. She stops, kneels, and picks up a glowing object half-buried in the sand. Close-up on her face as she looks up, a massive structure emerges from the dust on the horizon."
+          />
+          <button
+            type="button"
+            className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-lg border border-border bg-surface px-2 py-1 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-raised hover:text-text"
+          >
+            <ImagePlus className="h-3.5 w-3.5" />
+            First frame of video
+          </button>
+        </div>
+      </div>
+
+      <div className="thin-scrollbar flex-1 space-y-4 overflow-y-auto pr-1">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="space-y-1.5">
             <FieldLabel htmlFor="project-title" label={dictionary.projectForm.title} required />
             <input
@@ -80,7 +116,7 @@ export function ProjectCreationForm() {
           </div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="space-y-1.5">
             <FieldLabel htmlFor="offer" label={dictionary.projectForm.offer} required />
             <input
@@ -105,7 +141,7 @@ export function ProjectCreationForm() {
           </div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="space-y-1.5">
             <FieldLabel htmlFor="target-audience" label={dictionary.projectForm.targetAudience} required />
             <input
@@ -144,23 +180,6 @@ export function ProjectCreationForm() {
           </select>
         </div>
 
-        <div className="space-y-1.5">
-          <FieldLabel
-            htmlFor="script-seed"
-            label={dictionary.projectForm.scriptSeed}
-            hint={dictionary.projectForm.scriptHint}
-            required
-          />
-          <textarea
-            id="script-seed"
-            required
-            rows={4}
-            value={form.script}
-            onChange={(event) => update("script", event.target.value)}
-            className="control-field resize-y"
-            placeholder={dictionary.projectForm.scriptPlaceholder}
-          />
-        </div>
       </div>
 
       {error ? (
@@ -169,13 +188,19 @@ export function ProjectCreationForm() {
         </div>
       ) : null}
 
-      <div className="flex justify-end pt-2 border-t border-border">
+      <div className="-mx-4 mt-auto flex flex-col gap-4 border-t border-border bg-surface px-4 pb-0 pt-3">
+        <div className="flex flex-wrap justify-end gap-2 text-xs font-semibold text-text-secondary">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><Volume2 className="h-3.5 w-3.5" />On</span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><SlidersHorizontal className="h-3.5 w-3.5" />9:16</span>
+          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">720p</span>
+          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">10s</span>
+        </div>
         <button
           type="submit"
           disabled={isPending}
-          className="btn-primary w-full sm:w-auto"
+          className="btn-primary ml-auto w-full rounded-xl px-5 py-3 text-sm sm:w-auto"
         >
-          {isPending ? dictionary.projectForm.creating : dictionary.projectForm.create}
+          {isPending ? dictionary.projectForm.creating : "Generate"}
         </button>
       </div>
     </form>

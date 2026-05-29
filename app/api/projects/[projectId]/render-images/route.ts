@@ -1,5 +1,7 @@
 import { apiError, apiSuccess, requireAppUser } from "@/lib/api";
+import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
 import { holdImageCredits, refundImageCredits, settleImageCredits } from "@/lib/credits";
+import { assertPromptAllowed } from "@/lib/moderation";
 import { createGenerationJob, createOutput, getProjectBundle, saveSceneImage, updateGenerationJob } from "@/lib/store";
 import { buildSceneImagePrompt, generateSceneImage } from "@/lib/openrouter";
 
@@ -22,11 +24,19 @@ export async function POST(
       return apiError(new Error("Approve a storyboard before rendering images."), 409);
     }
 
+    assertPromptAllowed([
+      bundle.storyboard.headline,
+      bundle.storyboard.hook,
+      bundle.storyboard.cta,
+      ...bundle.scenes.map((scene) => scene.visualDirection),
+    ].join("\n"));
+
     await holdImageCredits(user.id, projectId);
     heldCredits = true;
 
     const jobs = await Promise.all(
       bundle.scenes.map(async (scene) => {
+        const route = getProviderRoute("image");
         const prompt = buildSceneImagePrompt({
           headline: bundle.storyboard?.headline ?? bundle.project.title,
           visualDirection: scene.visualDirection,
@@ -35,6 +45,7 @@ export async function POST(
         const job = await createGenerationJob(user.id, projectId, {
           type: "image",
           status: "processing",
+          ...getProviderJobMetadata(route),
           requestPayload: { prompt, sceneId: scene.id },
         });
         let result: Awaited<ReturnType<typeof generateSceneImage>>;
@@ -50,6 +61,7 @@ export async function POST(
         await updateGenerationJob(job.id, {
           status: "completed",
           responsePayload: result.responsePayload,
+          modelKey: result.provider,
         });
         if (result.imageUrl) {
           await saveSceneImage(projectId, scene.order, result.imageUrl);

@@ -38,6 +38,8 @@ export const outputTypeEnum = pgEnum("output_type", [
   "thumbnail",
 ]);
 
+export const providerStatusEnum = pgEnum("provider_status", ["active", "degraded", "disabled"]);
+
 export const avatarPolicyStateEnum = pgEnum("avatar_policy_state", [
   "self_declared",
   "third_party_declared",
@@ -168,7 +170,11 @@ export const generationJobs = pgTable("generation_jobs", {
   userId: uuid("user_id").notNull(),
   type: jobTypeEnum("type").notNull(),
   status: jobStatusEnum("status").notNull().default("queued"),
+  providerKey: varchar("provider_key", { length: 100 }),
+  modelKey: varchar("model_key", { length: 255 }),
   providerJobId: varchar("provider_job_id", { length: 255 }),
+  costEstimate: integer("cost_estimate"),
+  attempts: integer("attempts").notNull().default(0),
   requestPayload: jsonb("request_payload").$type<unknown>(),
   responsePayload: jsonb("response_payload").$type<unknown>(),
   errorMessage: text("error_message"),
@@ -177,6 +183,46 @@ export const generationJobs = pgTable("generation_jobs", {
 }, (table) => [
   index("generation_jobs_project_created_idx").on(table.projectId, table.createdAt),
   index("generation_jobs_provider_job_idx").on(table.providerJobId),
+]);
+
+export const aiProviders = pgTable("ai_providers", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  providerKey: varchar("provider_key", { length: 100 }).notNull().unique(),
+  status: providerStatusEnum("status").notNull().default("active"),
+  supportedCapabilities: jsonb("supported_capabilities").$type<string[]>().notNull().default([]),
+  config: jsonb("config").$type<unknown>(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const aiModels = pgTable("ai_models", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  providerKey: varchar("provider_key", { length: 100 }).notNull(),
+  modelKey: varchar("model_key", { length: 255 }).notNull(),
+  capability: varchar("capability", { length: 50 }).notNull(),
+  costUnit: varchar("cost_unit", { length: 50 }),
+  maxDurationSeconds: integer("max_duration_seconds"),
+  maxResolution: varchar("max_resolution", { length: 50 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("ai_models_provider_model_unique").on(table.providerKey, table.modelKey),
+  index("ai_models_capability_idx").on(table.capability),
+]);
+
+export const providerEvents = pgTable("provider_events", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  providerKey: varchar("provider_key", { length: 100 }).notNull(),
+  modelKey: varchar("model_key", { length: 255 }),
+  generationJobId: uuid("generation_job_id"),
+  capability: varchar("capability", { length: 50 }).notNull(),
+  status: varchar("status", { length: 50 }).notNull(),
+  latencyMs: integer("latency_ms"),
+  retryCount: integer("retry_count").notNull().default(0),
+  errorCode: varchar("error_code", { length: 100 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  index("provider_events_provider_created_idx").on(table.providerKey, table.createdAt),
+  index("provider_events_job_idx").on(table.generationJobId),
 ]);
 
 export const outputs = pgTable("outputs", {

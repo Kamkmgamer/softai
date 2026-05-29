@@ -79,7 +79,7 @@ describe("submitVideoRender", () => {
     vi.stubEnv("OPENROUTER_API_KEY", "test-key");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
 
-    const fetchMock = vi.fn(async () => new Response(
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response(
       JSON.stringify({ id: "video-job", status: "pending", polling_url: "https://openrouter.ai/poll/video-job" }),
       { status: 200 },
     ));
@@ -110,7 +110,7 @@ describe("submitVideoRender", () => {
     vi.stubEnv("OPENROUTER_API_KEY", "test-key");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://softai.example");
 
-    const fetchMock = vi.fn(async () => new Response(
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response(
       JSON.stringify({ id: "video-job", status: "pending", polling_url: "https://openrouter.ai/poll/video-job" }),
       { status: 200 },
     ));
