@@ -222,6 +222,16 @@ export const features: FeatureTile[] = [
     appRoute: "/apps/product-reshoot",
     projectKind: "image_edit",
   },
+  {
+    slug: "vary-image",
+    title: "Vary Image",
+    description: "Generate creative variations of your image — change elements while keeping the core composition.",
+    image: "/rendering-feature.png",
+    category: "Image",
+    status: "implemented",
+    appRoute: "/apps/vary-image",
+    projectKind: "image_edit",
+  },
 
   // ── Audio ─────────────────────────────────────────────────
   {

@@ -32,6 +32,7 @@ function getKind(app: CreativeInput["app"]): ProjectKind {
   if (app === "expand-image") return "image_edit";
   if (app === "stylize-image") return "image_edit";
   if (app === "product-reshoot") return "image_edit";
+  if (app === "vary-image") return "image_edit";
   return "video_edit";
 }
 
@@ -41,10 +42,11 @@ function getAppLabel(app: CreativeInput["app"]) {
   if (app === "expand-image") return "Expand Image";
   if (app === "stylize-image") return "Stylize Image";
   if (app === "product-reshoot") return "Product Reshoot";
+  if (app === "vary-image") return "Vary Image";
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" }>) {
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" }>) {
   if (input.app === "expand-image") {
     return [
       "Expand/outpaint the provided image beyond its current borders.",
@@ -78,6 +80,18 @@ function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" |
       `Use this source image as the product reference: ${input.sourceImageUrl}. The product must remain exactly recognizable — same shape, colors, branding, and proportions.`,
       "Place the product naturally in the new scene with realistic lighting, shadows, and reflections that match the environment.",
       "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original product.",
+    ].join(" ");
+  }
+
+  if (input.app === "vary-image") {
+    return [
+      "Create a variation of the provided image with specific changes.",
+      `Changes requested: ${input.prompt}.`,
+      `Variation style: ${input.style}.`,
+      `Aspect ratio: ${input.aspectRatio}.`,
+      `Use this source image as the reference: ${input.sourceImageUrl}. Preserve the overall composition, framing, and subject while applying the requested changes.`,
+      "The variation should feel like a deliberate creative choice, not a random alteration.",
+      "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original.",
     ].join(" ");
   }
 
@@ -167,10 +181,10 @@ export async function POST(request: Request) {
       type: "image",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot") ? input.sourceImageUrl : null },
+      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image") ? input.sourceImageUrl : null },
     });
 
-    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot") {
+    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image") {
       await addBrandAsset(user.id, project.id, {
         type: "reference_image",
         name: "Source image",
@@ -178,7 +192,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot")
+    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image")
       ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
       : await generateSceneImage(prompt, "en");
     await updateGenerationJob(job.id, {
