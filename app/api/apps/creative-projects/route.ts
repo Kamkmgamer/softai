@@ -31,6 +31,7 @@ function getKind(app: CreativeInput["app"]): ProjectKind {
   if (app === "image-editor") return "image_edit";
   if (app === "expand-image") return "image_edit";
   if (app === "stylize-image") return "image_edit";
+  if (app === "product-reshoot") return "image_edit";
   return "video_edit";
 }
 
@@ -39,10 +40,11 @@ function getAppLabel(app: CreativeInput["app"]) {
   if (app === "image-editor") return "AI Image Editor";
   if (app === "expand-image") return "Expand Image";
   if (app === "stylize-image") return "Stylize Image";
+  if (app === "product-reshoot") return "Product Reshoot";
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" }>) {
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" }>) {
   if (input.app === "expand-image") {
     return [
       "Expand/outpaint the provided image beyond its current borders.",
@@ -64,6 +66,18 @@ function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" |
       `Use this source image as the reference: ${input.sourceImageUrl}. Transform the visual style while preserving the subject composition and recognizable elements.`,
       "The result should feel like a cohesive artistic interpretation, not a simple filter overlay.",
       "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos.",
+    ].join(" ");
+  }
+
+  if (input.app === "product-reshoot") {
+    return [
+      "Reshoot the product in the provided image in a new setting.",
+      `New scene description: ${input.prompt}.`,
+      `Photography style: ${input.style}.`,
+      `Aspect ratio: ${input.aspectRatio}.`,
+      `Use this source image as the product reference: ${input.sourceImageUrl}. The product must remain exactly recognizable — same shape, colors, branding, and proportions.`,
+      "Place the product naturally in the new scene with realistic lighting, shadows, and reflections that match the environment.",
+      "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original product.",
     ].join(" ");
   }
 
@@ -153,10 +167,10 @@ export async function POST(request: Request) {
       type: "image",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image") ? input.sourceImageUrl : null },
+      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot") ? input.sourceImageUrl : null },
     });
 
-    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image") {
+    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot") {
       await addBrandAsset(user.id, project.id, {
         type: "reference_image",
         name: "Source image",
@@ -164,7 +178,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image")
+    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot")
       ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
       : await generateSceneImage(prompt, "en");
     await updateGenerationJob(job.id, {

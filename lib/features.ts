@@ -211,6 +211,17 @@ export const features: FeatureTile[] = [
     projectKind: "image_edit",
     badge: "New",
   },
+  {
+    slug: "product-reshoot",
+    title: "Product Reshoot",
+    description: "Instantly change the setting, lighting, or angle of your product photo.",
+    image: "/hero-mockup.png",
+    category: "Image",
+    starterKit: "Marketing",
+    status: "implemented",
+    appRoute: "/apps/product-reshoot",
+    projectKind: "image_edit",
+  },
 
   // ── Audio ─────────────────────────────────────────────────
   {
