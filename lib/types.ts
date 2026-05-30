@@ -96,7 +96,12 @@ export type ChatMessageRecord = {
   createdAt: string;
 };
 
-export type ProjectKind = "campaign_ad" | "multi_shot_video";
+export type ProjectKind =
+  | "campaign_ad"
+  | "multi_shot_video"
+  | "text_to_image"
+  | "image_edit"
+  | "video_edit";
 
 export type ProjectRecord = {
   id: string;

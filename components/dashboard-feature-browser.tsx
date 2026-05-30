@@ -2,9 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Search, Wand2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { CreditCard, Search, Wallet } from "lucide-react";
+import { getDictionary } from "@/lib/dictionaries";
+import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
+import { cn, formatCredits } from "@/lib/utils";
 import {
   type FeatureCategory,
   type FeatureTile,
@@ -16,8 +19,20 @@ import {
   getDefaultFeatureForCategory,
 } from "@/lib/features";
 
-export function DashboardFeatureBrowser() {
+type DashboardBillingSummary = {
+  balance: number;
+  plan: string;
+};
+
+export function DashboardFeatureBrowser({
+  billingSummary,
+}: {
+  billingSummary: DashboardBillingSummary;
+}) {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
   const [activeCategory, setActiveCategory] =
     useState<FeatureCategory>("Starter Kits");
   const [activeStarterKit, setActiveStarterKit] =
@@ -226,8 +241,31 @@ export function DashboardFeatureBrowser() {
         </div>
       </aside>
 
-      <section className="min-h-0 overflow-hidden bg-bg px-5 py-8 lg:px-10 lg:py-10">
-        <div className="mx-auto flex h-full max-w-[980px] flex-col justify-center gap-6">
+      <section className="min-h-0 overflow-y-auto bg-bg px-5 py-8 lg:px-10 lg:py-8">
+        <div className="mx-auto flex min-h-full max-w-[980px] flex-col justify-center gap-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface/80 px-4 py-3 shadow-[var(--shadow-sm)]">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">
+              <span className="inline-flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-text-tertiary" />
+                <strong className="font-semibold text-text">{formatCredits(billingSummary.balance, locale)}</strong>
+                credits
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-text-tertiary" />
+                <strong className="font-semibold text-text">{billingSummary.plan}</strong>
+                plan
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link href={localizePath("/billing", locale)} className="btn btn-secondary btn-sm">
+                {dictionary.app.billing}
+              </Link>
+              <Link href={localizePath("/payments#/billing", locale)} className="btn btn-primary btn-sm">
+                {dictionary.app.payments}
+              </Link>
+            </div>
+          </div>
+
           <div>
             <h2 className="text-[28px] font-semibold text-text sm:text-[32px]">
               {activeFeature.title}
@@ -244,12 +282,11 @@ export function DashboardFeatureBrowser() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => chooseModel(model)}
-                    style={active ? { color: "oklch(0.08 0.006 260)" } : undefined}
                     className={cn(
-                      "rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:shadow-[var(--focus-ring)]",
+                      "rounded-md border px-4 py-2 text-sm font-semibold transition-colors focus-visible:shadow-[var(--focus-ring)]",
                       active
-                        ? "bg-text"
-                        : "bg-surface-raised text-text-secondary hover:bg-surface-sunken hover:text-text",
+                        ? "border-accent bg-accent-soft text-accent-text"
+                        : "border-border bg-surface-raised text-text-secondary hover:bg-surface-sunken hover:text-text",
                     )}
                   >
                     {model}
@@ -265,18 +302,17 @@ export function DashboardFeatureBrowser() {
             className="block w-full overflow-hidden rounded-md border border-border bg-surface text-left shadow-[var(--shadow-lg)] transition-colors hover:border-border-strong focus-visible:shadow-[var(--focus-ring)]"
           >
             <span className="relative block aspect-[16/9]">
-              <Image
-                src={activeFeature.image}
-                alt={`${activeFeature.title} preview`}
-                fill
-                priority
-                sizes="(min-width: 1024px) 980px, 100vw"
-                className="object-cover"
+              <video
+                src="/edit-studio-empty-state.webm"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover"
               />
               <span className="absolute inset-x-0 top-0 h-1 bg-success" />
               <span className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" />
-              <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full bg-bg/80 px-3 py-2 text-xs font-medium text-text backdrop-blur">
-                <Wand2 className="h-3.5 w-3.5" />
+              <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-md bg-bg/85 px-3 py-2 text-xs font-medium text-text ring-1 ring-border">
                 {activeFeature.status === "implemented"
                   ? "Open generator"
                   : "Not implemented yet"}

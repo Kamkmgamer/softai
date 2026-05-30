@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Send, Sparkles } from "lucide-react";
+import { MessageSquare, Send } from "lucide-react";
 import { CREDIT_COSTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { ChatMessageRecord, ProjectRecord } from "@/lib/types";
@@ -108,7 +108,7 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-accent-text" />
+              <MessageSquare className="h-4 w-4 text-text-tertiary" />
               <h2 className="text-[0.9375rem] font-semibold text-text">
                 {isArabic ? "مساعد الحملة" : "Campaign assistant"}
               </h2>
@@ -119,7 +119,7 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
                 : "Ask for angles, offer rewrites, script edits, or storyboard improvements using this project context."}
             </p>
           </div>
-          <span className="shrink-0 rounded-full border border-accent/20 bg-accent-soft px-2 py-1 text-[11px] font-medium text-accent-text">
+          <span className="shrink-0 rounded-md border border-border bg-bg px-2 py-1 text-[11px] font-medium text-text-secondary">
             {CREDIT_COSTS.chatResponse} credits
           </span>
         </div>
@@ -164,7 +164,7 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
               type="button"
               disabled={isPending}
               onClick={() => sendMessage(suggestion)}
-              className="rounded-full border border-border bg-bg px-2.5 py-1 text-[11px] font-medium text-text-secondary transition-colors hover:border-border-strong hover:bg-surface-raised hover:text-text disabled:opacity-50"
+              className="rounded-md border border-border bg-bg px-2.5 py-1 text-[11px] font-medium text-text-secondary transition-colors hover:border-border-strong hover:bg-surface-raised hover:text-text disabled:opacity-50"
             >
               {suggestion}
             </button>

@@ -35,6 +35,26 @@ export const uploadRouter = {
       url: file.ufsUrl,
       name: file.name,
     })),
+
+  mediaReferenceUploader: f({
+    image: {
+      maxFileCount: 1,
+      maxFileSize: "8MB",
+    },
+    video: {
+      maxFileCount: 1,
+      maxFileSize: "64MB",
+    },
+  })
+    .middleware(async () => {
+      const user = await requireAppUser();
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => ({
+      userId: metadata.userId,
+      url: file.ufsUrl,
+      name: file.name,
+    })),
 } satisfies FileRouter;
 
 export type UploadRouter = typeof uploadRouter;

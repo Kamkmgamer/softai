@@ -102,6 +102,30 @@ export const multiShotVideoSchema = z.discriminatedUnion("mode", [
   }),
 ]);
 
+export const creativeAppSchema = z.discriminatedUnion("app", [
+  z.object({
+    app: z.literal("text-to-image"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Commercial product ad"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+  }),
+  z.object({
+    app: z.literal("image-editor"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url(),
+    style: z.string().min(2).max(80).default("Keep product identity"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+  }),
+  z.object({
+    app: z.literal("edit-studio"),
+    prompt: z.string().min(10).max(4000),
+    sourceVideoUrl: z.string().url().optional().nullable(),
+    style: z.string().min(2).max(80).default("Cinematic commercial edit"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    duration: z.enum(["10s", "15s", "20s"]).default("10s"),
+  }),
+]);
+
 export const chatMessageSchema = z.object({
   content: z.string().trim().min(1).max(4000),
 });

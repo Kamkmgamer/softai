@@ -1,0 +1,183 @@
+import { apiError, apiSuccess, readJson, requireAppUser } from "@/lib/api";
+import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
+import { holdImageCredits, refundImageCredits, settleImageCredits } from "@/lib/credits";
+import { assertPromptAllowed } from "@/lib/moderation";
+import { generateReferencedImage, generateSceneImage } from "@/lib/openrouter";
+import {
+  addBrandAsset,
+  approveStoryboard,
+  createGenerationJob,
+  createOutput,
+  createProject,
+  saveSceneImage,
+  saveStoryboard,
+  updateGenerationJob,
+} from "@/lib/store";
+import type { ProjectKind } from "@/lib/types";
+import { creativeAppSchema } from "@/lib/validators";
+
+type CreativeInput = Awaited<ReturnType<typeof readCreativeInput>>;
+
+function readCreativeInput(request: Request) {
+  return readJson(request, creativeAppSchema);
+}
+
+function titleFromPrompt(prompt: string) {
+  return prompt.trim().slice(0, 64) + (prompt.trim().length > 64 ? "..." : "");
+}
+
+function getKind(app: CreativeInput["app"]): ProjectKind {
+  if (app === "text-to-image") return "text_to_image";
+  if (app === "image-editor") return "image_edit";
+  return "video_edit";
+}
+
+function getAppLabel(app: CreativeInput["app"]) {
+  if (app === "text-to-image") return "Text to Image";
+  if (app === "image-editor") return "AI Image Editor";
+  return "Edit Studio";
+}
+
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" }>) {
+  const sourceInstruction = input.app === "image-editor"
+    ? `Use this source image as the product/reference context: ${input.sourceImageUrl}. Preserve the important product identity while applying the requested edit.`
+    : "Create the image from scratch.";
+
+  return [
+    "Create one polished, ad-ready image for a small business campaign.",
+    `Requested result: ${input.prompt}.`,
+    `Style or tool preset: ${input.style}.`,
+    `Aspect ratio target: ${input.aspectRatio}.`,
+    sourceInstruction,
+    "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original referenced product.",
+  ].join(" ");
+}
+
+function buildVideoEditScenes(input: Extract<CreativeInput, { app: "edit-studio" }>) {
+  const source = input.sourceVideoUrl
+    ? `Use the uploaded source video as edit context: ${input.sourceVideoUrl}.`
+    : "No source video was supplied; create a fresh transformed commercial sequence from the prompt.";
+
+  return [
+    {
+      title: "Edited opener",
+      narration: "Open with the strongest transformed visual moment.",
+      visualDirection: `${source} Apply this edit: ${input.prompt}. Establish the ${input.style} look immediately with a clean commercial opening frame.`,
+      overlayText: "Before the scroll",
+      durationSeconds: 4,
+    },
+    {
+      title: "Transformation beat",
+      narration: "Show the most noticeable AI edit clearly and confidently.",
+      visualDirection: `Continue the edit while preserving subject continuity. Emphasize relighting, restyling, object/background changes, or pacing requested by the user: ${input.prompt}.`,
+      overlayText: "AI edit applied",
+      durationSeconds: 4,
+    },
+    {
+      title: "Final polish",
+      narration: "End on a clean, publishable result.",
+      visualDirection: `Finish with a refined ${input.style} commercial hero shot, stable composition, and negative space for later CTA overlays.`,
+      overlayText: "Ready to publish",
+      durationSeconds: 4,
+    },
+  ];
+}
+
+export async function POST(request: Request) {
+  let heldImageCreditsForProject: string | null = null;
+
+  try {
+    const user = await requireAppUser();
+    const input = await readCreativeInput(request);
+    assertPromptAllowed(input.prompt);
+
+    const project = await createProject(user.id, {
+      kind: getKind(input.app),
+      title: titleFromPrompt(input.prompt),
+      productName: getAppLabel(input.app),
+      offer: input.style,
+      cta: input.app === "edit-studio" ? "Render edited video" : "Use this creative",
+      targetAudience: "small business customers",
+      brandVoice: "polished, direct, commercial",
+      platformTarget: "tiktok",
+      language: "en",
+      script: input.prompt,
+      metadata: input,
+    });
+
+    if (input.app === "edit-studio") {
+      await saveStoryboard(user.id, project.id, {
+        headline: "AI video edit plan",
+        hook: input.prompt,
+        cta: "Render edited video",
+        scenes: buildVideoEditScenes(input),
+      });
+      await approveStoryboard(user.id, project.id);
+      return apiSuccess({ project: { id: project.id, title: project.title, kind: project.kind } }, { status: 201 });
+    }
+
+    await holdImageCredits(user.id, project.id);
+    heldImageCreditsForProject = project.id;
+
+    const route = getProviderRoute("image");
+    const prompt = buildImagePrompt(input);
+    const job = await createGenerationJob(user.id, project.id, {
+      type: "image",
+      status: "processing",
+      ...getProviderJobMetadata(route),
+      requestPayload: { prompt, sourceImageUrl: input.app === "image-editor" ? input.sourceImageUrl : null },
+    });
+
+    if (input.app === "image-editor") {
+      await addBrandAsset(user.id, project.id, {
+        type: "reference_image",
+        name: "Source image",
+        url: input.sourceImageUrl,
+      });
+    }
+
+    const result = input.app === "image-editor"
+      ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
+      : await generateSceneImage(prompt, "en");
+    await updateGenerationJob(job.id, {
+      status: "completed",
+      modelKey: result.provider,
+      responsePayload: result.responsePayload,
+    });
+
+    await saveStoryboard(user.id, project.id, {
+      headline: getAppLabel(input.app),
+      hook: input.prompt,
+      cta: "Use this creative",
+      scenes: [
+        {
+          title: "Generated image",
+          narration: "Static image creative generated from the requested direction.",
+          visualDirection: prompt,
+          overlayText: "",
+          durationSeconds: 5,
+        },
+      ],
+    });
+    await approveStoryboard(user.id, project.id);
+    await saveSceneImage(project.id, 1, result.imageUrl);
+    await createOutput(user.id, project.id, {
+      type: "scene_image",
+      title: `${getAppLabel(input.app)} output`,
+      url: result.imageUrl,
+    });
+    await settleImageCredits(user.id, project.id);
+    heldImageCreditsForProject = null;
+
+    return apiSuccess({
+      project: { id: project.id, title: project.title, kind: project.kind },
+      output: { url: result.imageUrl },
+    }, { status: 201 });
+  } catch (error) {
+    const user = await requireAppUser().catch(() => null);
+    if (user && heldImageCreditsForProject) {
+      await refundImageCredits(user.id, heldImageCreditsForProject);
+    }
+    return apiError(error);
+  }
+}

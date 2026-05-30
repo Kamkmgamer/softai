@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Clock3, ImagePlus, Layers3, Play, Volume2 } from "lucide-react";
+import { ImageCreativeProject } from "@/components/project-detail/image-creative-project";
 import { MultiShotVideoProject } from "@/components/project-detail/multi-shot-video-project";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
@@ -32,11 +33,16 @@ export default async function ProjectDetailPage({
     return <MultiShotVideoProject projectId={projectId} bundle={bundle} />;
   }
 
+  if (bundle.project.kind === "text_to_image" || bundle.project.kind === "image_edit") {
+    return <ImageCreativeProject bundle={bundle} />;
+  }
+
   const storyboardReady = Boolean(bundle.storyboard && bundle.scenes.length > 0);
   const imagesReady = storyboardReady && bundle.scenes.every((scene) => scene.imageUrl);
   const finalVideo = bundle.outputs.find((output) => output.type === "final_video");
   const posterUrl = bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ?? "/rendering-feature.png";
   const totalDuration = bundle.scenes.reduce((total, scene) => total + scene.durationSeconds, 0);
+  const appLabel = getProjectAppLabel(bundle.project.kind);
 
   return (
     <div className="grid min-h-[calc(100dvh-4rem)] bg-bg lg:min-h-[100dvh] lg:grid-cols-[464px_1fr]">
@@ -44,7 +50,7 @@ export default async function ProjectDetailPage({
         <div className="flex items-center justify-between gap-3 px-1">
           <div className="text-sm text-text-secondary">
             Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">Campaign Ad</strong>
+            <strong className="font-semibold text-text">{appLabel}</strong>
           </div>
           <StatusBadge status={bundle.project.status} />
         </div>
@@ -126,6 +132,13 @@ export default async function ProjectDetailPage({
       </section>
     </div>
   );
+}
+
+function getProjectAppLabel(kind: string) {
+  if (kind === "text_to_image") return "Text to Image";
+  if (kind === "image_edit") return "AI Image Editor";
+  if (kind === "video_edit") return "Edit Studio";
+  return "Campaign Ad";
 }
 
 function BriefRow({ label, value }: { label: string; value: string }) {

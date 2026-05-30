@@ -5,11 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Blocks,
+  CreditCard,
   LibraryBig,
   Menu,
+  PlusSquare,
   Settings,
   Shield,
-  Sparkles,
   Wallet,
   X,
 } from "lucide-react";
@@ -25,13 +26,15 @@ const links: Array<{
   runwayLabel: string;
   icon: ComponentType<{ className?: string }>;
   adminOnly?: boolean;
+  group: "create" | "account";
 }> = [
-  { href: "/dashboard", labelKey: "dashboard", runwayLabel: "Apps", icon: Blocks },
-  { href: "/projects/new", labelKey: "newProject", runwayLabel: "Custom", icon: Sparkles },
-  { href: "/library", labelKey: "library", runwayLabel: "Agent", icon: LibraryBig },
-  { href: "/billing", labelKey: "billing", runwayLabel: "Workflow", icon: Wallet },
-  { href: "/settings", labelKey: "settings", runwayLabel: "Characters", icon: Settings },
-  { href: "/admin", labelKey: "admin", runwayLabel: "Admin", icon: Shield, adminOnly: true },
+  { href: "/dashboard", labelKey: "dashboard", runwayLabel: "Apps", icon: Blocks, group: "create" },
+  { href: "/projects/new", labelKey: "newProject", runwayLabel: "Custom", icon: PlusSquare, group: "create" },
+  { href: "/library", labelKey: "library", runwayLabel: "Library", icon: LibraryBig, group: "create" },
+  { href: "/billing", labelKey: "billing", runwayLabel: "Billing", icon: Wallet, group: "account" },
+  { href: "/payments#/billing", labelKey: "payments", runwayLabel: "Payments", icon: CreditCard, group: "account" },
+  { href: "/settings", labelKey: "settings", runwayLabel: "Settings", icon: Settings, group: "account" },
+  { href: "/admin", labelKey: "admin", runwayLabel: "Admin", icon: Shield, adminOnly: true, group: "account" },
 ];
 
 export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
@@ -40,6 +43,56 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   const dictionary = getDictionary(locale);
   const unlocalizedPathname = stripLocaleFromPathname(pathname);
   const visibleLinks = links.filter((link) => !link.adminOnly || isAdmin);
+  const createLinks = visibleLinks.filter((link) => link.group === "create");
+  const accountLinks = visibleLinks.filter((link) => link.group === "account");
+
+  function renderDesktopLink(link: (typeof links)[number]) {
+    const Icon = link.icon;
+    const activeHref = link.href.split("#")[0] ?? link.href;
+    const active =
+      unlocalizedPathname === activeHref || unlocalizedPathname.startsWith(`${activeHref}/`);
+
+    return (
+      <Link
+        key={link.href}
+        href={localizePath(link.href, locale)}
+        title={dictionary.app[link.labelKey]}
+        className={cn(
+          "group relative flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold leading-none transition-colors",
+          active
+            ? "bg-surface-raised text-text"
+            : "text-text-secondary hover:bg-surface-raised hover:text-text",
+        )}
+      >
+        {active ? <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" /> : null}
+        <Icon className="h-[17px] w-[17px] shrink-0" />
+        {link.runwayLabel}
+      </Link>
+    );
+  }
+
+  function renderMobileLink(link: (typeof links)[number]) {
+    const Icon = link.icon;
+    const activeHref = link.href.split("#")[0] ?? link.href;
+    const active =
+      unlocalizedPathname === activeHref || unlocalizedPathname.startsWith(`${activeHref}/`);
+
+    return (
+      <Link
+        key={link.href}
+        href={localizePath(link.href, locale)}
+        className={cn(
+          "flex items-center gap-2.5 rounded-[var(--radius-md)] px-2.5 py-2 text-[13px] font-medium transition-colors",
+          active
+            ? "bg-accent-soft text-accent-text"
+            : "text-text-secondary hover:bg-surface-raised hover:text-text",
+        )}
+      >
+        <Icon className="h-[15px] w-[15px] shrink-0" />
+        {dictionary.app[link.labelKey]}
+      </Link>
+    );
+  }
 
   return (
     <>
@@ -57,30 +110,9 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         </Link>
 
         {/* Nav */}
-        <nav className="flex-1 space-y-2 px-1.5">
-          {visibleLinks.map((link) => {
-              const Icon = link.icon;
-              const active =
-                unlocalizedPathname === link.href || unlocalizedPathname.startsWith(`${link.href}/`);
-
-            return (
-              <Link
-                key={link.href}
-                href={localizePath(link.href, locale)}
-                title={dictionary.app[link.labelKey]}
-                className={cn(
-                  "group relative flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold leading-none transition-colors",
-                  active
-                    ? "bg-surface-raised text-text"
-                    : "text-text-secondary hover:bg-surface-raised hover:text-text",
-                )}
-              >
-                {active ? <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" /> : null}
-                <Icon className="h-[17px] w-[17px] shrink-0" />
-                {link.runwayLabel}
-              </Link>
-            );
-          })}
+        <nav className="flex flex-1 flex-col px-1.5">
+          <div className="space-y-2">{createLinks.map(renderDesktopLink)}</div>
+          <div className="mt-auto space-y-2 border-t border-border pt-3">{accountLinks.map(renderDesktopLink)}</div>
         </nav>
 
         {/* User */}
@@ -143,28 +175,9 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
               </label>
             </div>
 
-            <nav className="flex-1 space-y-0.5">
-              {visibleLinks.map((link) => {
-                  const Icon = link.icon;
-                  const active =
-                    unlocalizedPathname === link.href || unlocalizedPathname.startsWith(`${link.href}/`);
-
-                return (
-                  <Link
-                    key={link.href}
-                    href={localizePath(link.href, locale)}
-                    className={cn(
-                      "flex items-center gap-2.5 rounded-[var(--radius-md)] px-2.5 py-2 text-[13px] font-medium transition-colors",
-                      active
-                        ? "bg-accent-soft text-accent-text"
-                        : "text-text-secondary hover:bg-surface-raised hover:text-text",
-                    )}
-                  >
-                    <Icon className="h-[15px] w-[15px] shrink-0" />
-                    {dictionary.app[link.labelKey]}
-                  </Link>
-                );
-              })}
+            <nav className="flex-1 space-y-4">
+              <div className="space-y-0.5">{createLinks.map(renderMobileLink)}</div>
+              <div className="space-y-0.5 border-t border-border pt-4">{accountLinks.map(renderMobileLink)}</div>
             </nav>
 
             <div className="flex items-center justify-between gap-3 border-t border-border px-2 pt-4">

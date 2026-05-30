@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { ImageIcon, ShieldCheck, Zap } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
@@ -24,8 +24,7 @@ export default async function MarketingPage() {
         <section className="relative mx-auto max-w-[1200px] px-6 py-20 lg:py-32">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-8 items-center">
             <div className="max-w-2xl">
-              <div className="mb-6 inline-flex items-center rounded-full border border-accent/20 bg-accent-soft px-3 py-1 text-[13px] font-medium text-accent-text">
-                <Sparkles className="mx-1.5 h-3.5 w-3.5" />
+              <div className="mb-6 inline-flex items-center rounded-md border border-accent/20 bg-accent-soft px-3 py-1 text-[13px] font-medium text-accent-text">
                 {marketing.eyebrow}
               </div>
               <h1 className="text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-[4rem] lg:leading-[1.1] text-balance">
@@ -177,7 +176,7 @@ export default async function MarketingPage() {
                 
                 <div className="flex-1 rounded-[var(--radius-lg)] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]">
                   <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-surface-sunken text-text-secondary ring-1 ring-border">
-                    <Sparkles className="h-5 w-5" />
+                    <ImageIcon className="h-5 w-5" />
                   </div>
                   <h3 className="text-lg font-medium tracking-tight text-text">{marketing.avatarsTitle}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">

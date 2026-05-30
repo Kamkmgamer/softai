@@ -92,7 +92,154 @@
 .runway-shell .btn-primary {
   border-color: var(--accent);
   background: var(--accent);
-  color: oklch(0.98 0.006 280);
+  color: oklch(0.985 0.006 280);
+}
+
+.runway-shell .btn-primary:hover:not(:disabled) {
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+  color: oklch(0.985 0.006 280);
+}
+
+.runway-shell .btn-secondary {
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+.runway-shell .btn-secondary:hover:not(:disabled) {
+  border-color: var(--text-tertiary);
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+.runway-shell .btn-primary:disabled,
+.runway-shell .btn-secondary:disabled {
+  border-color: var(--border);
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  opacity: 1;
+}
+
+.runway-shell .cl-rootBox,
+.runway-shell .cl-cardBox {
+  width: 100%;
+}
+
+.runway-shell .clerk-account-surface .cl-rootBox,
+.runway-shell .clerk-account-surface .cl-cardBox,
+.runway-shell .clerk-account-surface .cl-card,
+.runway-shell .clerk-account-surface .cl-userProfile-root,
+.runway-shell .clerk-account-surface .cl-userProfile-root > div,
+.runway-shell .clerk-account-surface .cl-page,
+.runway-shell .clerk-account-surface .cl-profilePage,
+.runway-shell .clerk-account-surface .cl-pageScrollBox,
+.runway-shell .clerk-account-surface .cl-profileSection {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.runway-shell .clerk-account-surface .cl-card,
+.runway-shell .clerk-account-surface .cl-cardBox {
+  min-height: min(704px, calc(100dvh - 176px));
+}
+
+.runway-shell .clerk-account-surface .cl-card {
+  overflow: hidden !important;
+}
+
+.runway-shell .clerk-account-surface .cl-pageScrollBox {
+  padding: 28px 32px !important;
+}
+
+@media (max-width: 767px) {
+  .runway-shell .clerk-account-surface .cl-pageScrollBox {
+    padding: 20px !important;
+  }
+}
+
+.runway-shell .cl-card,
+.runway-shell .cl-cardBox,
+.runway-shell .cl-userProfile-root,
+.runway-shell .cl-userProfile-root > div,
+.runway-shell .cl-pricingTable,
+.runway-shell .cl-pricingTableCard,
+.runway-shell .cl-pageScrollBox {
+  background: transparent !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+
+.runway-shell .cl-navbar,
+.runway-shell .cl-profileSection,
+.runway-shell .cl-pricingTableCard,
+.runway-shell .cl-modalContent {
+  border-color: var(--border) !important;
+}
+
+.runway-shell .cl-navbar,
+.runway-shell .cl-modalContent,
+.runway-shell .cl-drawerContent {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+.runway-shell .cl-navbarButton,
+.runway-shell .cl-menuButton,
+.runway-shell .cl-userPreviewSecondaryIdentifier,
+.runway-shell .cl-headerSubtitle,
+.runway-shell .cl-formFieldLabel,
+.runway-shell .cl-profileSectionContent,
+.runway-shell .cl-breadcrumbsItem,
+.runway-shell .cl-footerActionText {
+  color: var(--text-secondary) !important;
+}
+
+.runway-shell .cl-headerTitle,
+.runway-shell .cl-profileSectionTitle,
+.runway-shell .cl-userPreviewMainIdentifier,
+.runway-shell .cl-navbarButton[data-active="true"],
+.runway-shell .cl-formFieldInput,
+.runway-shell .cl-pricingTableCardTitle,
+.runway-shell .cl-pricingTableCardPrice,
+.runway-shell .cl-pricingTableCardDescription {
+  color: var(--text) !important;
+}
+
+.runway-shell .cl-navbarButton:hover,
+.runway-shell .cl-menuButton:hover,
+.runway-shell .cl-accordionTriggerButton:hover {
+  background: var(--surface-raised) !important;
+  color: var(--text) !important;
+}
+
+.runway-shell .cl-formFieldInput,
+.runway-shell .cl-selectButton,
+.runway-shell .cl-phoneInputBox {
+  border-color: var(--border) !important;
+  background: var(--surface-sunken) !important;
+  color: var(--text) !important;
+}
+
+.runway-shell .cl-formFieldInput:focus,
+.runway-shell .cl-selectButton:focus {
+  border-color: var(--accent) !important;
+  box-shadow: var(--focus-ring) !important;
+}
+
+.runway-shell .cl-formButtonPrimary,
+.runway-shell .cl-profileSectionPrimaryButton,
+.runway-shell .cl-pricingTableCardButton {
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: oklch(0.98 0.006 280) !important;
+}
+
+.runway-shell .cl-formButtonPrimary:hover,
+.runway-shell .cl-profileSectionPrimaryButton:hover,
+.runway-shell .cl-pricingTableCardButton:hover {
+  border-color: var(--accent-hover) !important;
+  background: var(--accent-hover) !important;
 }
 
 /* ─── Tailwind v4 theme bridge ───────────────────────────── */

@@ -649,6 +649,83 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
   };
 }
 
+export async function generateReferencedImage({
+  prompt,
+  imageUrl,
+  language = "en",
+}: {
+  prompt: string;
+  imageUrl: string;
+  language?: "en" | "ar";
+}) {
+  const env = getEnv();
+  const route = getProviderRoute("image");
+
+  if (route.isDemo) {
+    return {
+      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(`softai-edit-${language}-${imageUrl}-${prompt.slice(0, 80)}`)}/1280/1280`,
+      provider: route.modelKey,
+      requestPayload: { prompt, imageUrl },
+      responsePayload: null,
+    };
+  }
+
+  const requestPayload = {
+    model: route.modelKey,
+    modalities: ["image", "text"],
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: [
+              "Edit the provided reference image. Preserve the recognizable subject/product identity unless the prompt explicitly asks to change it.",
+              "Return one final edited image only, not analysis.",
+              language === "ar"
+                ? "Do not render Arabic words, pseudo-Arabic, or English words unless the user explicitly asks for text replacement."
+                : "Do not render captions, fake letters, labels, UI text, or watermarks unless the user explicitly asks for text replacement.",
+              prompt,
+            ].join(" "),
+          },
+          {
+            type: "image_url",
+            image_url: { url: imageUrl },
+          },
+        ],
+      },
+    ],
+  };
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.openRouterApiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": env.appUrl,
+      "X-Title": "SoftAI",
+    },
+    body: JSON.stringify(requestPayload),
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(payload?.error?.message ?? payload?.error ?? `OpenRouter referenced image request failed with status ${response.status}.`);
+  }
+
+  const editedImageUrl = extractImageUrl(payload);
+  if (!editedImageUrl) {
+    throw new Error("OpenRouter referenced image response did not include an image URL.");
+  }
+
+  return {
+    imageUrl: editedImageUrl,
+    provider: route.modelKey,
+    requestPayload,
+    responsePayload: payload,
+  };
+}
+
 type VideoRenderOptions = {
   duration?: number;
   size?: string;
