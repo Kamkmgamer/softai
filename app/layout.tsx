@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { ui } from "@clerk/ui";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { IBM_Plex_Mono, Inter, Noto_Naskh_Arabic } from "next/font/google";
@@ -54,7 +55,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${ibmPlexMono.variable} ${notoNaskhArabic.variable}`}
     >
       <body>
-        <ClerkProvider localization={locale === "ar" ? softaiArabicClerkLocalization : undefined}>
+        <ClerkProvider ui={ui} localization={locale === "ar" ? softaiArabicClerkLocalization : undefined}>
           <Providers>{children}</Providers>
         </ClerkProvider>
       </body>
