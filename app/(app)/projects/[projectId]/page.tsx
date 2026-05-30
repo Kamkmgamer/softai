@@ -35,7 +35,8 @@ export default async function ProjectDetailPage({
 
   if (
     bundle.project.kind === "text_to_image" ||
-    bundle.project.kind === "image_edit"
+    bundle.project.kind === "image_edit" ||
+    bundle.project.kind === "mockup"
   ) {
     return <ImageCreativeProject bundle={bundle} />;
   }
@@ -195,6 +196,7 @@ function getProjectAppLabel(kind: string) {
   if (kind === "text_to_image") return "Text to Image";
   if (kind === "image_edit") return "AI Image Editor";
   if (kind === "video_edit") return "Edit Studio";
+  if (kind === "mockup") return "Mockup Generator";
   return "Campaign Ad";
 }
 

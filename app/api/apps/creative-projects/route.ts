@@ -33,6 +33,7 @@ function getKind(app: CreativeInput["app"]): ProjectKind {
   if (app === "stylize-image") return "image_edit";
   if (app === "product-reshoot") return "image_edit";
   if (app === "vary-image") return "image_edit";
+  if (app === "mockup") return "mockup";
   return "video_edit";
 }
 
@@ -43,10 +44,11 @@ function getAppLabel(app: CreativeInput["app"]) {
   if (app === "stylize-image") return "Stylize Image";
   if (app === "product-reshoot") return "Product Reshoot";
   if (app === "vary-image") return "Vary Image";
+  if (app === "mockup") return "Mockup Generator";
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" }>) {
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" }>) {
   if (input.app === "expand-image") {
     return [
       "Expand/outpaint the provided image beyond its current borders.",
@@ -92,6 +94,18 @@ function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" |
       `Use this source image as the reference: ${input.sourceImageUrl}. Preserve the overall composition, framing, and subject while applying the requested changes.`,
       "The variation should feel like a deliberate creative choice, not a random alteration.",
       "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original.",
+    ].join(" ");
+  }
+
+  if (input.app === "mockup") {
+    return [
+      "Place the provided design onto a real-world product mockup.",
+      `Mockup scene description: ${input.prompt}.`,
+      `Photography style: ${input.style}.`,
+      `Aspect ratio: ${input.aspectRatio}.`,
+      `Use this source design image: ${input.sourceImageUrl}. The design must be placed naturally onto the product — respecting perspective, curvature, lighting, and material texture.`,
+      "The result should look like a professional product photograph showcasing the design in context.",
+      "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original design.",
     ].join(" ");
   }
 
@@ -181,10 +195,10 @@ export async function POST(request: Request) {
       type: "image",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image") ? input.sourceImageUrl : null },
+      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image" || input.app === "mockup") ? input.sourceImageUrl : null },
     });
 
-    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image") {
+    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image" || input.app === "mockup") {
       await addBrandAsset(user.id, project.id, {
         type: "reference_image",
         name: "Source image",
@@ -192,7 +206,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image")
+    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image" || input.app === "mockup")
       ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
       : await generateSceneImage(prompt, "en");
     await updateGenerationJob(job.id, {

@@ -101,7 +101,8 @@ export type ProjectKind =
   | "multi_shot_video"
   | "text_to_image"
   | "image_edit"
-  | "video_edit";
+  | "video_edit"
+  | "mockup";
 
 export type ProjectRecord = {
   id: string;

@@ -8,7 +8,7 @@ type Props = {
 };
 
 type CreativeMetadata = {
-  app?: "text-to-image" | "image-editor";
+  app?: "text-to-image" | "image-editor" | "mockup";
   aspectRatio?: "9:16" | "1:1" | "16:9";
   sourceImageUrl?: string;
   style?: string;
@@ -28,9 +28,9 @@ export function ImageCreativeProject({ bundle }: Props) {
   const generatedImage =
     bundle.outputs.find((output) => output.type === "scene_image") ?? null;
   const appLabel =
-    bundle.project.kind === "image_edit" ? "AI Image Editor" : "Text to Image";
+    bundle.project.kind === "image_edit" ? "AI Image Editor" : bundle.project.kind === "mockup" ? "Mockup Generator" : "Text to Image";
   const promptLabel =
-    bundle.project.kind === "image_edit" ? "Edit instruction" : "Prompt";
+    bundle.project.kind === "image_edit" ? "Edit instruction" : bundle.project.kind === "mockup" ? "Scene description" : "Prompt";
 
   return (
     <div className="h-full min-h-0 overflow-y-auto bg-bg">
@@ -86,7 +86,7 @@ export function ImageCreativeProject({ bundle }: Props) {
         </aside>
 
         <main className="flex min-h-0 flex-col gap-4 overflow-y-auto px-5 py-6 lg:px-10 lg:py-8">
-          {bundle.project.kind === "image_edit" ? (
+          {bundle.project.kind === "image_edit" || bundle.project.kind === "mockup" ? (
             <div className="grid min-h-0 flex-1 gap-4 md:grid-cols-2">
               <ImagePanel
                 title="Source"
@@ -94,7 +94,7 @@ export function ImageCreativeProject({ bundle }: Props) {
                 emptyLabel="No source image saved"
               />
               <ImagePanel
-                title="Edited result"
+                title={bundle.project.kind === "mockup" ? "Mockup result" : "Edited result"}
                 imageUrl={generatedImage?.url ?? null}
                 primary
                 emptyLabel="Image generation is still pending"

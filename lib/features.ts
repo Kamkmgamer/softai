@@ -232,6 +232,17 @@ export const features: FeatureTile[] = [
     appRoute: "/apps/vary-image",
     projectKind: "image_edit",
   },
+  {
+    slug: "mockup",
+    title: "Mockup Generator",
+    description: "Place your design on real-world products — apparel, mugs, screens, signage.",
+    image: "/hero-mockup.png",
+    category: "Image",
+    status: "implemented",
+    appRoute: "/apps/mockup",
+    projectKind: "mockup",
+    badge: "New",
+  },
 
   // ── Audio ─────────────────────────────────────────────────
   {

@@ -152,6 +152,13 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     style: z.string().min(2).max(80).default("Creative variation"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
   }),
+  z.object({
+    app: z.literal("mockup"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url(),
+    style: z.string().min(2).max(80).default("Photorealistic"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("1:1"),
+  }),
 ]);
 
 export const chatMessageSchema = z.object({
