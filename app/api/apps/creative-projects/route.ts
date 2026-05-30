@@ -30,6 +30,7 @@ function getKind(app: CreativeInput["app"]): ProjectKind {
   if (app === "text-to-image") return "text_to_image";
   if (app === "image-editor") return "image_edit";
   if (app === "expand-image") return "image_edit";
+  if (app === "stylize-image") return "image_edit";
   return "video_edit";
 }
 
@@ -37,10 +38,11 @@ function getAppLabel(app: CreativeInput["app"]) {
   if (app === "text-to-image") return "Text to Image";
   if (app === "image-editor") return "AI Image Editor";
   if (app === "expand-image") return "Expand Image";
+  if (app === "stylize-image") return "Stylize Image";
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" }>) {
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" }>) {
   if (input.app === "expand-image") {
     return [
       "Expand/outpaint the provided image beyond its current borders.",
@@ -49,6 +51,18 @@ function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" |
       `Style: ${input.style}.`,
       `Use this source image as the starting point: ${input.sourceImageUrl}. Seamlessly extend the image content, matching lighting, perspective, color palette, and style perfectly.`,
       "The expanded area must look naturally continuous with the original image. Avoid visible seams, abrupt color shifts, or style mismatches.",
+      "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos.",
+    ].join(" ");
+  }
+
+  if (input.app === "stylize-image") {
+    return [
+      "Apply an artistic style transformation to the provided image.",
+      `Requested style: ${input.prompt}.`,
+      `Style preset: ${input.style}.`,
+      `Target aspect ratio: ${input.aspectRatio}.`,
+      `Use this source image as the reference: ${input.sourceImageUrl}. Transform the visual style while preserving the subject composition and recognizable elements.`,
+      "The result should feel like a cohesive artistic interpretation, not a simple filter overlay.",
       "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos.",
     ].join(" ");
   }
@@ -139,10 +153,10 @@ export async function POST(request: Request) {
       type: "image",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image") ? input.sourceImageUrl : null },
+      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image") ? input.sourceImageUrl : null },
     });
 
-    if (input.app === "image-editor" || input.app === "expand-image") {
+    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image") {
       await addBrandAsset(user.id, project.id, {
         type: "reference_image",
         name: "Source image",
@@ -150,7 +164,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const result = (input.app === "image-editor" || input.app === "expand-image")
+    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image")
       ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
       : await generateSceneImage(prompt, "en");
     await updateGenerationJob(job.id, {

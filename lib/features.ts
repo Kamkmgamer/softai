@@ -200,6 +200,17 @@ export const features: FeatureTile[] = [
     appRoute: "/apps/expand-image",
     projectKind: "image_edit",
   },
+  {
+    slug: "stylize-image",
+    title: "Stylize Image",
+    description: "Apply artistic styles to your image — watercolor, oil painting, anime, vintage, and more.",
+    image: "/hero-mockup.png",
+    category: "Image",
+    status: "implemented",
+    appRoute: "/apps/stylize-image",
+    projectKind: "image_edit",
+    badge: "New",
+  },
 
   // ── Audio ─────────────────────────────────────────────────
   {
