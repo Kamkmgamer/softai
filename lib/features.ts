@@ -196,8 +196,9 @@ export const features: FeatureTile[] = [
     description: "Extend an image beyond its original frame.",
     image: "/hero-mockup.png",
     category: "Image",
-    status: "coming_soon",
+    status: "implemented",
     appRoute: "/apps/expand-image",
+    projectKind: "image_edit",
   },
 
   // ── Audio ─────────────────────────────────────────────────

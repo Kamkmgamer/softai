@@ -7,7 +7,7 @@ import { UploadCloud } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
 
-type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio";
+type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio" | "expand-image";
 
 type CreativeAppFormProps = {
   app: CreativeAppKind;
@@ -25,8 +25,6 @@ const durations = ["10s", "15s", "20s"];
 export function CreativeAppForm({
   app,
   title,
-  eyebrow,
-  description,
   placeholder,
   presets,
   requiresUpload,
@@ -58,7 +56,7 @@ export function CreativeAppForm({
       prompt: prompt.trim(),
       style,
       aspectRatio,
-      ...(app === "image-editor" ? { sourceImageUrl: sourceUrl } : null),
+      ...(app === "image-editor" || app === "expand-image" ? { sourceImageUrl: sourceUrl } : null),
       ...(app === "edit-studio" ? { sourceVideoUrl: sourceUrl, duration } : null),
     };
 

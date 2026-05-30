@@ -29,16 +29,30 @@ function titleFromPrompt(prompt: string) {
 function getKind(app: CreativeInput["app"]): ProjectKind {
   if (app === "text-to-image") return "text_to_image";
   if (app === "image-editor") return "image_edit";
+  if (app === "expand-image") return "image_edit";
   return "video_edit";
 }
 
 function getAppLabel(app: CreativeInput["app"]) {
   if (app === "text-to-image") return "Text to Image";
   if (app === "image-editor") return "AI Image Editor";
+  if (app === "expand-image") return "Expand Image";
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" }>) {
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" }>) {
+  if (input.app === "expand-image") {
+    return [
+      "Expand/outpaint the provided image beyond its current borders.",
+      `Expansion direction and content: ${input.prompt}.`,
+      `Target aspect ratio: ${input.aspectRatio}.`,
+      `Style: ${input.style}.`,
+      `Use this source image as the starting point: ${input.sourceImageUrl}. Seamlessly extend the image content, matching lighting, perspective, color palette, and style perfectly.`,
+      "The expanded area must look naturally continuous with the original image. Avoid visible seams, abrupt color shifts, or style mismatches.",
+      "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos.",
+    ].join(" ");
+  }
+
   const sourceInstruction = input.app === "image-editor"
     ? `Use this source image as the product/reference context: ${input.sourceImageUrl}. Preserve the important product identity while applying the requested edit.`
     : "Create the image from scratch.";
@@ -125,10 +139,10 @@ export async function POST(request: Request) {
       type: "image",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, sourceImageUrl: input.app === "image-editor" ? input.sourceImageUrl : null },
+      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image") ? input.sourceImageUrl : null },
     });
 
-    if (input.app === "image-editor") {
+    if (input.app === "image-editor" || input.app === "expand-image") {
       await addBrandAsset(user.id, project.id, {
         type: "reference_image",
         name: "Source image",
@@ -136,7 +150,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const result = input.app === "image-editor"
+    const result = (input.app === "image-editor" || input.app === "expand-image")
       ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
       : await generateSceneImage(prompt, "en");
     await updateGenerationJob(job.id, {
