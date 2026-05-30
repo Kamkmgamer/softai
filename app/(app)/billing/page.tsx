@@ -1,18 +1,13 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Activity, CalendarClock, CreditCard, Wallet } from "lucide-react";
-import dynamic from "next/dynamic";
-
-const PricingTable = dynamic(
-  () => import("@clerk/nextjs").then((mod) => mod.PricingTable),
-  { ssr: false },
-);
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import { localizePath, type Locale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { getBillingSummary } from "@/lib/store";
 import { runwayClerkAppearance } from "@/lib/clerk-appearance";
+import { PricingTable } from "@/components/pricing-table";
 import { EmptyState, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatCredits, formatDate } from "@/lib/utils";
 
