@@ -5,7 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { getDictionary } from "@/lib/dictionaries";
-import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
 export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
@@ -23,22 +27,33 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6">
-        <Link href={localizePath("/", locale)} className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-text text-[11px] font-bold text-bg">
+      <div className="mx-auto flex h-16 max-w-300 items-center justify-between px-6">
+        <Link
+          href={localizePath("/", locale)}
+          className="flex items-center gap-2.5"
+        >
+          <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-text text-[11px] font-bold text-bg">
             S
           </div>
-          <span className="text-[15px] font-semibold tracking-tight text-text">SoftAI</span>
+          <span className="text-[15px] font-semibold tracking-tight text-text">
+            SoftAI
+          </span>
         </Link>
-        
+
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-8 sm:flex">
           <LanguageSwitcher />
-          <Link href={localizePath("/pricing", locale)} className="text-sm font-medium text-text-secondary hover:text-text transition-colors">
+          <Link
+            href={localizePath("/pricing", locale)}
+            className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
+          >
             {dictionary.app.billing === "الفوترة" ? "الأسعار" : "Pricing"}
           </Link>
           {hasAccess ? (
-            <Link href={localizePath("/dashboard", locale)} className="btn-primary">
+            <Link
+              href={localizePath("/dashboard", locale)}
+              className="btn-primary"
+            >
               {dictionary.app.dashboard}
             </Link>
           ) : (
@@ -47,9 +62,12 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
                 href={localizePath("/sign-in", locale)}
                 className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
               >
-                 {locale === "ar" ? "تسجيل الدخول" : "Log in"}
+                {locale === "ar" ? "تسجيل الدخول" : "Log in"}
               </Link>
-              <Link href={localizePath("/sign-up", locale)} className="btn-primary">
+              <Link
+                href={localizePath("/sign-up", locale)}
+                className="btn-primary"
+              >
                 {locale === "ar" ? "ابدأ الآن" : "Sign up"}
               </Link>
             </div>
@@ -65,7 +83,11 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
           onClick={() => setMobileMenuOpen((open) => !open)}
         >
           <span className="sr-only">{dictionary.app.openNavigation}</span>
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </div>
 
@@ -73,7 +95,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
       {mobileMenuOpen && (
         <div
           id="marketing-mobile-menu"
-          className="sm:hidden border-t border-border bg-surface px-6 py-4 shadow-[var(--shadow-sm)]"
+          className="sm:hidden border-t border-border bg-surface px-6 py-4 shadow-(--shadow-sm)"
         >
           <nav className="flex flex-col gap-4">
             <LanguageSwitcher className="w-fit" />

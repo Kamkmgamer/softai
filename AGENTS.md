@@ -38,5 +38,4 @@ For all related auth and payment functionality, consult Clerk skills and/or [Cle
 
 ## UI and Style
 
-- This version of Tailwind CSS has breaking changes — Old v3 styles are not working, consult [Tailwind docs](https://tailwindcss.com/docs).
-- Use impeccable skill to know how to do elegant designs when asked to make new designs or pages.
+For UI, styling, Tailwind CSS, and design guidelines, see [STYLES.AGENTS.md](./STYLES.AGENTS.md).

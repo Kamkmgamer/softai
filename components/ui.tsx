@@ -45,7 +45,9 @@ export function SectionHeader({
       <div className="flex items-center gap-2.5">
         <h2 className="text-[0.9375rem] font-semibold text-text">{title}</h2>
         {count !== undefined ? (
-          <span className="text-xs tabular-nums text-text-tertiary">{count}</span>
+          <span className="text-xs tabular-nums text-text-tertiary">
+            {count}
+          </span>
         ) : null}
       </div>
       {action}
@@ -56,11 +58,11 @@ export function SectionHeader({
 /* ─── Badge / Pill ───────────────────────────────────────── */
 
 const badgeTones = {
-  default:  "border-border bg-surface-raised text-text-secondary",
-  accent:   "border-accent/20 bg-accent-soft text-accent-text",
-  success:  "border-success/20 bg-success-soft text-success",
-  warning:  "border-warning/20 bg-warning-soft text-warning",
-  danger:   "border-danger/20 bg-danger-soft text-danger",
+  default: "border-border bg-surface-raised text-text-secondary",
+  accent: "border-accent/20 bg-accent-soft text-accent-text",
+  success: "border-success/20 bg-success-soft text-success",
+  warning: "border-warning/20 bg-warning-soft text-warning",
+  danger: "border-danger/20 bg-danger-soft text-danger",
 } as const;
 
 export function Badge({
@@ -88,24 +90,29 @@ export const Pill = Badge;
 /* ─── Status badge (dot + label) ─────────────────────────── */
 
 const statusColors: Record<string, string> = {
-  draft:            "status-dot-neutral",
+  draft: "status-dot-neutral",
   storyboard_ready: "status-dot-warning",
-  review_needed:    "status-dot-warning",
-  rendering:        "status-dot-warning",
-  completed:        "status-dot-success",
-  failed:           "status-dot-danger",
-  blocked:          "status-dot-danger",
-  active:           "status-dot-success",
-  inactive:         "status-dot-neutral",
-  trialing:         "status-dot-warning",
-  past_due:         "status-dot-danger",
-  canceled:         "status-dot-danger",
+  review_needed: "status-dot-warning",
+  rendering: "status-dot-warning",
+  completed: "status-dot-success",
+  failed: "status-dot-danger",
+  blocked: "status-dot-danger",
+  active: "status-dot-success",
+  inactive: "status-dot-neutral",
+  trialing: "status-dot-warning",
+  past_due: "status-dot-danger",
+  canceled: "status-dot-danger",
 };
 
 export function StatusBadge({ status }: { status: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-xs text-text-secondary capitalize">
-      <span className={cn("status-dot", statusColors[status] ?? "status-dot-neutral")} />
+      <span
+        className={cn(
+          "status-dot",
+          statusColors[status] ?? "status-dot-neutral",
+        )}
+      />
       {status.replaceAll("_", " ")}
     </span>
   );
@@ -129,7 +136,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var(--shadow-sm)]",
+        "rounded-lg border border-border bg-surface shadow-(--shadow-sm)",
         paddings[padding],
         className,
       )}
@@ -154,11 +161,13 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-[var(--radius-lg)] border border-dashed border-border px-6 py-12 text-center">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-6 py-12 text-center">
       {Icon ? <Icon className="mb-3 h-8 w-8 text-text-tertiary" /> : null}
       <p className="text-sm font-medium text-text">{title}</p>
       {description ? (
-        <p className="mt-1 max-w-sm text-[0.8125rem] text-text-secondary">{description}</p>
+        <p className="mt-1 max-w-sm text-[0.8125rem] text-text-secondary">
+          {description}
+        </p>
       ) : null}
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
@@ -177,7 +186,9 @@ export function DataRow({
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-border py-2.5 last:border-0">
       <dt className="shrink-0 text-[0.8125rem] text-text-secondary">{label}</dt>
-      <dd className="text-end text-[0.8125rem] font-medium text-text">{children}</dd>
+      <dd className="text-end text-[0.8125rem] font-medium text-text">
+        {children}
+      </dd>
     </div>
   );
 }
@@ -224,7 +235,10 @@ export function FieldLabel({
 }) {
   return (
     <div className="space-y-0.5">
-      <label htmlFor={htmlFor} className="text-[0.8125rem] font-medium text-text">
+      <label
+        htmlFor={htmlFor}
+        className="text-[0.8125rem] font-medium text-text"
+      >
         {label}
         {required ? <span className="mx-0.5 text-danger">*</span> : null}
       </label>

@@ -6,7 +6,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { CreditCard, Search, Wallet } from "lucide-react";
 import { getDictionary } from "@/lib/dictionaries";
-import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 import { cn, formatCredits } from "@/lib/utils";
 import {
   type FeatureCategory,
@@ -92,13 +96,13 @@ export function DashboardFeatureBrowser({
 
   return (
     <div className="grid h-full min-h-0 overflow-hidden lg:grid-cols-[464px_minmax(0,1fr)]">
-      <aside className="min-h-0 overflow-hidden border-border bg-[radial-gradient(circle_at_52%_0%,oklch(0.33_0.055_310_/_0.45),transparent_270px),var(--surface)] px-5 py-8 lg:border-r lg:px-6 lg:py-12">
-        <div className="mx-auto flex h-full max-w-[416px] flex-col">
+      <aside className="min-h-0 overflow-hidden border-border bg-[radial-gradient(circle_at_52%_0%,oklch(0.33_0.055_310/0.45),transparent_270px),var(--surface)] px-5 py-8 lg:border-r lg:px-6 lg:py-12">
+        <div className="mx-auto flex h-full max-w-104 flex-col">
           <div className="space-y-4 px-1">
             <h1 className="text-center text-2xl font-semibold text-text">
               What do you want to create?
             </h1>
-            <label className="flex h-[43px] items-center gap-2 rounded-xl border border-border-strong bg-surface-raised/80 px-3 text-text-secondary shadow-[var(--shadow-sm)] transition-colors focus-within:border-border-strong">
+            <label className="flex h-10.75 items-center gap-2 rounded-xl border border-border-strong bg-surface-raised/80 px-3 text-text-secondary shadow-(--shadow-sm) transition-colors focus-within:border-border-strong">
               <Search className="h-4 w-4" />
               <input
                 value={query}
@@ -109,7 +113,7 @@ export function DashboardFeatureBrowser({
             </label>
           </div>
 
-          <div className="mt-14 flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="mt-14 flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
             {categories.map((category) => {
               const active = category === activeCategory;
               return (
@@ -127,7 +131,7 @@ export function DashboardFeatureBrowser({
                     setNotice(null);
                   }}
                   className={cn(
-                    "shrink-0 rounded-t-lg border-b px-2.5 pb-2 pt-1 transition-colors hover:text-text focus-visible:shadow-[var(--focus-ring)]",
+                    "shrink-0 rounded-t-lg border-b px-2.5 pb-2 pt-1 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
                     active
                       ? "border-text text-text"
                       : "border-transparent text-text-tertiary hover:border-border-strong",
@@ -167,13 +171,13 @@ export function DashboardFeatureBrowser({
                       setNotice(null);
                     }}
                     className={cn(
-                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-[var(--focus-ring)]",
+                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
                       active
                         ? "border-border-strong bg-surface-raised/85"
                         : "border-transparent hover:border-border hover:bg-surface-raised/70",
                     )}
                   >
-                    <span className="flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-surface-raised text-text-secondary ring-1 ring-border transition-colors group-hover:text-text">
+                    <span className="flex h-18 w-18 items-center justify-center rounded-2xl bg-surface-raised text-text-secondary ring-1 ring-border transition-colors group-hover:text-text">
                       <Icon className="h-5 w-5" />
                     </span>
                     <span className="min-w-0 self-center">
@@ -196,7 +200,7 @@ export function DashboardFeatureBrowser({
                     type="button"
                     onClick={() => openFeature(feature)}
                     className={cn(
-                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-[var(--focus-ring)]",
+                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
                       active
                         ? "border-border-strong bg-surface-raised/85"
                         : "border-transparent hover:border-border hover:bg-surface-raised/70",
@@ -207,7 +211,7 @@ export function DashboardFeatureBrowser({
                       alt=""
                       width={96}
                       height={96}
-                      className="h-[72px] w-[72px] rounded-2xl object-cover ring-1 ring-border"
+                      className="h-18 w-18 rounded-2xl object-cover ring-1 ring-border"
                     />
                     <span className="min-w-0 self-center">
                       <span className="flex items-center gap-2 text-sm font-semibold text-text">
@@ -242,25 +246,35 @@ export function DashboardFeatureBrowser({
       </aside>
 
       <section className="min-h-0 overflow-y-auto bg-bg px-5 py-8 lg:px-10 lg:py-8">
-        <div className="mx-auto flex min-h-full max-w-[980px] flex-col justify-center gap-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface/80 px-4 py-3 shadow-[var(--shadow-sm)]">
+        <div className="mx-auto flex min-h-full max-w-245 flex-col justify-center gap-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface/80 px-4 py-3 shadow-(--shadow-sm)">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">
               <span className="inline-flex items-center gap-2">
                 <Wallet className="h-4 w-4 text-text-tertiary" />
-                <strong className="font-semibold text-text">{formatCredits(billingSummary.balance, locale)}</strong>
+                <strong className="font-semibold text-text">
+                  {formatCredits(billingSummary.balance, locale)}
+                </strong>
                 credits
               </span>
               <span className="inline-flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-text-tertiary" />
-                <strong className="font-semibold text-text">{billingSummary.plan}</strong>
+                <strong className="font-semibold text-text">
+                  {billingSummary.plan}
+                </strong>
                 plan
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Link href={localizePath("/billing", locale)} className="btn btn-secondary btn-sm">
+              <Link
+                href={localizePath("/billing", locale)}
+                className="btn btn-secondary btn-sm"
+              >
                 {dictionary.app.billing}
               </Link>
-              <Link href={localizePath("/payments#/billing", locale)} className="btn btn-primary btn-sm">
+              <Link
+                href={localizePath("/payments#/billing", locale)}
+                className="btn btn-primary btn-sm"
+              >
                 {dictionary.app.payments}
               </Link>
             </div>
@@ -283,7 +297,7 @@ export function DashboardFeatureBrowser({
                     aria-pressed={active}
                     onClick={() => chooseModel(model)}
                     className={cn(
-                      "rounded-md border px-4 py-2 text-sm font-semibold transition-colors focus-visible:shadow-[var(--focus-ring)]",
+                      "rounded-md border px-4 py-2 text-sm font-semibold transition-colors focus-visible:shadow-(--focus-ring)",
                       active
                         ? "border-accent bg-accent-soft text-accent-text"
                         : "border-border bg-surface-raised text-text-secondary hover:bg-surface-sunken hover:text-text",
@@ -299,9 +313,9 @@ export function DashboardFeatureBrowser({
           <button
             type="button"
             onClick={() => openFeature(activeFeature)}
-            className="block w-full overflow-hidden rounded-md border border-border bg-surface text-left shadow-[var(--shadow-lg)] transition-colors hover:border-border-strong focus-visible:shadow-[var(--focus-ring)]"
+            className="block w-full overflow-hidden rounded-md border border-border bg-surface text-left shadow-(--shadow-lg) transition-colors hover:border-border-strong focus-visible:shadow-(--focus-ring)"
           >
-            <span className="relative block aspect-[16/9]">
+            <span className="relative block aspect-video">
               <video
                 src="/edit-studio-empty-state.webm"
                 autoPlay
@@ -311,7 +325,7 @@ export function DashboardFeatureBrowser({
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <span className="absolute inset-x-0 top-0 h-1 bg-success" />
-              <span className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" />
+              <span className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
               <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-md bg-bg/85 px-3 py-2 text-xs font-medium text-text ring-1 ring-border">
                 {activeFeature.status === "implemented"
                   ? "Open generator"

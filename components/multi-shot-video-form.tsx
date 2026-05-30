@@ -59,7 +59,11 @@ export function MultiShotVideoForm() {
     });
   }
 
-  function getUploadedUrl(file: { ufsUrl?: string; url?: string; serverData?: { url?: string } | null }) {
+  function getUploadedUrl(file: {
+    ufsUrl?: string;
+    url?: string;
+    serverData?: { url?: string } | null;
+  }) {
     return file.ufsUrl ?? file.serverData?.url ?? file.url ?? null;
   }
 
@@ -71,7 +75,11 @@ export function MultiShotVideoForm() {
       borderRadius: "0.75rem",
       cursor: "pointer",
     },
-    label: { color: "var(--text-secondary)", fontSize: "0.75rem", fontWeight: 500 },
+    label: {
+      color: "var(--text-secondary)",
+      fontSize: "0.75rem",
+      fontWeight: 500,
+    },
     allowedContent: { color: "var(--text-tertiary)", fontSize: "0.6875rem" },
     button: { display: "none" },
   };
@@ -88,7 +96,9 @@ export function MultiShotVideoForm() {
   }
 
   function updateShot(id: string, prompt: string) {
-    setShots((s) => s.map((shot) => (shot.id === id ? { ...shot, prompt } : shot)));
+    setShots((s) =>
+      s.map((shot) => (shot.id === id ? { ...shot, prompt } : shot)),
+    );
   }
 
   function canSubmit(): boolean {
@@ -148,12 +158,14 @@ export function MultiShotVideoForm() {
   return (
     <div className="flex h-full min-h-0 flex-col lg:flex-row">
       {/* Left panel: inputs */}
-      <aside className="flex min-h-0 w-full flex-col border-border bg-surface px-5 py-6 lg:w-[464px] lg:border-r lg:px-6 lg:py-8">
+      <aside className="flex min-h-0 w-full flex-col border-border bg-surface px-5 py-6 lg:w-116 lg:border-r lg:px-6 lg:py-8">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between gap-3 px-1">
           <div className="text-sm text-text-secondary">
             Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">Multi-Shot Video</strong>
+            <strong className="font-semibold text-text">
+              Multi-Shot Video
+            </strong>
           </div>
           <div className="rounded-full bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
             <button
@@ -161,7 +173,9 @@ export function MultiShotVideoForm() {
               onClick={() => setMode("auto")}
               className={cn(
                 "rounded-full px-3 py-1.5 transition-colors",
-                mode === "auto" ? "bg-surface-raised text-text" : "hover:text-text",
+                mode === "auto"
+                  ? "bg-surface-raised text-text"
+                  : "hover:text-text",
               )}
             >
               Auto
@@ -171,7 +185,9 @@ export function MultiShotVideoForm() {
               onClick={() => setMode("custom")}
               className={cn(
                 "rounded-full px-3 py-1.5 transition-colors",
-                mode === "custom" ? "bg-surface-raised text-text" : "hover:text-text",
+                mode === "custom"
+                  ? "bg-surface-raised text-text"
+                  : "hover:text-text",
               )}
             >
               Custom
@@ -186,11 +202,11 @@ export function MultiShotVideoForm() {
               <label className="text-[13px] font-medium text-text">
                 Describe your sequence
               </label>
-              <div className="flex min-h-[300px] flex-col rounded-xl border border-border bg-bg-subtle p-3 transition-colors focus-within:border-border-strong focus-within:shadow-[var(--focus-ring)]">
+              <div className="flex min-h-75 flex-col rounded-xl border border-border bg-bg-subtle p-3 transition-colors focus-within:border-border-strong focus-within:shadow-(--focus-ring)">
                 <textarea
                   value={autoPrompt}
                   onChange={(e) => setAutoPrompt(e.target.value)}
-                  className="min-h-[260px] flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-text placeholder:text-text-tertiary"
+                  className="min-h-65 flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-text placeholder:text-text-tertiary"
                   placeholder="A lone astronaut walks across a vast red desert under a pink sky. She stops, kneels, and picks up a glowing object half-buried in the sand. Close-up on her face as she looks up, a massive structure emerges from the dust on the horizon."
                 />
               </div>
@@ -244,7 +260,7 @@ export function MultiShotVideoForm() {
                     rows={3}
                     value={shot.prompt}
                     onChange={(e) => updateShot(shot.id, e.target.value)}
-                    className="w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-2.5 text-[14px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-[var(--focus-ring)]"
+                    className="w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-2.5 text-[14px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-(--focus-ring)"
                     placeholder={
                       index === 0
                         ? "Opening shot: the character enters the scene..."
@@ -345,10 +361,10 @@ export function MultiShotVideoForm() {
       </aside>
 
       {/* Right panel: preview/examples */}
-      <section className="relative flex min-h-[620px] flex-1 items-center justify-center px-5 py-12 lg:px-10">
-        <div className="w-full max-w-[980px] space-y-6 text-center">
+      <section className="relative flex min-h-155 flex-1 items-center justify-center px-5 py-12 lg:px-10">
+        <div className="w-full max-w-245 space-y-6 text-center">
           <div>
-            <h1 className="text-[28px] font-semibold tracking-[-0.05em] text-text sm:text-[32px]">
+            <h1 className="text-[28px] font-semibold tracking-tighter text-text sm:text-[32px]">
               Multi-Shot Video
             </h1>
             <p className="mt-2 text-sm text-text-secondary">
@@ -356,16 +372,16 @@ export function MultiShotVideoForm() {
             </p>
           </div>
 
-          <div className="mx-auto overflow-hidden rounded-md border border-border bg-surface shadow-[var(--shadow-lg)]">
-            <div className="relative aspect-[16/9] bg-bg-subtle">
+          <div className="mx-auto overflow-hidden rounded-md border border-border bg-surface shadow-(--shadow-lg)">
+            <div className="relative aspect-video bg-bg-subtle">
               <div className="absolute inset-0 flex items-center justify-center text-sm text-text-tertiary">
                 Your generated video will appear here
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
             </div>
           </div>
 
-          <div className="mx-auto flex max-w-[760px] gap-2 overflow-hidden">
+          <div className="mx-auto flex max-w-190 gap-2 overflow-hidden">
             {[1, 2, 3].map((n) => (
               <div
                 key={n}
@@ -394,7 +410,11 @@ function FirstFrameUpload({
   firstFrameUrl: string | null;
   uploadMessage: string | null;
   uploadAppearance: Record<string, unknown>;
-  getUploadedUrl: (file: { ufsUrl?: string; url?: string; serverData?: { url?: string } | null }) => string | null;
+  getUploadedUrl: (file: {
+    ufsUrl?: string;
+    url?: string;
+    serverData?: { url?: string } | null;
+  }) => string | null;
   onUploaded: (url: string, name: string) => void;
   onError: (message: string) => void;
 }) {
@@ -426,7 +446,13 @@ function FirstFrameUpload({
       />
       {firstFrameUrl ? (
         <div className="overflow-hidden rounded-xl border border-border bg-surface">
-          <Image src={firstFrameUrl} alt="First frame reference" width={640} height={360} className="h-28 w-full object-cover" />
+          <Image
+            src={firstFrameUrl}
+            alt="First frame reference"
+            width={640}
+            height={360}
+            className="h-28 w-full object-cover"
+          />
         </div>
       ) : null}
       {uploadMessage ? (

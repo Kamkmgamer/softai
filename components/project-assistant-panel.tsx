@@ -27,9 +27,15 @@ const arabicSuggestions = [
   "اختصر النص",
 ];
 
-function createLocalMessage(role: "user" | "assistant", content: string): ChatMessageRecord {
+function createLocalMessage(
+  role: "user" | "assistant",
+  content: string,
+): ChatMessageRecord {
   return {
-    id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `local-${Date.now()}`,
+    id:
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `local-${Date.now()}`,
     conversationId: "local",
     userId: "local",
     role,
@@ -39,14 +45,19 @@ function createLocalMessage(role: "user" | "assistant", content: string): ChatMe
   };
 }
 
-export function ProjectAssistantPanel({ conversationId, projectLanguage, initialMessages }: Props) {
+export function ProjectAssistantPanel({
+  conversationId,
+  projectLanguage,
+  initialMessages,
+}: Props) {
   const router = useRouter();
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const suggestions = projectLanguage === "ar" ? arabicSuggestions : englishSuggestions;
+  const suggestions =
+    projectLanguage === "ar" ? arabicSuggestions : englishSuggestions;
   const isArabic = projectLanguage === "ar";
 
   useEffect(() => {
@@ -69,11 +80,14 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
 
     startTransition(async () => {
       try {
-        const response = await fetch(`/api/chat/conversations/${conversationId}/messages`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content }),
-        });
+        const response = await fetch(
+          `/api/chat/conversations/${conversationId}/messages`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content }),
+          },
+        );
 
         if (!response.ok || !response.body) {
           const payload = await response.json().catch(() => null);
@@ -88,22 +102,31 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
           const { value, done } = await reader.read();
           if (done) break;
           streamed += decoder.decode(value, { stream: true });
-          setMessages((current) => current.map((message) => (
-            message.id === assistantMessage.id ? { ...message, content: streamed } : message
-          )));
+          setMessages((current) =>
+            current.map((message) =>
+              message.id === assistantMessage.id
+                ? { ...message, content: streamed }
+                : message,
+            ),
+          );
         }
 
         router.refresh();
       } catch (caught) {
-        const message = caught instanceof Error ? caught.message : "Assistant response failed.";
+        const message =
+          caught instanceof Error
+            ? caught.message
+            : "Assistant response failed.";
         setError(message);
-        setMessages((current) => current.filter((entry) => entry.id !== assistantMessage.id));
+        setMessages((current) =>
+          current.filter((entry) => entry.id !== assistantMessage.id),
+        );
       }
     });
   }
 
   return (
-    <section className="overflow-hidden rounded-[28px] border border-border bg-surface shadow-[var(--shadow-sm)]">
+    <section className="overflow-hidden rounded-[28px] border border-border bg-surface shadow-(--shadow-sm)">
       <div className="border-b border-border bg-surface-raised/70 px-4 py-4">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -125,11 +148,19 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
         </div>
       </div>
 
-      <div className="max-h-[440px] space-y-3 overflow-y-auto px-4 py-4">
+      <div className="max-h-110 space-y-3 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
-          <div className="rounded-[var(--radius-md)] border border-dashed border-border bg-surface-raised px-4 py-8 text-center">
-            <p className="text-sm font-medium text-text">{isArabic ? "ابدأ بسؤال عن هذه الحملة" : "Start with a campaign question"}</p>
-            <p className="mt-1 text-xs text-text-secondary">{isArabic ? "سأستخدم موجز المشروع الحالي للإجابة." : "I will use the current project brief to answer."}</p>
+          <div className="rounded-md border border-dashed border-border bg-surface-raised px-4 py-8 text-center">
+            <p className="text-sm font-medium text-text">
+              {isArabic
+                ? "ابدأ بسؤال عن هذه الحملة"
+                : "Start with a campaign question"}
+            </p>
+            <p className="mt-1 text-xs text-text-secondary">
+              {isArabic
+                ? "سأستخدم موجز المشروع الحالي للإجابة."
+                : "I will use the current project brief to answer."}
+            </p>
           </div>
         ) : null}
 
@@ -183,9 +214,15 @@ export function ProjectAssistantPanel({ conversationId, projectLanguage, initial
             onChange={(event) => setInput(event.target.value)}
             disabled={isPending}
             className="control-field min-w-0 flex-1"
-            placeholder={isArabic ? "اكتب سؤالك..." : "Ask about this campaign..."}
+            placeholder={
+              isArabic ? "اكتب سؤالك..." : "Ask about this campaign..."
+            }
           />
-          <button type="submit" disabled={isPending || !input.trim()} className="btn btn-primary shrink-0">
+          <button
+            type="submit"
+            disabled={isPending || !input.trim()}
+            className="btn btn-primary shrink-0"
+          >
             <Send className="h-4 w-4" />
             <span className="sr-only">{isArabic ? "إرسال" : "Send"}</span>
           </button>

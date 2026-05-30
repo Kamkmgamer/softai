@@ -16,7 +16,12 @@ import {
 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { getDictionary } from "@/lib/dictionaries";
-import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath, stripLocaleFromPathname } from "@/lib/i18n";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+  stripLocaleFromPathname,
+} from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { cn } from "@/lib/utils";
 
@@ -28,13 +33,56 @@ const links: Array<{
   adminOnly?: boolean;
   group: "create" | "account";
 }> = [
-  { href: "/dashboard", labelKey: "dashboard", runwayLabel: "Apps", icon: Blocks, group: "create" },
-  { href: "/projects/new", labelKey: "newProject", runwayLabel: "Custom", icon: PlusSquare, group: "create" },
-  { href: "/library", labelKey: "library", runwayLabel: "Library", icon: LibraryBig, group: "create" },
-  { href: "/billing", labelKey: "billing", runwayLabel: "Billing", icon: Wallet, group: "account" },
-  { href: "/payments#/billing", labelKey: "payments", runwayLabel: "Payments", icon: CreditCard, group: "account" },
-  { href: "/settings", labelKey: "settings", runwayLabel: "Settings", icon: Settings, group: "account" },
-  { href: "/admin", labelKey: "admin", runwayLabel: "Admin", icon: Shield, adminOnly: true, group: "account" },
+  {
+    href: "/dashboard",
+    labelKey: "dashboard",
+    runwayLabel: "Apps",
+    icon: Blocks,
+    group: "create",
+  },
+  {
+    href: "/projects/new",
+    labelKey: "newProject",
+    runwayLabel: "Custom",
+    icon: PlusSquare,
+    group: "create",
+  },
+  {
+    href: "/library",
+    labelKey: "library",
+    runwayLabel: "Library",
+    icon: LibraryBig,
+    group: "create",
+  },
+  {
+    href: "/billing",
+    labelKey: "billing",
+    runwayLabel: "Billing",
+    icon: Wallet,
+    group: "account",
+  },
+  {
+    href: "/payments#/billing",
+    labelKey: "payments",
+    runwayLabel: "Payments",
+    icon: CreditCard,
+    group: "account",
+  },
+  {
+    href: "/settings",
+    labelKey: "settings",
+    runwayLabel: "Settings",
+    icon: Settings,
+    group: "account",
+  },
+  {
+    href: "/admin",
+    labelKey: "admin",
+    runwayLabel: "Admin",
+    icon: Shield,
+    adminOnly: true,
+    group: "account",
+  },
 ];
 
 export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
@@ -50,7 +98,8 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
     const Icon = link.icon;
     const activeHref = link.href.split("#")[0] ?? link.href;
     const active =
-      unlocalizedPathname === activeHref || unlocalizedPathname.startsWith(`${activeHref}/`);
+      unlocalizedPathname === activeHref ||
+      unlocalizedPathname.startsWith(`${activeHref}/`);
 
     return (
       <Link
@@ -64,8 +113,10 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
             : "text-text-secondary hover:bg-surface-raised hover:text-text",
         )}
       >
-        {active ? <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" /> : null}
-        <Icon className="h-[17px] w-[17px] shrink-0" />
+        {active ? (
+          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" />
+        ) : null}
+        <Icon className="h-4.25 w-4.25 shrink-0" />
         {link.runwayLabel}
       </Link>
     );
@@ -75,20 +126,21 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
     const Icon = link.icon;
     const activeHref = link.href.split("#")[0] ?? link.href;
     const active =
-      unlocalizedPathname === activeHref || unlocalizedPathname.startsWith(`${activeHref}/`);
+      unlocalizedPathname === activeHref ||
+      unlocalizedPathname.startsWith(`${activeHref}/`);
 
     return (
       <Link
         key={link.href}
         href={localizePath(link.href, locale)}
         className={cn(
-          "flex items-center gap-2.5 rounded-[var(--radius-md)] px-2.5 py-2 text-[13px] font-medium transition-colors",
+          "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors",
           active
             ? "bg-accent-soft text-accent-text"
             : "text-text-secondary hover:bg-surface-raised hover:text-text",
         )}
       >
-        <Icon className="h-[15px] w-[15px] shrink-0" />
+        <Icon className="h-3.75 w-3.75 shrink-0" />
         {dictionary.app[link.labelKey]}
       </Link>
     );
@@ -97,14 +149,17 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-[100dvh] lg:w-16 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:py-2">
+      <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-16 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:py-2">
         {/* Logo */}
-        <Link href={localizePath("/dashboard", locale)} className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-border-strong bg-surface-raised text-text transition-colors hover:bg-accent-soft">
+        <Link
+          href={localizePath("/dashboard", locale)}
+          className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-border-strong bg-surface-raised text-text transition-colors hover:bg-accent-soft"
+        >
           <div className="grid grid-cols-2 gap-0.5">
-            <span className="h-2 w-2 rounded-[2px] border border-current" />
-            <span className="h-2 w-2 rounded-[2px] border border-current" />
-            <span className="h-2 w-2 rounded-[2px] border border-current" />
-            <span className="h-2 w-2 rounded-[2px] bg-accent" />
+            <span className="h-2 w-2 rounded-xs border border-current" />
+            <span className="h-2 w-2 rounded-xs border border-current" />
+            <span className="h-2 w-2 rounded-xs border border-current" />
+            <span className="h-2 w-2 rounded-xs bg-accent" />
           </div>
           <span className="sr-only">SoftAI</span>
         </Link>
@@ -112,7 +167,9 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         {/* Nav */}
         <nav className="flex flex-1 flex-col px-1.5">
           <div className="space-y-2">{createLinks.map(renderDesktopLink)}</div>
-          <div className="mt-auto space-y-2 border-t border-border pt-3">{accountLinks.map(renderDesktopLink)}</div>
+          <div className="mt-auto space-y-2 border-t border-border pt-3">
+            {accountLinks.map(renderDesktopLink)}
+          </div>
         </nav>
 
         {/* User */}
@@ -129,15 +186,20 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
       </aside>
 
       {/* Viewport-wide top bar and drawer */}
-      <div className="app-mobile-menu fixed inset-x-0 top-0 z-[1000] lg:hidden">
+      <div className="app-mobile-menu fixed inset-x-0 top-0 z-1000 lg:hidden">
         <div className="flex h-16 items-center justify-between border-b border-border bg-surface/95 px-5 backdrop-blur-md">
-          <Link href={localizePath("/dashboard", locale)} className="flex items-center gap-2.5">
+          <Link
+            href={localizePath("/dashboard", locale)}
+            className="flex items-center gap-2.5"
+          >
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-[11px] font-bold text-text">
               S
             </div>
-            <span className="text-sm font-semibold tracking-tight text-text">SoftAI</span>
+            <span className="text-sm font-semibold tracking-tight text-text">
+              SoftAI
+            </span>
           </Link>
-          <label className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-border bg-surface text-text-secondary transition-colors hover:border-border-strong hover:bg-surface-raised hover:text-text focus-visible:shadow-[var(--focus-ring)]">
+          <label className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border border-border bg-surface text-text-secondary transition-colors hover:border-border-strong hover:bg-surface-raised hover:text-text focus-visible:shadow-(--focus-ring)">
             <input
               key={pathname}
               id="app-mobile-menu-toggle"
@@ -149,22 +211,31 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
           </label>
         </div>
 
-        <div className="app-mobile-menu-drawer fixed inset-0 z-[2147483647]">
+        <div className="app-mobile-menu-drawer fixed inset-0 z-2147483647">
           <label
             htmlFor="app-mobile-menu-toggle"
             aria-label={dictionary.app.closeNavigation}
             className="absolute inset-0 block bg-text/25"
           />
-          <aside className={cn(
-            "relative z-[1] flex h-full w-[min(82vw,320px)] flex-col bg-surface px-3 py-4 shadow-[var(--shadow-lg)]",
-            locale === "ar" ? "mr-auto border-r border-border" : "ml-auto border-l border-border",
-          )}>
+          <aside
+            className={cn(
+              "relative z-1 flex h-full w-[min(82vw,320px)] flex-col bg-surface px-3 py-4 shadow-(--shadow-lg)",
+              locale === "ar"
+                ? "mr-auto border-r border-border"
+                : "ml-auto border-l border-border",
+            )}
+          >
             <div className="mb-5 flex items-center justify-between px-2">
-              <Link href={localizePath("/dashboard", locale)} className="flex items-center gap-2.5">
+              <Link
+                href={localizePath("/dashboard", locale)}
+                className="flex items-center gap-2.5"
+              >
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-text text-[11px] font-bold text-bg">
                   S
                 </div>
-                <span className="text-sm font-semibold tracking-tight text-text">SoftAI</span>
+                <span className="text-sm font-semibold tracking-tight text-text">
+                  SoftAI
+                </span>
               </Link>
               <label
                 htmlFor="app-mobile-menu-toggle"
@@ -176,8 +247,12 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
             </div>
 
             <nav className="flex-1 space-y-4">
-              <div className="space-y-0.5">{createLinks.map(renderMobileLink)}</div>
-              <div className="space-y-0.5 border-t border-border pt-4">{accountLinks.map(renderMobileLink)}</div>
+              <div className="space-y-0.5">
+                {createLinks.map(renderMobileLink)}
+              </div>
+              <div className="space-y-0.5 border-t border-border pt-4">
+                {accountLinks.map(renderMobileLink)}
+              </div>
             </nav>
 
             <div className="flex items-center justify-between gap-3 border-t border-border px-2 pt-4">

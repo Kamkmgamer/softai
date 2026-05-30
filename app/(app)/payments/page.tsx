@@ -30,16 +30,19 @@ export default async function PaymentsPage() {
               {dictionary.payments.description}
             </p>
           </div>
-          <Link href={localizePath("/billing", locale)} className="btn btn-secondary">
+          <Link
+            href={localizePath("/billing", locale)}
+            className="btn btn-secondary"
+          >
             {dictionary.payments.openBilling}
           </Link>
         </header>
 
-        <section id="billing" className="clerk-account-surface overflow-hidden rounded-2xl border border-border bg-bg shadow-[var(--shadow-sm)]">
-            <UserProfile
-              appearance={runwayClerkAppearance}
-              routing="hash"
-            />
+        <section
+          id="billing"
+          className="clerk-account-surface overflow-hidden rounded-2xl border border-border bg-bg shadow-(--shadow-sm)"
+        >
+          <UserProfile appearance={runwayClerkAppearance} routing="hash" />
         </section>
       </div>
     </div>

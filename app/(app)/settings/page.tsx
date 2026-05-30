@@ -22,18 +22,19 @@ export default async function SettingsPage() {
             <Settings className="h-3.5 w-3.5" />
             {dictionary.settings.title}
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-text">{dictionary.settings.accountProfile}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-text-secondary">{dictionary.settings.description}</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-text">
+            {dictionary.settings.accountProfile}
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-text-secondary">
+            {dictionary.settings.description}
+          </p>
         </header>
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-4">
             <SectionHeader title={dictionary.settings.accountProfile} />
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--shadow-sm)]">
-              <UserProfile
-                appearance={runwayClerkAppearance}
-                routing="hash"
-              />
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
+              <UserProfile appearance={runwayClerkAppearance} routing="hash" />
             </div>
           </div>
 
@@ -45,13 +46,22 @@ export default async function SettingsPage() {
               </div>
               <ul className="space-y-3 list-disc ps-4 marker:text-text-tertiary">
                 <li>
-                  <strong className="font-medium text-text">{dictionary.settings.contentGenerationTitle}</strong> {dictionary.settings.contentGeneration}
+                  <strong className="font-medium text-text">
+                    {dictionary.settings.contentGenerationTitle}
+                  </strong>{" "}
+                  {dictionary.settings.contentGeneration}
                 </li>
                 <li>
-                  <strong className="font-medium text-text">{dictionary.settings.avatarsTitle}</strong> {dictionary.settings.avatars}
+                  <strong className="font-medium text-text">
+                    {dictionary.settings.avatarsTitle}
+                  </strong>{" "}
+                  {dictionary.settings.avatars}
                 </li>
                 <li>
-                  <strong className="font-medium text-text">{dictionary.settings.dataUsageTitle}</strong> {dictionary.settings.dataUsage}
+                  <strong className="font-medium text-text">
+                    {dictionary.settings.dataUsageTitle}
+                  </strong>{" "}
+                  {dictionary.settings.dataUsage}
                 </li>
               </ul>
             </div>

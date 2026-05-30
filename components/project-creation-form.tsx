@@ -5,7 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { ImagePlus, SlidersHorizontal, Volume2 } from "lucide-react";
 import { FieldLabel } from "@/components/ui";
 import { getDictionary } from "@/lib/dictionaries";
-import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 
 const initialState = {
   title: "",
@@ -54,13 +58,19 @@ export function ProjectCreationForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex min-h-[calc(100dvh-2rem)] flex-col gap-4">
+    <form
+      onSubmit={onSubmit}
+      className="flex min-h-[calc(100dvh-2rem)] flex-col gap-4"
+    >
       <div className="flex items-center justify-between gap-3 px-1">
         <div className="text-sm text-text-secondary">
-          Apps <span className="text-text-tertiary">/</span> <strong className="font-semibold text-text">Multi-Shot Video</strong>
+          Apps <span className="text-text-tertiary">/</span>{" "}
+          <strong className="font-semibold text-text">Multi-Shot Video</strong>
         </div>
         <div className="rounded-full bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
-          <span className="inline-flex rounded-full bg-surface-raised px-3 py-1.5 text-text">Auto</span>
+          <span className="inline-flex rounded-full bg-surface-raised px-3 py-1.5 text-text">
+            Auto
+          </span>
           <span className="inline-flex px-3 py-1.5">Custom</span>
         </div>
       </div>
@@ -71,13 +81,13 @@ export function ProjectCreationForm() {
           label="Describe your story"
           required
         />
-        <div className="flex min-h-[360px] flex-col rounded-xl border border-border bg-bg-subtle p-3 transition-colors focus-within:border-border-strong focus-within:shadow-[var(--focus-ring)]">
+        <div className="flex min-h-90 flex-col rounded-xl border border-border bg-bg-subtle p-3 transition-colors focus-within:border-border-strong focus-within:shadow-(--focus-ring)">
           <textarea
             id="script-seed"
             required
             value={form.script}
             onChange={(event) => update("script", event.target.value)}
-            className="min-h-[300px] flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-text placeholder:text-text-tertiary"
+            className="min-h-75 flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-text placeholder:text-text-tertiary"
             placeholder="A lone astronaut walks across a vast red desert under a pink sky. She stops, kneels, and picks up a glowing object half-buried in the sand. Close-up on her face as she looks up, a massive structure emerges from the dust on the horizon."
           />
           <button
@@ -93,7 +103,11 @@ export function ProjectCreationForm() {
       <div className="thin-scrollbar flex-1 space-y-4 overflow-y-auto pr-1">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="project-title" label={dictionary.projectForm.title} required />
+            <FieldLabel
+              htmlFor="project-title"
+              label={dictionary.projectForm.title}
+              required
+            />
             <input
               id="project-title"
               required
@@ -104,7 +118,11 @@ export function ProjectCreationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="product-name" label={dictionary.projectForm.productName} required />
+            <FieldLabel
+              htmlFor="product-name"
+              label={dictionary.projectForm.productName}
+              required
+            />
             <input
               id="product-name"
               required
@@ -118,7 +136,11 @@ export function ProjectCreationForm() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="offer" label={dictionary.projectForm.offer} required />
+            <FieldLabel
+              htmlFor="offer"
+              label={dictionary.projectForm.offer}
+              required
+            />
             <input
               id="offer"
               required
@@ -129,7 +151,11 @@ export function ProjectCreationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="cta" label={dictionary.projectForm.cta} required />
+            <FieldLabel
+              htmlFor="cta"
+              label={dictionary.projectForm.cta}
+              required
+            />
             <input
               id="cta"
               required
@@ -143,7 +169,11 @@ export function ProjectCreationForm() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="target-audience" label={dictionary.projectForm.targetAudience} required />
+            <FieldLabel
+              htmlFor="target-audience"
+              label={dictionary.projectForm.targetAudience}
+              required
+            />
             <input
               id="target-audience"
               required
@@ -154,7 +184,11 @@ export function ProjectCreationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor="brand-voice" label={dictionary.projectForm.brandVoice} required />
+            <FieldLabel
+              htmlFor="brand-voice"
+              label={dictionary.projectForm.brandVoice}
+              required
+            />
             <input
               id="brand-voice"
               required
@@ -167,7 +201,10 @@ export function ProjectCreationForm() {
         </div>
 
         <div className="space-y-1.5">
-          <FieldLabel htmlFor="platform-target" label={dictionary.projectForm.platformFormat} />
+          <FieldLabel
+            htmlFor="platform-target"
+            label={dictionary.projectForm.platformFormat}
+          />
           <select
             id="platform-target"
             value={form.platformTarget}
@@ -179,7 +216,6 @@ export function ProjectCreationForm() {
             <option value="youtube">YouTube Shorts (9:16)</option>
           </select>
         </div>
-
       </div>
 
       {error ? (
@@ -190,10 +226,20 @@ export function ProjectCreationForm() {
 
       <div className="-mx-4 mt-auto flex flex-col gap-4 border-t border-border bg-surface px-4 pb-0 pt-3">
         <div className="flex flex-wrap justify-end gap-2 text-xs font-semibold text-text-secondary">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><Volume2 className="h-3.5 w-3.5" />On</span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5"><SlidersHorizontal className="h-3.5 w-3.5" />9:16</span>
-          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">720p</span>
-          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">10s</span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <Volume2 className="h-3.5 w-3.5" />
+            On
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            9:16
+          </span>
+          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">
+            720p
+          </span>
+          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">
+            10s
+          </span>
         </div>
         <button
           type="submit"

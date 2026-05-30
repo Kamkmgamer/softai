@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { DEFAULT_LOCALE, getLocaleFromPathname, localizePath } from "@/lib/i18n";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 
 export function AuthControls() {
   const { isSignedIn, isLoaded } = useAuth();

@@ -11,7 +11,11 @@ import { PricingTable } from "@/components/pricing-table";
 import { EmptyState, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatCredits, formatDate } from "@/lib/utils";
 
-function localizeBillingNote(note: string, locale: Locale, dictionary: ReturnType<typeof getDictionary>) {
+function localizeBillingNote(
+  note: string,
+  locale: Locale,
+  dictionary: ReturnType<typeof getDictionary>,
+) {
   if (locale !== "ar") return note;
   const notes: Record<string, string> = {
     "Onboarding credits": dictionary.billing.onboardingCredits,
@@ -52,7 +56,14 @@ export default async function BillingPage() {
   const session = await getAppSession();
   if (!session) redirect(localizePath("/sign-in", locale));
 
-  const { balance, recentActivity, plan, monthlyCredits, status, currentPeriodEnd } = await getBillingSummary(session.userId);
+  const {
+    balance,
+    recentActivity,
+    plan,
+    monthlyCredits,
+    status,
+    currentPeriodEnd,
+  } = await getBillingSummary(session.userId);
 
   return (
     <div className="thin-scrollbar h-full overflow-y-auto px-5 py-8 lg:px-10 lg:py-10">
@@ -64,13 +75,17 @@ export default async function BillingPage() {
               {dictionary.billing.title}
             </p>
             <h1 className="text-2xl font-semibold tracking-tight text-text">
-              {formatCredits(balance, locale)} {dictionary.billing.availableCredits}
+              {formatCredits(balance, locale)}{" "}
+              {dictionary.billing.availableCredits}
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-text-secondary">
               {dictionary.billing.description}
             </p>
           </div>
-          <Link href={localizePath("/payments#/billing", locale)} className="btn btn-secondary">
+          <Link
+            href={localizePath("/payments#/billing", locale)}
+            className="btn btn-secondary"
+          >
             {dictionary.payments.title}
           </Link>
         </header>
@@ -80,31 +95,50 @@ export default async function BillingPage() {
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <Wallet className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">Credits</p>
-            <p className="mt-1 text-xl font-semibold text-text">{formatCredits(balance, locale)}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+              Credits
+            </p>
+            <p className="mt-1 text-xl font-semibold text-text">
+              {formatCredits(balance, locale)}
+            </p>
           </div>
           <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <CreditCard className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">Plan</p>
-            <p className="mt-1 text-xl font-semibold text-text">{localizePlanName(plan, locale)}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+              Plan
+            </p>
+            <p className="mt-1 text-xl font-semibold text-text">
+              {localizePlanName(plan, locale)}
+            </p>
           </div>
           <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <Activity className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">Status</p>
-            <div className="mt-2"><StatusBadge status={status} /></div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+              Status
+            </p>
+            <div className="mt-2">
+              <StatusBadge status={status} />
+            </div>
           </div>
           <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <CalendarClock className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">{dictionary.billing.monthlyCredits}</p>
-            <p className="mt-1 text-xl font-semibold text-text">{formatCredits(monthlyCredits, locale)}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+              {dictionary.billing.monthlyCredits}
+            </p>
+            <p className="mt-1 text-xl font-semibold text-text">
+              {formatCredits(monthlyCredits, locale)}
+            </p>
             {currentPeriodEnd ? (
-              <p className="mt-1 text-xs text-text-tertiary">{dictionary.billing.renews} {formatDate(currentPeriodEnd, locale)}</p>
+              <p className="mt-1 text-xs text-text-tertiary">
+                {dictionary.billing.renews}{" "}
+                {formatDate(currentPeriodEnd, locale)}
+              </p>
             ) : null}
           </div>
         </section>
@@ -112,7 +146,7 @@ export default async function BillingPage() {
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-4">
             <SectionHeader title={dictionary.billing.topUpCredits} />
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--shadow-sm)]">
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
               <PricingTable
                 appearance={runwayClerkAppearance}
                 newSubscriptionRedirectUrl={localizePath("/billing", locale)}
@@ -121,7 +155,10 @@ export default async function BillingPage() {
           </div>
 
           <div className="space-y-4">
-            <SectionHeader title={dictionary.billing.recentActivity} count={recentActivity.length} />
+            <SectionHeader
+              title={dictionary.billing.recentActivity}
+              count={recentActivity.length}
+            />
             {recentActivity.length === 0 ? (
               <EmptyState
                 icon={Activity}
@@ -131,10 +168,21 @@ export default async function BillingPage() {
             ) : (
               <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
                 {recentActivity.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between gap-4 p-4 transition-colors hover:bg-surface-raised">
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between gap-4 p-4 transition-colors hover:bg-surface-raised"
+                  >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-text">{localizeBillingNote(tx.note || tx.reason, locale, dictionary)}</p>
-                      <p className="mt-0.5 text-xs text-text-tertiary">{formatDate(tx.createdAt, locale)}</p>
+                      <p className="truncate text-sm font-medium text-text">
+                        {localizeBillingNote(
+                          tx.note || tx.reason,
+                          locale,
+                          dictionary,
+                        )}
+                      </p>
+                      <p className="mt-0.5 text-xs text-text-tertiary">
+                        {formatDate(tx.createdAt, locale)}
+                      </p>
                     </div>
                     <span
                       className={`shrink-0 text-[13px] font-semibold tabular-nums ${

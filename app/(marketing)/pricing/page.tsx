@@ -21,13 +21,15 @@ export default async function PricingPage() {
             </p>
           </div>
 
-          <div className="mx-auto max-w-3xl rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var(--shadow-sm)]">
+          <div className="mx-auto max-w-3xl rounded-lg border border-border bg-surface shadow-(--shadow-sm)">
             <PricingTable newSubscriptionRedirectUrl="/billing" />
           </div>
 
           <div className="mx-auto mt-20 max-w-2xl">
-            <h2 className="text-xl font-semibold text-text mb-6 text-center">Credit economics</h2>
-            <div className="rounded-[var(--radius-lg)] border border-border bg-surface overflow-hidden">
+            <h2 className="text-xl font-semibold text-text mb-6 text-center">
+              Credit economics
+            </h2>
+            <div className="rounded-lg border border-border bg-surface overflow-hidden">
               <table className="w-full text-left text-[13px]">
                 <thead className="border-b border-border bg-surface-raised text-xs font-medium text-text-secondary">
                   <tr>
@@ -37,12 +39,20 @@ export default async function PricingPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   <tr className="hover:bg-surface-raised transition-colors">
-                    <td className="px-5 py-3 font-medium text-text">Generate storyboard</td>
-                    <td className="px-5 py-3 text-right text-text-secondary">100 credits</td>
+                    <td className="px-5 py-3 font-medium text-text">
+                      Generate storyboard
+                    </td>
+                    <td className="px-5 py-3 text-right text-text-secondary">
+                      100 credits
+                    </td>
                   </tr>
                   <tr className="hover:bg-surface-raised transition-colors">
-                    <td className="px-5 py-3 font-medium text-text">Render final video</td>
-                    <td className="px-5 py-3 text-right text-text-secondary">500 credits</td>
+                    <td className="px-5 py-3 font-medium text-text">
+                      Render final video
+                    </td>
+                    <td className="px-5 py-3 text-right text-text-secondary">
+                      500 credits
+                    </td>
                   </tr>
                 </tbody>
               </table>

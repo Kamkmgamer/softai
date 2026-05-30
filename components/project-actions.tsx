@@ -18,20 +18,33 @@ type OutputSummary = {
   type?: string;
 };
 
-export function ProjectActions({ projectId, canRenderImages, canRenderVideo, mode = "stepwise" }: Props) {
+export function ProjectActions({
+  projectId,
+  canRenderImages,
+  canRenderVideo,
+  mode = "stepwise",
+}: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [pendingAction, setPendingAction] = useState<"render-images" | "render-video" | "generate-video" | null>(null);
+  const [pendingAction, setPendingAction] = useState<
+    "render-images" | "render-video" | "generate-video" | null
+  >(null);
 
   async function waitForFinalVideoOutput() {
     for (let attempt = 0; attempt < VIDEO_OUTPUT_POLL_ATTEMPTS; attempt++) {
-      await new Promise((resolve) => setTimeout(resolve, VIDEO_OUTPUT_POLL_INTERVAL_MS));
+      await new Promise((resolve) =>
+        setTimeout(resolve, VIDEO_OUTPUT_POLL_INTERVAL_MS),
+      );
 
-      const response = await fetch(`/api/projects/${projectId}/outputs`, { cache: "no-store" });
+      const response = await fetch(`/api/projects/${projectId}/outputs`, {
+        cache: "no-store",
+      });
       if (!response.ok) continue;
 
       const payload = await response.json().catch(() => null);
-      const outputs: OutputSummary[] = Array.isArray(payload?.outputs) ? payload.outputs : [];
+      const outputs: OutputSummary[] = Array.isArray(payload?.outputs)
+        ? payload.outputs
+        : [];
       if (outputs.some((output) => output?.type === "final_video")) {
         router.refresh();
         return;
@@ -69,9 +82,12 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo, mod
 
     try {
       if (!canRenderVideo) {
-        const imageResponse = await fetch(`/api/projects/${projectId}/render-images`, {
-          method: "POST",
-        });
+        const imageResponse = await fetch(
+          `/api/projects/${projectId}/render-images`,
+          {
+            method: "POST",
+          },
+        );
         const imagePayload = await imageResponse.json().catch(() => null);
         if (!imageResponse.ok) {
           setError(imagePayload?.error ?? "Failed to render shot images.");
@@ -79,9 +95,12 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo, mod
         }
       }
 
-      const videoResponse = await fetch(`/api/projects/${projectId}/render-video`, {
-        method: "POST",
-      });
+      const videoResponse = await fetch(
+        `/api/projects/${projectId}/render-video`,
+        {
+          method: "POST",
+        },
+      );
       const videoPayload = await videoResponse.json().catch(() => null);
       if (!videoResponse.ok) {
         setError(videoPayload?.error ?? "Failed to generate video.");
@@ -149,7 +168,9 @@ export function ProjectActions({ projectId, canRenderImages, canRenderVideo, mod
       >
         <Film className="h-4 w-4 shrink-0" />
         <span className="flex-1 text-start">
-          {pendingAction === "render-video" ? "Generating video (this may take up to 2 minutes)..." : "Render video"}
+          {pendingAction === "render-video"
+            ? "Generating video (this may take up to 2 minutes)..."
+            : "Render video"}
         </span>
       </button>
 
