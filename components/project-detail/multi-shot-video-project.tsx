@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Clock3, Layers3, Play, Volume2 } from "lucide-react";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
@@ -54,7 +55,10 @@ export function MultiShotVideoProject({ projectId, bundle }: Props) {
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-4 lg:py-4">
         <div className="flex items-center justify-between gap-3 px-1">
           <div className="text-sm text-text-secondary">
-            Apps <span className="text-text-tertiary">/</span>{" "}
+            <Link href="/dashboard" className="hover:text-text transition-colors">
+              Apps
+            </Link>{" "}
+            <span className="text-text-tertiary">/</span>{" "}
             <strong className="font-semibold text-text">
               Multi-Shot Video
             </strong>

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ImagePlus, Plus, Trash2, Settings2 } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
@@ -162,7 +163,10 @@ export function MultiShotVideoForm() {
         {/* Header */}
         <div className="mb-5 flex items-center justify-between gap-3 px-1">
           <div className="text-sm text-text-secondary">
-            Apps <span className="text-text-tertiary">/</span>{" "}
+            <Link href="/dashboard" className="hover:text-text transition-colors">
+              Apps
+            </Link>{" "}
+            <span className="text-text-tertiary">/</span>{" "}
             <strong className="font-semibold text-text">
               Multi-Shot Video
             </strong>

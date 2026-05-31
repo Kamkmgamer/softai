@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { ImagePlus, SlidersHorizontal, Volume2 } from "lucide-react";
 import { FieldLabel } from "@/components/ui";
 import { getDictionary } from "@/lib/dictionaries";
@@ -64,7 +65,10 @@ export function ProjectCreationForm() {
     >
       <div className="flex items-center justify-between gap-3 px-1">
         <div className="text-sm text-text-secondary">
-          Apps <span className="text-text-tertiary">/</span>{" "}
+          <Link href="/dashboard" className="hover:text-text transition-colors">
+            Apps
+          </Link>{" "}
+          <span className="text-text-tertiary">/</span>{" "}
           <strong className="font-semibold text-text">Multi-Shot Video</strong>
         </div>
         <div className="rounded-md bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
