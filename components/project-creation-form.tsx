@@ -67,8 +67,8 @@ export function ProjectCreationForm() {
           Apps <span className="text-text-tertiary">/</span>{" "}
           <strong className="font-semibold text-text">Multi-Shot Video</strong>
         </div>
-        <div className="rounded-full bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
-          <span className="inline-flex rounded-full bg-surface-raised px-3 py-1.5 text-text">
+        <div className="rounded-md bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
+          <span className="inline-flex rounded-sm bg-surface-raised px-3 py-1.5 text-text">
             Auto
           </span>
           <span className="inline-flex px-3 py-1.5">Custom</span>
@@ -226,18 +226,18 @@ export function ProjectCreationForm() {
 
       <div className="-mx-4 mt-auto flex flex-col gap-4 border-t border-border bg-surface px-4 pb-0 pt-3">
         <div className="flex flex-wrap justify-end gap-2 text-xs font-semibold text-text-secondary">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
             <Volume2 className="h-3.5 w-3.5" />
             On
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
             <SlidersHorizontal className="h-3.5 w-3.5" />
             9:16
           </span>
-          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">
+          <span className="inline-flex rounded-md border border-border bg-bg px-2.5 py-1.5">
             720p
           </span>
-          <span className="inline-flex rounded-full border border-border bg-bg px-2.5 py-1.5">
+          <span className="inline-flex rounded-md border border-border bg-bg px-2.5 py-1.5">
             10s
           </span>
         </div>

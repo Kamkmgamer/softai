@@ -21,7 +21,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     throw error;
   });
   return (
-    <div className="runway-shell flex h-dvh overflow-hidden bg-bg text-text max-lg:flex-col">
+    <div className="softai-shell flex h-dvh overflow-hidden bg-bg text-text max-lg:flex-col">
       <AppSidebar isAdmin={session.isAdmin} />
       <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-bg pt-16 lg:h-dvh lg:pt-0">
         <div className="h-full min-h-0">{children}</div>

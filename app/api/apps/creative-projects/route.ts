@@ -34,6 +34,7 @@ function getKind(app: CreativeInput["app"]): ProjectKind {
   if (app === "product-reshoot") return "image_edit";
   if (app === "vary-image") return "image_edit";
   if (app === "mockup") return "mockup";
+  if (app === "create-ad") return "create_ad";
   return "video_edit";
 }
 
@@ -45,10 +46,11 @@ function getAppLabel(app: CreativeInput["app"]) {
   if (app === "product-reshoot") return "Product Reshoot";
   if (app === "vary-image") return "Vary Image";
   if (app === "mockup") return "Mockup Generator";
+  if (app === "create-ad") return "Create Ad";
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" }>) {
+function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad" }>) {
   if (input.app === "expand-image") {
     return [
       "Expand/outpaint the provided image beyond its current borders.",
@@ -106,6 +108,21 @@ function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" |
       `Use this source design image: ${input.sourceImageUrl}. The design must be placed naturally onto the product — respecting perspective, curvature, lighting, and material texture.`,
       "The result should look like a professional product photograph showcasing the design in context.",
       "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original design.",
+    ].join(" ");
+  }
+
+  if (input.app === "create-ad") {
+    const sourceInstruction = input.sourceImageUrl
+      ? `Use this source image as the ad reference: ${input.sourceImageUrl}. Adapt the visual style, layout, and product presentation while applying the requested changes.`
+      : "Create the ad from scratch based on the description.";
+    return [
+      "Create a high-converting ad creative for a small business campaign.",
+      `Ad description: ${input.prompt}.`,
+      `Visual style: ${input.style}.`,
+      `Aspect ratio: ${input.aspectRatio}.`,
+      sourceInstruction,
+      "The result should look like a polished, platform-ready ad with strong visual hierarchy and clear product focus.",
+      "Avoid embedded text, fake letters, labels, watermarks, captions, UI, or logos unless they are part of the original referenced product.",
     ].join(" ");
   }
 
@@ -191,23 +208,27 @@ export async function POST(request: Request) {
 
     const route = getProviderRoute("image");
     const prompt = buildImagePrompt(input);
+    const sourceImageUrl =
+      input.app !== "text-to-image"
+        ? input.sourceImageUrl
+        : null;
     const job = await createGenerationJob(user.id, project.id, {
       type: "image",
       status: "processing",
       ...getProviderJobMetadata(route),
-      requestPayload: { prompt, sourceImageUrl: (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image" || input.app === "mockup") ? input.sourceImageUrl : null },
+      requestPayload: { prompt, sourceImageUrl },
     });
 
-    if (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image" || input.app === "mockup") {
+    if (sourceImageUrl) {
       await addBrandAsset(user.id, project.id, {
         type: "reference_image",
         name: "Source image",
-        url: input.sourceImageUrl,
+        url: sourceImageUrl,
       });
     }
 
-    const result = (input.app === "image-editor" || input.app === "expand-image" || input.app === "stylize-image" || input.app === "product-reshoot" || input.app === "vary-image" || input.app === "mockup")
-      ? await generateReferencedImage({ prompt, imageUrl: input.sourceImageUrl, language: "en" })
+    const result = sourceImageUrl
+      ? await generateReferencedImage({ prompt, imageUrl: sourceImageUrl, language: "en" })
       : await generateSceneImage(prompt, "en");
     await updateGenerationJob(job.id, {
       status: "completed",

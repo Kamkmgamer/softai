@@ -1,8 +1,8 @@
 # Softai Feature Roadmap
 
-This catalog turns Softai into a Runway-style AI media studio focused on small businesses: product photos, ad creatives, video ads, social content, landing pages, and campaign iteration.
+This catalog turns Softai into a practical AI media studio focused on small businesses: product photos, ad creatives, video ads, social content, landing pages, and campaign iteration.
 
-The goal is not to copy Runway feature-for-feature for filmmakers. The goal is near parity in practical AI media tooling while specializing the workflows for founders, local businesses, ecommerce sellers, agencies, and social media teams.
+The goal is broad practical AI media coverage while specializing the workflows for founders, local businesses, ecommerce sellers, agencies, and social media teams.
 
 ## Product Positioning
 
@@ -201,7 +201,7 @@ Phase 2 (Image Tools)       ──── Fast user-facing wins.
   Sprint 2.2: AI image editor (bg remove, fill, expand)
   Sprint 2.3: Static ad generator (server-side compositing) + carousels
 
-Phase 3 (Video Tools)       ──── Core Runway parity.
+Phase 3 (Video Tools)       ──── Core video-tool coverage.
   Sprint 3.1: Image-to-video
   Sprint 3.2: Video editor (trim, captions, overlays)
   Sprint 3.3: UGC/talking-head + video enhancement

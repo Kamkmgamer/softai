@@ -124,6 +124,57 @@ describe("submitVideoRender", () => {
     expect(body.callback_url).toBe("https://softai.example/api/webhooks/openrouter");
   });
 
+  it("adds strict first-frame instructions for anchored image-to-video renders", async () => {
+    vi.stubEnv("OPENROUTER_API_KEY", "test-key");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
+
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response(
+      JSON.stringify({ id: "video-job", status: "pending", polling_url: "https://openrouter.ai/poll/video-job" }),
+      { status: 200 },
+    ));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await submitVideoRender("Add a slow camera push", [
+      { url: "https://example.com/start.png", role: "first_frame" },
+    ]);
+
+    const [, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+
+    expect(body.prompt).toContain("exact opening frame");
+    expect(body.prompt).toContain("Add a slow camera push");
+    expect(body.input_references).toEqual([
+      { type: "image_url", image_url: { url: "https://example.com/start.png" } },
+    ]);
+  });
+
+  it("adds strict first-and-last-frame interpolation instructions", async () => {
+    vi.stubEnv("OPENROUTER_API_KEY", "test-key");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
+
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response(
+      JSON.stringify({ id: "video-job", status: "pending", polling_url: "https://openrouter.ai/poll/video-job" }),
+      { status: 200 },
+    ));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await submitVideoRender("Bridge the two product photos", [
+      { url: "https://example.com/start.png", role: "first_frame" },
+      { url: "https://example.com/end.png", role: "last_frame" },
+    ]);
+
+    const [, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+
+    expect(body.prompt).toContain("exact opening frame");
+    expect(body.prompt).toContain("exact ending frame");
+    expect(body.prompt).toContain("hard anchors");
+    expect(body.input_references).toEqual([
+      { type: "image_url", image_url: { url: "https://example.com/start.png" } },
+      { type: "image_url", image_url: { url: "https://example.com/end.png" } },
+    ]);
+  });
+
   it("returns direct completed video URLs from provider responses", async () => {
     vi.stubEnv("OPENROUTER_API_KEY", "test-key");
 

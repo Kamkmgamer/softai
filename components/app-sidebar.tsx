@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 const links: Array<{
   href: string;
   labelKey: keyof ReturnType<typeof getDictionary>["app"];
-  runwayLabel: string;
+  shortLabel: string;
   icon: ComponentType<{ className?: string }>;
   adminOnly?: boolean;
   group: "create" | "account";
@@ -36,49 +36,49 @@ const links: Array<{
   {
     href: "/dashboard",
     labelKey: "dashboard",
-    runwayLabel: "Apps",
+    shortLabel: "Apps",
     icon: Blocks,
     group: "create",
   },
   {
     href: "/projects/new",
     labelKey: "newProject",
-    runwayLabel: "Custom",
+    shortLabel: "Custom",
     icon: PlusSquare,
     group: "create",
   },
   {
     href: "/library",
     labelKey: "library",
-    runwayLabel: "Library",
+    shortLabel: "Library",
     icon: LibraryBig,
     group: "create",
   },
   {
     href: "/billing",
     labelKey: "billing",
-    runwayLabel: "Billing",
+    shortLabel: "Billing",
     icon: Wallet,
     group: "account",
   },
   {
     href: "/payments#/billing",
     labelKey: "payments",
-    runwayLabel: "Payments",
+    shortLabel: "Payments",
     icon: CreditCard,
     group: "account",
   },
   {
     href: "/settings",
     labelKey: "settings",
-    runwayLabel: "Settings",
+    shortLabel: "Settings",
     icon: Settings,
     group: "account",
   },
   {
     href: "/admin",
     labelKey: "admin",
-    runwayLabel: "Admin",
+    shortLabel: "Admin",
     icon: Shield,
     adminOnly: true,
     group: "account",
@@ -117,7 +117,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
           <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" />
         ) : null}
         <Icon className="h-4.25 w-4.25 shrink-0" />
-        {link.runwayLabel}
+        {link.shortLabel}
       </Link>
     );
   }

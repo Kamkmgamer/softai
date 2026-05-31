@@ -6,7 +6,7 @@
 
 #### Description
 
-SEO landing pages comparing Softai against relevant alternatives such as Canva, Midjourney, ChatGPT, Runway, ElevenLabs, Adobe Firefly, and 3aqel.
+SEO landing pages comparing Softai against relevant alternatives such as Canva, Midjourney, ChatGPT, ElevenLabs, Adobe Firefly, and 3aqel.
 
 #### Target Users
 

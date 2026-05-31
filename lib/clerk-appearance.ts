@@ -1,13 +1,13 @@
-export const runwayClerkAppearance = {
+export const softaiClerkAppearance = {
   variables: {
-    colorBackground: "oklch(0.105 0.008 260)",
-    colorForeground: "oklch(0.965 0.004 260)",
-    colorPrimary: "oklch(0.58 0.22 280)",
-    colorText: "oklch(0.965 0.004 260)",
-    colorTextSecondary: "oklch(0.76 0.016 260)",
-    colorInputBackground: "oklch(0.075 0.007 260)",
-    colorInputText: "oklch(0.965 0.004 260)",
-    colorNeutral: "oklch(0.58 0.018 260)",
+    colorBackground: "oklch(0.995 0.004 76)",
+    colorForeground: "oklch(0.18 0.015 58)",
+    colorPrimary: "oklch(0.63 0.15 47)",
+    colorText: "oklch(0.18 0.015 58)",
+    colorTextSecondary: "oklch(0.44 0.025 60)",
+    colorInputBackground: "oklch(0.985 0.007 75)",
+    colorInputText: "oklch(0.18 0.015 58)",
+    colorNeutral: "oklch(0.58 0.02 62)",
     borderRadius: "12px",
   },
   elements: {

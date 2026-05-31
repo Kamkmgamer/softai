@@ -6,7 +6,7 @@ import { getDictionary } from "@/lib/dictionaries";
 import { localizePath, type Locale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { getBillingSummary } from "@/lib/store";
-import { runwayClerkAppearance } from "@/lib/clerk-appearance";
+import { softaiClerkAppearance } from "@/lib/clerk-appearance";
 import { PricingTable } from "@/components/pricing-table";
 import { EmptyState, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatCredits, formatDate } from "@/lib/utils";
@@ -70,10 +70,6 @@ export default async function BillingPage() {
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
-              <Wallet className="h-3.5 w-3.5" />
-              {dictionary.billing.title}
-            </p>
             <h1 className="text-2xl font-semibold tracking-tight text-text">
               {formatCredits(balance, locale)}{" "}
               {dictionary.billing.availableCredits}
@@ -95,7 +91,7 @@ export default async function BillingPage() {
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <Wallet className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+            <p className="text-xs font-medium text-text-tertiary">
               Credits
             </p>
             <p className="mt-1 text-xl font-semibold text-text">
@@ -106,7 +102,7 @@ export default async function BillingPage() {
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <CreditCard className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+            <p className="text-xs font-medium text-text-tertiary">
               Plan
             </p>
             <p className="mt-1 text-xl font-semibold text-text">
@@ -117,7 +113,7 @@ export default async function BillingPage() {
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <Activity className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+            <p className="text-xs font-medium text-text-tertiary">
               Status
             </p>
             <div className="mt-2">
@@ -128,7 +124,7 @@ export default async function BillingPage() {
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
               <CalendarClock className="h-4 w-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+            <p className="text-xs font-medium text-text-tertiary">
               {dictionary.billing.monthlyCredits}
             </p>
             <p className="mt-1 text-xl font-semibold text-text">
@@ -148,7 +144,7 @@ export default async function BillingPage() {
             <SectionHeader title={dictionary.billing.topUpCredits} />
             <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
               <PricingTable
-                appearance={runwayClerkAppearance}
+                appearance={softaiClerkAppearance}
                 newSubscriptionRedirectUrl={localizePath("/billing", locale)}
               />
             </div>

@@ -23,7 +23,6 @@ export const dictionaries = {
       updated: "Updated",
     },
     marketing: {
-      eyebrow: "SoftAI Studio v2.0",
       heroTitle: "Turn your product brief into a video ad.",
       heroDescription: "Upload your product images, paste your script, and generate short-form video campaigns ready for TikTok and Instagram. No timeline editor required.",
       dashboardCta: "Go to Dashboard",
@@ -162,7 +161,6 @@ export const dictionaries = {
       updated: "آخر تحديث",
     },
     marketing: {
-      eyebrow: "استوديو SoftAI v2.0",
       heroTitle: "حوّل وصف منتجك إلى إعلان فيديو جاهز.",
       heroDescription: "ارفع صور المنتج، اكتب النص أو الفكرة، واحصل على حملات فيديو قصيرة مناسبة لتيك توك وإنستغرام، من دون الحاجة لتعلّم محرر فيديو معقد.",
       dashboardCta: "اذهب إلى لوحة التحكم",

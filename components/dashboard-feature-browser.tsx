@@ -18,7 +18,7 @@ import {
   type StarterKit,
   categories,
   features,
-  modelOptions,
+  mediaAssets,
   starterKits,
   getDefaultFeatureForCategory,
 } from "@/lib/features";
@@ -43,13 +43,35 @@ export function DashboardFeatureBrowser({
     useState<StarterKit>("Film or shorts");
   const [query, setQuery] = useState("");
   const [selectedFeature, setSelectedFeature] = useState("multi-shot-video");
-  const [selectedModel, setSelectedModel] = useState("Multi-Shot Video");
-  const [notice, setNotice] = useState<string | null>(null);
+
+  const implementedFeatures = useMemo(
+    () => features.filter((feature) => feature.status === "implemented"),
+    [],
+  );
+
+  const visibleCategories = useMemo(
+    () =>
+      categories.filter((category) => {
+        if (category === "Starter Kits") {
+          return implementedFeatures.some((feature) => feature.starterKit);
+        }
+        return implementedFeatures.some((feature) => feature.category === category);
+      }),
+    [implementedFeatures],
+  );
+
+  const visibleStarterKits = useMemo(
+    () =>
+      starterKits.filter((kit) =>
+        implementedFeatures.some((feature) => feature.starterKit === kit.title),
+      ),
+    [implementedFeatures],
+  );
 
   const visibleFeatures = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return features.filter((feature) => {
+    return implementedFeatures.filter((feature) => {
       const matchesCategory =
         activeCategory === "Starter Kits"
           ? feature.starterKit === activeStarterKit
@@ -61,37 +83,16 @@ export function DashboardFeatureBrowser({
 
       return matchesCategory && matchesQuery;
     });
-  }, [activeCategory, activeStarterKit, query]);
+  }, [activeCategory, activeStarterKit, implementedFeatures, query]);
 
   const activeFeature =
     visibleFeatures.find((f) => f.slug === selectedFeature) ??
-    visibleFeatures.find((f) => f.status === "implemented") ??
     visibleFeatures[0] ??
-    features.find((f) => f.slug === "multi-shot-video")!;
+    implementedFeatures.find((f) => f.slug === "multi-shot-video")!;
 
   function openFeature(feature: FeatureTile) {
     setSelectedFeature(feature.slug);
-
-    if (feature.status === "implemented") {
-      setNotice(null);
-      router.push(feature.appRoute);
-      return;
-    }
-
-    setNotice(
-      `${feature.title} is not implemented yet. Multi-Shot Video is available now.`,
-    );
-  }
-
-  function chooseModel(model: string) {
-    setSelectedModel(model);
-    if (model !== "Multi-Shot Video") {
-      setNotice(
-        `${model} is not implemented yet. Multi-Shot Video is available now.`,
-      );
-      return;
-    }
-    setNotice(null);
+    router.push(feature.appRoute);
   }
 
   return (
@@ -114,7 +115,7 @@ export function DashboardFeatureBrowser({
           </div>
 
           <div className="mt-14 flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
-            {categories.map((category) => {
+            {visibleCategories.map((category) => {
               const active = category === activeCategory;
               return (
                 <button
@@ -128,7 +129,6 @@ export function DashboardFeatureBrowser({
                       activeStarterKit,
                     );
                     setSelectedFeature(next.slug);
-                    setNotice(null);
                   }}
                   className={cn(
                     "shrink-0 rounded-t-lg border-b px-2.5 pb-2 pt-1 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
@@ -143,54 +143,94 @@ export function DashboardFeatureBrowser({
             })}
           </div>
 
-          {notice ? (
-            <div
-              role="status"
-              className="mt-4 rounded-xl border border-border bg-surface-raised px-3 py-2 text-[13px] font-medium text-text-secondary"
-            >
-              {notice}
-            </div>
-          ) : null}
-
           <div className="thin-scrollbar mt-5 flex-1 space-y-3 overflow-y-auto pr-2">
             {activeCategory === "Starter Kits" ? (
-              starterKits.map((kit) => {
-                const Icon = kit.icon;
-                const active = kit.title === activeStarterKit;
-                const defaultFeature = getDefaultFeatureForCategory(
-                  "Starter Kits",
-                  kit.title,
-                );
-                return (
-                  <button
-                    key={kit.title}
-                    type="button"
-                    onClick={() => {
-                      setActiveStarterKit(kit.title);
-                      setSelectedFeature(defaultFeature.slug);
-                      setNotice(null);
-                    }}
-                    className={cn(
-                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
-                      active
-                        ? "border-border-strong bg-surface-raised/85"
-                        : "border-transparent hover:border-border hover:bg-surface-raised/70",
-                    )}
-                  >
-                    <span className="flex h-18 w-18 items-center justify-center rounded-2xl bg-surface-raised text-text-secondary ring-1 ring-border transition-colors group-hover:text-text">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <span className="min-w-0 self-center">
-                      <span className="flex items-center gap-2 text-sm font-semibold text-text">
-                        {kit.title}
+              <>
+                {visibleStarterKits.map((kit) => {
+                  const Icon = kit.icon;
+                  const active = kit.title === activeStarterKit;
+                  return (
+                    <button
+                      key={kit.title}
+                      type="button"
+                      onClick={() => {
+                        setActiveStarterKit(kit.title);
+                        const next = getDefaultFeatureForCategory(
+                          "Starter Kits",
+                          kit.title,
+                        );
+                        setSelectedFeature(next.slug);
+                      }}
+                      className={cn(
+                        "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
+                        active
+                          ? "border-border-strong bg-surface-raised/85"
+                          : "border-transparent hover:border-border hover:bg-surface-raised/70",
+                      )}
+                    >
+                      <span className="flex h-18 w-18 items-center justify-center rounded-2xl bg-surface-raised text-text-secondary ring-1 ring-border transition-colors group-hover:text-text">
+                        <Icon className="h-5 w-5" />
                       </span>
-                      <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                        {kit.description}
+                      <span className="min-w-0 self-center">
+                        <span className="flex items-center gap-2 text-sm font-semibold text-text">
+                          {kit.title}
+                        </span>
+                        <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
+                          {kit.description}
+                        </span>
                       </span>
-                    </span>
-                  </button>
-                );
-              })
+                    </button>
+                  );
+                })}
+                {visibleFeatures.length > 0 ? (
+                  <div className="space-y-2 pt-2">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
+                      Tools in this kit
+                    </p>
+                    {visibleFeatures.map((feature) => {
+                      const active = feature.slug === selectedFeature;
+                      return (
+                        <button
+                          key={feature.slug}
+                          type="button"
+                          onClick={() => setSelectedFeature(feature.slug)}
+                          className={cn(
+                            "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
+                            active
+                              ? "border-border-strong bg-surface-raised/85"
+                              : "border-transparent hover:border-border hover:bg-surface-raised/70",
+                          )}
+                        >
+                          <Image
+                            src={feature.image}
+                            alt=""
+                            width={96}
+                            height={96}
+                            className="h-18 w-18 rounded-2xl object-cover ring-1 ring-border"
+                          />
+                          <span className="min-w-0 self-center">
+                            <span className="flex items-center gap-2 text-sm font-semibold text-text">
+                              {feature.title}
+                              {feature.badge ? (
+                                <span className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
+                                  {feature.badge}
+                                </span>
+                              ) : null}
+                            </span>
+                            <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
+                              {feature.description}
+                            </span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
+                    No tools in this kit yet.
+                  </div>
+                )}
+              </>
             ) : visibleFeatures.length ? (
               visibleFeatures.map((feature) => {
                 const active = feature.slug === activeFeature.slug;
@@ -225,11 +265,6 @@ export function DashboardFeatureBrowser({
                       <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
                         {feature.description}
                       </span>
-                      {feature.status !== "implemented" ? (
-                        <span className="mt-2 inline-flex rounded-full border border-border px-2 py-0.5 text-[11px] font-semibold text-text-tertiary">
-                          Not implemented
-                        </span>
-                      ) : null}
                     </span>
                   </button>
                 );
@@ -287,27 +322,6 @@ export function DashboardFeatureBrowser({
             <p className="mt-2 max-w-xl text-sm text-text-secondary">
               {activeFeature.description}
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              {modelOptions.map((model) => {
-                const active = model === selectedModel;
-                return (
-                  <button
-                    key={model}
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => chooseModel(model)}
-                    className={cn(
-                      "rounded-md border px-4 py-2 text-sm font-semibold transition-colors focus-visible:shadow-(--focus-ring)",
-                      active
-                        ? "border-accent bg-accent-soft text-accent-text"
-                        : "border-border bg-surface-raised text-text-secondary hover:bg-surface-sunken hover:text-text",
-                    )}
-                  >
-                    {model}
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           <button
@@ -317,7 +331,7 @@ export function DashboardFeatureBrowser({
           >
             <span className="relative block aspect-video">
               <video
-                src="/edit-studio-empty-state.webm"
+                src={mediaAssets.videoPreview}
                 autoPlay
                 loop
                 muted
@@ -327,9 +341,7 @@ export function DashboardFeatureBrowser({
               <span className="absolute inset-x-0 top-0 h-1 bg-success" />
               <span className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
               <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-md bg-bg/85 px-3 py-2 text-xs font-medium text-text ring-1 ring-border">
-                {activeFeature.status === "implemented"
-                  ? "Open generator"
-                  : "Not implemented yet"}
+                Open generator
               </span>
             </span>
           </button>
@@ -340,9 +352,7 @@ export function DashboardFeatureBrowser({
               onClick={() => openFeature(activeFeature)}
               className="btn btn-primary"
             >
-              {activeFeature.status === "implemented"
-                ? `Open ${activeFeature.title}`
-                : "Not implemented yet"}
+              Open {activeFeature.title}
             </button>
           </div>
         </div>

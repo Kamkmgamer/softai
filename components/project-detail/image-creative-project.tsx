@@ -8,7 +8,7 @@ type Props = {
 };
 
 type CreativeMetadata = {
-  app?: "text-to-image" | "image-editor" | "mockup";
+  app?: "text-to-image" | "image-editor" | "mockup" | "create-ad";
   aspectRatio?: "9:16" | "1:1" | "16:9";
   sourceImageUrl?: string;
   style?: string;
@@ -28,9 +28,9 @@ export function ImageCreativeProject({ bundle }: Props) {
   const generatedImage =
     bundle.outputs.find((output) => output.type === "scene_image") ?? null;
   const appLabel =
-    bundle.project.kind === "image_edit" ? "AI Image Editor" : bundle.project.kind === "mockup" ? "Mockup Generator" : "Text to Image";
+    bundle.project.kind === "image_edit" ? "AI Image Editor" : bundle.project.kind === "mockup" ? "Mockup Generator" : bundle.project.kind === "create_ad" ? "Create Ad" : "Text to Image";
   const promptLabel =
-    bundle.project.kind === "image_edit" ? "Edit instruction" : bundle.project.kind === "mockup" ? "Scene description" : "Prompt";
+    bundle.project.kind === "image_edit" ? "Edit instruction" : bundle.project.kind === "mockup" ? "Scene description" : bundle.project.kind === "create_ad" ? "Ad description" : "Prompt";
 
   return (
     <div className="h-full min-h-0 overflow-y-auto bg-bg">
@@ -46,7 +46,7 @@ export function ImageCreativeProject({ bundle }: Props) {
 
           <div className="mt-8 space-y-6">
             <section>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-text-tertiary">
+              <p className="text-xs font-medium text-text-tertiary">
                 {promptLabel}
               </p>
               <p className="mt-3 max-h-55 overflow-y-auto rounded-xl border border-border bg-bg-subtle p-3 text-sm leading-6 text-text-secondary">
@@ -68,7 +68,7 @@ export function ImageCreativeProject({ bundle }: Props) {
 
             {sourceImageUrl ? (
               <section>
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-text-tertiary">
+                <p className="text-xs font-medium text-text-tertiary">
                   Reference image
                 </p>
                 <div className="mt-3 overflow-hidden rounded-xl border border-border bg-bg-subtle">
@@ -86,7 +86,7 @@ export function ImageCreativeProject({ bundle }: Props) {
         </aside>
 
         <main className="flex min-h-0 flex-col gap-4 overflow-y-auto px-5 py-6 lg:px-10 lg:py-8">
-          {bundle.project.kind === "image_edit" || bundle.project.kind === "mockup" ? (
+          {bundle.project.kind === "image_edit" || bundle.project.kind === "mockup" || bundle.project.kind === "create_ad" ? (
             <div className="grid min-h-0 flex-1 gap-4 md:grid-cols-2">
               <ImagePanel
                 title="Source"
@@ -94,7 +94,7 @@ export function ImageCreativeProject({ bundle }: Props) {
                 emptyLabel="No source image saved"
               />
               <ImagePanel
-                title={bundle.project.kind === "mockup" ? "Mockup result" : "Edited result"}
+                title={bundle.project.kind === "mockup" ? "Mockup result" : bundle.project.kind === "create_ad" ? "Ad result" : "Edited result"}
                 imageUrl={generatedImage?.url ?? null}
                 primary
                 emptyLabel="Image generation is still pending"
@@ -132,7 +132,7 @@ function ImagePanel({
       <div className="mb-2 flex items-center justify-between px-1">
         <h2 className="text-sm font-semibold text-text">{title}</h2>
         {primary ? (
-          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">
+          <span className="text-xs font-medium text-text-tertiary">
             Result
           </span>
         ) : null}
@@ -159,7 +159,7 @@ function ImagePanel({
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-border bg-bg-subtle px-3 py-2.5">
-      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-text-tertiary">
+      <p className="text-xs font-medium text-text-tertiary">
         {label}
       </p>
       <p className="mt-1 text-sm font-semibold text-text">{value}</p>

@@ -7,16 +7,16 @@ import { UploadCloud } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
 
-type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup";
+type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad";
 
 type CreativeAppFormProps = {
   app: CreativeAppKind;
   title: string;
-  eyebrow: string;
   description: string;
   placeholder: string;
   presets: string[];
   requiresUpload?: "image" | "video";
+  allowUpload?: "image" | "video";
 };
 
 const aspectRatios = ["9:16", "1:1", "16:9"];
@@ -25,9 +25,11 @@ const durations = ["10s", "15s", "20s"];
 export function CreativeAppForm({
   app,
   title,
+  description,
   placeholder,
   presets,
   requiresUpload,
+  allowUpload,
 }: CreativeAppFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -40,8 +42,9 @@ export function CreativeAppForm({
   const [error, setError] = useState<string | null>(null);
 
   const canSubmit = prompt.trim().length >= 10 && (!requiresUpload || sourceUrl);
-  const uploadLabel = requiresUpload === "video" ? "Drop source video here" : "Drop source image here";
-  const uploadedPreviewIsImage = requiresUpload === "image" && sourceUrl;
+  const uploadType = requiresUpload ?? allowUpload;
+  const uploadLabel = uploadType === "video" ? "Drop source video here" : "Drop source image here";
+  const uploadedPreviewIsImage = uploadType === "image" && sourceUrl;
 
   function getUploadedUrl(file: { ufsUrl?: string; url?: string; serverData?: { url?: string } | null }) {
     return file.ufsUrl ?? file.serverData?.url ?? file.url ?? null;
@@ -57,6 +60,7 @@ export function CreativeAppForm({
       style,
       aspectRatio,
       ...(app === "image-editor" || app === "expand-image" || app === "stylize-image" || app === "product-reshoot" || app === "vary-image" || app === "mockup" ? { sourceImageUrl: sourceUrl } : null),
+      ...(app === "create-ad" && sourceUrl ? { sourceImageUrl: sourceUrl } : null),
       ...(app === "edit-studio" ? { sourceVideoUrl: sourceUrl, duration } : null),
     };
 
@@ -84,19 +88,24 @@ export function CreativeAppForm({
   return (
     <div className="grid h-full min-h-0 bg-bg lg:grid-cols-[464px_minmax(0,1fr)]">
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-6 lg:py-8">
-        <div className="mb-5 flex items-center justify-between gap-3 px-1">
+        <div className="mb-5 space-y-2 px-1">
           <div className="text-sm text-text-secondary">
             Apps <span className="text-text-tertiary">/</span>{" "}
             <strong className="font-semibold text-text">{title}</strong>
           </div>
+          {description ? (
+            <p className="text-[13px] leading-5 text-text-secondary">
+              {description}
+            </p>
+          ) : null}
         </div>
 
         <div className="thin-scrollbar flex-1 space-y-5 overflow-y-auto pr-1">
-          {requiresUpload ? (
+          {uploadType ? (
             <div className="space-y-2 px-1">
               <div className="flex items-center gap-1.5 text-[13px] font-medium text-text">
                 <UploadCloud className="h-3.5 w-3.5" />
-                Source {requiresUpload}
+                {requiresUpload ? "Source" : "Optional source"} {uploadType}
               </div>
               <UploadDropzone
                 endpoint="mediaReferenceUploader"
@@ -115,7 +124,7 @@ export function CreativeAppForm({
                 }}
                 content={{
                   label: uploadLabel,
-                  allowedContent: requiresUpload === "video" ? "MP4/WebM up to 64MB" : "PNG, JPG, or WebP up to 8MB",
+                  allowedContent: uploadType === "video" ? "MP4/WebM up to 64MB" : "PNG, JPG, or WebP up to 8MB",
                 }}
                 onClientUploadComplete={(files) => {
                   const firstFile = files[0];

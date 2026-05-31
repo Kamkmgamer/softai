@@ -104,7 +104,7 @@ export function ProjectInputs({ projectId }: { projectId: string }) {
   return (
     <section className="rounded-[28px] border border-border bg-surface p-4 shadow-(--shadow-sm)">
       <div className="mb-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
+        <p className="text-xs font-medium text-text-tertiary">
           Inputs
         </p>
         <h2 className="mt-1 text-base font-semibold text-text">

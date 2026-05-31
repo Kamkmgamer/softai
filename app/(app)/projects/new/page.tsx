@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ProjectCreationForm } from "@/components/project-creation-form";
+import { mediaAssets } from "@/lib/features";
 
 export default function NewProjectPage() {
   return (
@@ -9,14 +10,6 @@ export default function NewProjectPage() {
       </section>
 
       <section className="relative flex min-h-155 items-center justify-center px-5 py-12 lg:px-10">
-        <div className="absolute right-3 top-3 hidden gap-2 lg:flex">
-          <span className="rounded-lg bg-surface-raised px-3 py-2 text-sm font-semibold text-text">
-            Login
-          </span>
-          <span className="rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-text">
-            Sign up
-          </span>
-        </div>
         <div className="w-full max-w-282.5 rounded-[18px] bg-surface p-6 shadow-(--shadow-lg) ring-1 ring-border">
           <div className="mb-5 space-y-2">
             <h1 className="text-2xl font-semibold tracking-[-0.04em] text-text">
@@ -27,10 +20,10 @@ export default function NewProjectPage() {
               steps, and renders.
             </p>
             <div className="flex gap-2 pt-2 text-xs font-semibold">
-              <span className="rounded-full bg-text px-3 py-1.5 text-bg">
+              <span className="rounded-md bg-text px-3 py-1.5 text-bg">
                 Examples
               </span>
-              <span className="rounded-full px-3 py-1.5 text-text-secondary">
+              <span className="rounded-md px-3 py-1.5 text-text-secondary">
                 How it works
               </span>
             </div>
@@ -38,24 +31,24 @@ export default function NewProjectPage() {
 
           <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {[
-              ["/hero-mockup.png", "Storyboard workspace for a product launch"],
+              [mediaAssets.productWorkspace, "Storyboard workspace for a product launch"],
               [
-                "/storyboard-feature.png",
+                mediaAssets.productPhoto,
                 "Scene review with structured campaign shots",
               ],
               [
-                "/rendering-feature.png",
+                mediaAssets.socialShoot,
                 "Rendered ad preview for social video",
               ],
               [
-                "/storyboard-feature.png",
+                mediaAssets.studioBottle,
                 "Script edits arranged into compact frames",
               ],
               [
-                "/rendering-feature.png",
+                mediaAssets.packaging,
                 "Motion preview with product close-up",
               ],
-              ["/hero-mockup.png", "Final campaign assets ready for export"],
+              [mediaAssets.campaignWall, "Final campaign assets ready for export"],
             ].map(([src, alt], index) => (
               <div
                 key={`${src}-${index}`}

@@ -731,6 +731,11 @@ type VideoRenderOptions = {
   size?: string;
 };
 
+export type VideoFrameReference = {
+  url: string;
+  role?: "reference" | "first_frame" | "last_frame";
+};
+
 type VideoSubmitResult = {
   id: string;
   status: string;
@@ -753,9 +758,42 @@ function getOpenRouterCallbackUrl(appUrl: string) {
   }
 }
 
+function normalizeVideoFrameReferences(
+  imageUrls: Array<string | VideoFrameReference>,
+): VideoFrameReference[] {
+  return imageUrls
+    .map((reference) =>
+      typeof reference === "string"
+        ? { url: reference, role: "reference" as const }
+        : { url: reference.url, role: reference.role ?? "reference" },
+    )
+    .filter((reference) => reference.url.trim().length > 0);
+}
+
+function buildAnchoredVideoPrompt(prompt: string, references: VideoFrameReference[]) {
+  const hasFirstFrame = references.some((reference) => reference.role === "first_frame");
+  const hasLastFrame = references.some((reference) => reference.role === "last_frame");
+
+  if (!hasFirstFrame && !hasLastFrame) return prompt;
+
+  const instructions = [
+    hasFirstFrame
+      ? "Use the first-frame reference as the exact opening frame. Preserve its subject, composition, camera angle, colors, and identity before adding motion."
+      : null,
+    hasLastFrame
+      ? "Use the last-frame reference as the exact ending frame. The generated motion must resolve cleanly into that final composition without changing its subject identity."
+      : null,
+    hasFirstFrame && hasLastFrame
+      ? "Interpolate only the in-between motion. The start and end frames are hard anchors, not loose inspiration."
+      : null,
+  ].filter(Boolean);
+
+  return `${instructions.join(" ")} ${prompt}`;
+}
+
 export async function submitVideoRender(
   prompt: string,
-  imageUrls: string[],
+  imageUrls: Array<string | VideoFrameReference>,
   language: "en" | "ar" = "en",
   options: VideoRenderOptions = {},
 ): Promise<VideoSubmitResult> {
@@ -763,6 +801,8 @@ export async function submitVideoRender(
   const route = getProviderRoute("video");
   const duration = options.duration ?? 4;
   const size = options.size ?? "720x1280";
+  const frameReferences = normalizeVideoFrameReferences(imageUrls);
+  const anchoredPrompt = buildAnchoredVideoPrompt(prompt, frameReferences);
 
   if (route.isDemo) {
     return {
@@ -771,17 +811,15 @@ export async function submitVideoRender(
       pollingUrl: null,
       url: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
       provider: route.modelKey,
-      requestPayload: { prompt, imageUrls, language, duration, size },
+      requestPayload: { prompt: anchoredPrompt, imageUrls: frameReferences, language, duration, size },
       responsePayload: null,
     };
   }
 
-  const inputReferences = imageUrls
-    .map((url) => url.trim())
-    .filter(Boolean)
-    .map((url) => ({
+  const inputReferences = frameReferences
+    .map((reference) => ({
       type: "image_url" as const,
-      image_url: { url },
+      image_url: { url: reference.url.trim() },
     }));
 
   const callbackUrl = getOpenRouterCallbackUrl(env.appUrl);
@@ -796,7 +834,7 @@ export async function submitVideoRender(
     },
     body: JSON.stringify({
       model: route.modelKey,
-      prompt,
+      prompt: anchoredPrompt,
       duration,
       size,
       input_references: inputReferences,
@@ -815,7 +853,7 @@ export async function submitVideoRender(
     pollingUrl: payload.polling_url ?? null,
     url: extractVideoUrlFromUnsignedUrls(payload.unsigned_urls) ?? extractVideoUrl(payload),
     provider: route.modelKey,
-    requestPayload: { prompt, imageUrls, language, duration, size },
+    requestPayload: { prompt: anchoredPrompt, imageUrls: frameReferences, language, duration, size },
     responsePayload: payload,
   };
 }
@@ -856,7 +894,7 @@ function normalizeVideoStatus(status: unknown): VideoPollResult["status"] {
   return "pending";
 }
 
-function extractVideoUrlFromUnsignedUrls(urls: unknown): string | null {
+export function extractVideoUrlFromUnsignedUrls(urls: unknown): string | null {
   if (!Array.isArray(urls) || urls.length === 0) return null;
   for (const item of urls) {
     const url = getNestedVideoUrl(item);

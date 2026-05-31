@@ -63,4 +63,4 @@ User opens a generated video, trims the ending, changes CTA overlay, adds captio
 
 - Browser video editing can become heavy.
 - Server rendering can be costly.
-- Advanced Runway-style video editing is provider-dependent.
+- Advanced timeline-style video editing is provider-dependent.

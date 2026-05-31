@@ -53,7 +53,7 @@ The main gap is that 3aqel offers many standalone creation tools around images, 
 | Gallery/public showcase | Public gallery of generated images/videos/designs | No | Medium | Add opt-in publishing flag on outputs, public `/gallery`, moderation queue, takedown flow. |
 | Credit refunds | Up to 5 monthly refunds if result not downloaded | No | Medium | Add refund policy fields, output download tracking, refund count per billing period, ledger reversal, UI action beside outputs. |
 | Courses/community/support | Recorded courses, weekly workshops, WhatsApp support | No | Medium | Add course content pages, gated plan entitlements, support CTA. More growth/ops than engineering-heavy. |
-| Comparison SEO pages | Pages comparing against Canva, Midjourney, ChatGPT, Runway, ElevenLabs, etc. | No | Small | Add static comparison route templates and content model. Good marketing acquisition work. |
+| Comparison SEO pages | Pages comparing against Canva, Midjourney, ChatGPT, ElevenLabs, etc. | No | Small | Add static comparison route templates and content model. Good marketing acquisition work. |
 
 ## Highest-Value Parity Work For Softai
 

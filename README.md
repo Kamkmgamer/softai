@@ -53,3 +53,4 @@ Copy `.env.example` and fill in providers when you want live integrations:
 - Route handlers currently persist to the in-memory store for local usability.
 - `db/schema.ts` is ready for the next step of replacing the demo store with a real Neon-backed repository.
 - OpenRouter calls fall back to deterministic demo responses when no API key is present.
+- Non-essential stock images and videos should stay outside `public/`. Upload production-ready media to cloud storage or a CDN to reduce Vercel bandwidth and asset costs.

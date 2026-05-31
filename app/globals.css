@@ -65,179 +65,155 @@
   --duration: 150ms;
 }
 
-.runway-shell {
-  --bg:             oklch(0.06 0.006 260);
-  --bg-subtle:      oklch(0.085 0.007 260);
-  --surface:        oklch(0.105 0.008 260);
-  --surface-raised: oklch(0.145 0.01 260);
-  --surface-sunken: oklch(0.075 0.007 260);
-  --text:           oklch(0.965 0.004 260);
-  --text-secondary: oklch(0.76 0.016 260);
-  --text-tertiary:  oklch(0.58 0.018 260);
-  --border:         oklch(0.24 0.012 260);
-  --border-strong:  oklch(0.34 0.014 260);
-  --accent:         oklch(0.58 0.22 280);
-  --accent-hover:   oklch(0.64 0.22 280);
-  --accent-soft:    oklch(0.22 0.07 280);
-  --accent-text:    oklch(0.91 0.035 285);
-  --success-soft:   oklch(0.2 0.04 152);
-  --warning-soft:   oklch(0.2 0.04 72);
-  --danger-soft:    oklch(0.19 0.045 27);
-  --shadow-sm:      0 1px 2px oklch(0 0 0 / 0.24);
-  --shadow-md:      0 8px 24px oklch(0 0 0 / 0.28);
-  --shadow-lg:      0 18px 48px oklch(0 0 0 / 0.42);
-  --focus-ring:     0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
-}
-
-.runway-shell .btn-primary {
+.softai-shell .btn-primary {
   border-color: var(--accent);
   background: var(--accent);
   color: oklch(0.985 0.006 280);
 }
 
-.runway-shell .btn-primary:hover:not(:disabled) {
+.softai-shell .btn-primary:hover:not(:disabled) {
   border-color: var(--accent-hover);
   background: var(--accent-hover);
   color: oklch(0.985 0.006 280);
 }
 
-.runway-shell .btn-secondary {
+.softai-shell .btn-secondary {
   border-color: var(--border-strong);
   background: var(--surface-raised);
   color: var(--text);
 }
 
-.runway-shell .btn-secondary:hover:not(:disabled) {
+.softai-shell .btn-secondary:hover:not(:disabled) {
   border-color: var(--text-tertiary);
   background: var(--surface-sunken);
   color: var(--text);
 }
 
-.runway-shell .btn-primary:disabled,
-.runway-shell .btn-secondary:disabled {
+.softai-shell .btn-primary:disabled,
+.softai-shell .btn-secondary:disabled {
   border-color: var(--border);
   background: var(--surface-sunken);
   color: var(--text-tertiary);
   opacity: 1;
 }
 
-.runway-shell .cl-rootBox,
-.runway-shell .cl-cardBox {
+.softai-shell .cl-rootBox,
+.softai-shell .cl-cardBox {
   width: 100%;
 }
 
-.runway-shell .clerk-account-surface .cl-rootBox,
-.runway-shell .clerk-account-surface .cl-cardBox,
-.runway-shell .clerk-account-surface .cl-card,
-.runway-shell .clerk-account-surface .cl-userProfile-root,
-.runway-shell .clerk-account-surface .cl-userProfile-root > div,
-.runway-shell .clerk-account-surface .cl-page,
-.runway-shell .clerk-account-surface .cl-profilePage,
-.runway-shell .clerk-account-surface .cl-pageScrollBox,
-.runway-shell .clerk-account-surface .cl-profileSection {
+.softai-shell .clerk-account-surface .cl-rootBox,
+.softai-shell .clerk-account-surface .cl-cardBox,
+.softai-shell .clerk-account-surface .cl-card,
+.softai-shell .clerk-account-surface .cl-userProfile-root,
+.softai-shell .clerk-account-surface .cl-userProfile-root > div,
+.softai-shell .clerk-account-surface .cl-page,
+.softai-shell .clerk-account-surface .cl-profilePage,
+.softai-shell .clerk-account-surface .cl-pageScrollBox,
+.softai-shell .clerk-account-surface .cl-profileSection {
   max-width: none !important;
   width: 100% !important;
 }
 
-.runway-shell .clerk-account-surface .cl-card,
-.runway-shell .clerk-account-surface .cl-cardBox {
+.softai-shell .clerk-account-surface .cl-card,
+.softai-shell .clerk-account-surface .cl-cardBox {
   min-height: min(704px, calc(100dvh - 176px));
 }
 
-.runway-shell .clerk-account-surface .cl-card {
+.softai-shell .clerk-account-surface .cl-card {
   overflow: hidden !important;
 }
 
-.runway-shell .clerk-account-surface .cl-pageScrollBox {
+.softai-shell .clerk-account-surface .cl-pageScrollBox {
   padding: 28px 32px !important;
 }
 
 @media (max-width: 767px) {
-  .runway-shell .clerk-account-surface .cl-pageScrollBox {
+  .softai-shell .clerk-account-surface .cl-pageScrollBox {
     padding: 20px !important;
   }
 }
 
-.runway-shell .cl-card,
-.runway-shell .cl-cardBox,
-.runway-shell .cl-userProfile-root,
-.runway-shell .cl-userProfile-root > div,
-.runway-shell .cl-pricingTable,
-.runway-shell .cl-pricingTableCard,
-.runway-shell .cl-pageScrollBox {
+.softai-shell .cl-card,
+.softai-shell .cl-cardBox,
+.softai-shell .cl-userProfile-root,
+.softai-shell .cl-userProfile-root > div,
+.softai-shell .cl-pricingTable,
+.softai-shell .cl-pricingTableCard,
+.softai-shell .cl-pageScrollBox {
   background: transparent !important;
   color: var(--text) !important;
   box-shadow: none !important;
 }
 
-.runway-shell .cl-navbar,
-.runway-shell .cl-profileSection,
-.runway-shell .cl-pricingTableCard,
-.runway-shell .cl-modalContent {
+.softai-shell .cl-navbar,
+.softai-shell .cl-profileSection,
+.softai-shell .cl-pricingTableCard,
+.softai-shell .cl-modalContent {
   border-color: var(--border) !important;
 }
 
-.runway-shell .cl-navbar,
-.runway-shell .cl-modalContent,
-.runway-shell .cl-drawerContent {
+.softai-shell .cl-navbar,
+.softai-shell .cl-modalContent,
+.softai-shell .cl-drawerContent {
   background: var(--surface) !important;
   color: var(--text) !important;
 }
 
-.runway-shell .cl-navbarButton,
-.runway-shell .cl-menuButton,
-.runway-shell .cl-userPreviewSecondaryIdentifier,
-.runway-shell .cl-headerSubtitle,
-.runway-shell .cl-formFieldLabel,
-.runway-shell .cl-profileSectionContent,
-.runway-shell .cl-breadcrumbsItem,
-.runway-shell .cl-footerActionText {
+.softai-shell .cl-navbarButton,
+.softai-shell .cl-menuButton,
+.softai-shell .cl-userPreviewSecondaryIdentifier,
+.softai-shell .cl-headerSubtitle,
+.softai-shell .cl-formFieldLabel,
+.softai-shell .cl-profileSectionContent,
+.softai-shell .cl-breadcrumbsItem,
+.softai-shell .cl-footerActionText {
   color: var(--text-secondary) !important;
 }
 
-.runway-shell .cl-headerTitle,
-.runway-shell .cl-profileSectionTitle,
-.runway-shell .cl-userPreviewMainIdentifier,
-.runway-shell .cl-navbarButton[data-active="true"],
-.runway-shell .cl-formFieldInput,
-.runway-shell .cl-pricingTableCardTitle,
-.runway-shell .cl-pricingTableCardPrice,
-.runway-shell .cl-pricingTableCardDescription {
+.softai-shell .cl-headerTitle,
+.softai-shell .cl-profileSectionTitle,
+.softai-shell .cl-userPreviewMainIdentifier,
+.softai-shell .cl-navbarButton[data-active="true"],
+.softai-shell .cl-formFieldInput,
+.softai-shell .cl-pricingTableCardTitle,
+.softai-shell .cl-pricingTableCardPrice,
+.softai-shell .cl-pricingTableCardDescription {
   color: var(--text) !important;
 }
 
-.runway-shell .cl-navbarButton:hover,
-.runway-shell .cl-menuButton:hover,
-.runway-shell .cl-accordionTriggerButton:hover {
+.softai-shell .cl-navbarButton:hover,
+.softai-shell .cl-menuButton:hover,
+.softai-shell .cl-accordionTriggerButton:hover {
   background: var(--surface-raised) !important;
   color: var(--text) !important;
 }
 
-.runway-shell .cl-formFieldInput,
-.runway-shell .cl-selectButton,
-.runway-shell .cl-phoneInputBox {
+.softai-shell .cl-formFieldInput,
+.softai-shell .cl-selectButton,
+.softai-shell .cl-phoneInputBox {
   border-color: var(--border) !important;
   background: var(--surface-sunken) !important;
   color: var(--text) !important;
 }
 
-.runway-shell .cl-formFieldInput:focus,
-.runway-shell .cl-selectButton:focus {
+.softai-shell .cl-formFieldInput:focus,
+.softai-shell .cl-selectButton:focus {
   border-color: var(--accent) !important;
   box-shadow: var(--focus-ring) !important;
 }
 
-.runway-shell .cl-formButtonPrimary,
-.runway-shell .cl-profileSectionPrimaryButton,
-.runway-shell .cl-pricingTableCardButton {
+.softai-shell .cl-formButtonPrimary,
+.softai-shell .cl-profileSectionPrimaryButton,
+.softai-shell .cl-pricingTableCardButton {
   border-color: var(--accent) !important;
   background: var(--accent) !important;
   color: oklch(0.98 0.006 280) !important;
 }
 
-.runway-shell .cl-formButtonPrimary:hover,
-.runway-shell .cl-profileSectionPrimaryButton:hover,
-.runway-shell .cl-pricingTableCardButton:hover {
+.softai-shell .cl-formButtonPrimary:hover,
+.softai-shell .cl-profileSectionPrimaryButton:hover,
+.softai-shell .cl-pricingTableCardButton:hover {
   border-color: var(--accent-hover) !important;
   background: var(--accent-hover) !important;
 }

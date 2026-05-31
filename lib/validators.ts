@@ -102,6 +102,16 @@ export const multiShotVideoSchema = z.discriminatedUnion("mode", [
   }),
 ]);
 
+export const imageToVideoSchema = z.object({
+  app: z.literal("image-to-video"),
+  prompt: z.string().min(10).max(4000),
+  firstFrameUrl: z.string().url(),
+  lastFrameUrl: z.string().url().nullable().optional(),
+  aspectRatio: z.enum(["16:9", "9:16", "1:1"]).default("16:9"),
+  duration: z.enum(["5s", "10s", "15s"]).default("5s"),
+  resolution: z.enum(["720p", "1080p"]).default("720p"),
+});
+
 export const creativeAppSchema = z.discriminatedUnion("app", [
   z.object({
     app: z.literal("text-to-image"),
@@ -158,6 +168,13 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Photorealistic"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("1:1"),
+  }),
+  z.object({
+    app: z.literal("create-ad"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url().optional().nullable(),
+    style: z.string().min(2).max(80).default("Social media ad"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
   }),
 ]);
 

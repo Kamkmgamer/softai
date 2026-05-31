@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CreditCard } from "lucide-react";
 import { UserProfile } from "@clerk/nextjs";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
-import { runwayClerkAppearance } from "@/lib/clerk-appearance";
+import { softaiClerkAppearance } from "@/lib/clerk-appearance";
 
 export default async function PaymentsPage() {
   const locale = await getRequestLocale();
@@ -19,10 +18,6 @@ export default async function PaymentsPage() {
       <div className="mx-auto max-w-[920px] space-y-6">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
-              <CreditCard className="h-3.5 w-3.5" />
-              {dictionary.payments.title}
-            </p>
             <h1 className="text-2xl font-semibold tracking-tight text-text">
               {dictionary.payments.accountPanel}
             </h1>
@@ -42,7 +37,7 @@ export default async function PaymentsPage() {
           id="billing"
           className="clerk-account-surface overflow-hidden rounded-2xl border border-border bg-bg shadow-(--shadow-sm)"
         >
-          <UserProfile appearance={runwayClerkAppearance} routing="hash" />
+          <UserProfile appearance={softaiClerkAppearance} routing="hash" />
         </section>
       </div>
     </div>

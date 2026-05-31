@@ -99,10 +99,12 @@ export type ChatMessageRecord = {
 export type ProjectKind =
   | "campaign_ad"
   | "multi_shot_video"
+  | "image_to_video"
   | "text_to_image"
   | "image_edit"
   | "video_edit"
-  | "mockup";
+  | "mockup"
+  | "create_ad";
 
 export type ProjectRecord = {
   id: string;

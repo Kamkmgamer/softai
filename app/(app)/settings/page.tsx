@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import { Settings, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { UserProfile } from "@clerk/nextjs";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
-import { runwayClerkAppearance } from "@/lib/clerk-appearance";
+import { softaiClerkAppearance } from "@/lib/clerk-appearance";
 import { SectionHeader } from "@/components/ui";
 
 export default async function SettingsPage() {
@@ -18,10 +18,6 @@ export default async function SettingsPage() {
     <div className="thin-scrollbar h-full overflow-y-auto px-5 py-8 lg:px-10 lg:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
         <header>
-          <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
-            <Settings className="h-3.5 w-3.5" />
-            {dictionary.settings.title}
-          </p>
           <h1 className="text-2xl font-semibold tracking-tight text-text">
             {dictionary.settings.accountProfile}
           </h1>
@@ -34,7 +30,7 @@ export default async function SettingsPage() {
           <div className="space-y-4">
             <SectionHeader title={dictionary.settings.accountProfile} />
             <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
-              <UserProfile appearance={runwayClerkAppearance} routing="hash" />
+              <UserProfile appearance={softaiClerkAppearance} routing="hash" />
             </div>
           </div>
 

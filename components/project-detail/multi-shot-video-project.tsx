@@ -3,6 +3,7 @@ import { Clock3, Layers3, Play, Volume2 } from "lucide-react";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
+import { mediaAssets } from "@/lib/features";
 import type { ProjectBundle } from "@/lib/types";
 
 type Props = {
@@ -42,7 +43,7 @@ export function MultiShotVideoProject({ projectId, bundle }: Props) {
   const posterUrl =
     bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ??
     firstFrameUrl ??
-    "/rendering-feature.png";
+    mediaAssets.socialShoot;
   const totalDuration = bundle.scenes.reduce(
     (total, scene) => total + scene.durationSeconds,
     0,
@@ -105,15 +106,15 @@ export function MultiShotVideoProject({ projectId, bundle }: Props) {
 
         <div className="-mx-4 mt-4 border-t border-border bg-surface px-4 pt-3">
           <div className="mb-3 flex flex-wrap justify-end gap-2 text-xs font-semibold text-text-secondary">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
               <Layers3 className="h-3.5 w-3.5" />
               {bundle.scenes.length || 3} shots
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
               <Clock3 className="h-3.5 w-3.5" />
               {metadata.duration ?? `${totalDuration || 10}s`}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
               <Volume2 className="h-3.5 w-3.5" />
               {metadata.audioOn ? "On" : "Off"}
             </span>
@@ -202,7 +203,7 @@ export function MultiShotVideoProject({ projectId, bundle }: Props) {
 function BriefRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-bg px-3 py-2.5 ring-1 ring-border">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
+      <p className="text-xs font-medium text-text-tertiary">
         {label}
       </p>
       <p className="mt-1 text-[13px] font-semibold leading-snug text-text">

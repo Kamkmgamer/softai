@@ -36,6 +36,27 @@ export type FeatureTile = {
   badge?: string;
 };
 
+export const mediaAssets = {
+  productWorkspace:
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80",
+  productPhoto:
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80",
+  studioBottle:
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1200&q=80",
+  socialShoot:
+    "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1200&q=80",
+  editDesk:
+    "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+  packaging:
+    "https://images.unsplash.com/photo-1608755728617-aefab37d2edd?auto=format&fit=crop&w=1200&q=80",
+  apparel:
+    "https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=1200&q=80",
+  campaignWall:
+    "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1600&q=80",
+  videoPreview:
+    "https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4",
+} as const;
+
 export const starterKits: Array<{
   title: StarterKit;
   description: string;
@@ -84,7 +105,7 @@ export const features: FeatureTile[] = [
     title: "Edit Studio",
     description:
       "Transform a video with natural-language edits for lighting, style, objects, or pacing.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.editDesk,
     category: "Video",
     starterKit: "Film or shorts",
     status: "implemented",
@@ -97,7 +118,7 @@ export const features: FeatureTile[] = [
     title: "Multi-Shot Video",
     description:
       "Write a simple prompt, get a multiple shots video.",
-    image: "/rendering-feature.png",
+    image: mediaAssets.socialShoot,
     category: "Video",
     starterKit: "Film or shorts",
     status: "implemented",
@@ -109,7 +130,7 @@ export const features: FeatureTile[] = [
     title: "Scene Builder",
     description:
       "Craft your multi-shot scene step by step, see the look, then bring it to life.",
-    image: "/storyboard-feature.png",
+    image: mediaAssets.productWorkspace,
     category: "Video",
     starterKit: "Film or shorts",
     status: "coming_soon",
@@ -119,7 +140,7 @@ export const features: FeatureTile[] = [
     slug: "upscale-video",
     title: "Upscale Video",
     description: "Upscale video with Topaz AI.",
-    image: "/storyboard-feature.png",
+    image: mediaAssets.editDesk,
     category: "Video",
     starterKit: "Film or shorts",
     status: "coming_soon",
@@ -130,7 +151,7 @@ export const features: FeatureTile[] = [
     title: "Performance Capture with Act-Two",
     description:
       "Animate characters using driving performance videos.",
-    image: "/rendering-feature.png",
+    image: mediaAssets.socialShoot,
     category: "Video",
     starterKit: "Film or shorts",
     status: "coming_soon",
@@ -140,7 +161,7 @@ export const features: FeatureTile[] = [
     slug: "remove-from-video",
     title: "Remove from Video",
     description: "Remove objects without reshooting.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.productWorkspace,
     category: "Video",
     starterKit: "Film or shorts",
     status: "coming_soon",
@@ -152,7 +173,7 @@ export const features: FeatureTile[] = [
     slug: "product-shot-video",
     title: "Product Shot Video Builder",
     description: "Turn a product photo into a polished video ad.",
-    image: "/rendering-feature.png",
+    image: mediaAssets.productPhoto,
     category: "Video",
     starterKit: "Marketing",
     status: "coming_soon",
@@ -164,7 +185,7 @@ export const features: FeatureTile[] = [
     slug: "text-to-image",
     title: "Text to Image",
     description: "Generate campaign-ready image plates from a prompt.",
-    image: "/storyboard-feature.png",
+    image: mediaAssets.studioBottle,
     category: "Image",
     status: "implemented",
     appRoute: "/apps/text-to-image",
@@ -174,27 +195,29 @@ export const features: FeatureTile[] = [
     slug: "image-editor",
     title: "AI Image Editor",
     description: "Restyle, reshoot, relight, or change backdrops from one reference image.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.productPhoto,
     category: "Image",
     status: "implemented",
     appRoute: "/apps/image-editor",
     projectKind: "image_edit",
-    badge: "Runway-style",
   },
   {
     slug: "image-to-video",
     title: "Image to Video",
-    description: "Generate video from a starting image.",
-    image: "/rendering-feature.png",
-    category: "Image",
-    status: "coming_soon",
+    description: "Animate one image or bridge first and last frames.",
+    image: mediaAssets.socialShoot,
+    category: "Video",
+    starterKit: "Marketing",
+    status: "implemented",
     appRoute: "/apps/image-to-video",
+    projectKind: "image_to_video",
+    badge: "New",
   },
   {
     slug: "expand-image",
     title: "Expand Image",
     description: "Extend an image beyond its original frame.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.campaignWall,
     category: "Image",
     status: "implemented",
     appRoute: "/apps/expand-image",
@@ -204,7 +227,7 @@ export const features: FeatureTile[] = [
     slug: "stylize-image",
     title: "Stylize Image",
     description: "Apply artistic styles to your image — watercolor, oil painting, anime, vintage, and more.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.studioBottle,
     category: "Image",
     status: "implemented",
     appRoute: "/apps/stylize-image",
@@ -215,7 +238,7 @@ export const features: FeatureTile[] = [
     slug: "product-reshoot",
     title: "Product Reshoot",
     description: "Instantly change the setting, lighting, or angle of your product photo.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.productPhoto,
     category: "Image",
     starterKit: "Marketing",
     status: "implemented",
@@ -226,7 +249,7 @@ export const features: FeatureTile[] = [
     slug: "vary-image",
     title: "Vary Image",
     description: "Generate creative variations of your image — change elements while keeping the core composition.",
-    image: "/rendering-feature.png",
+    image: mediaAssets.packaging,
     category: "Image",
     status: "implemented",
     appRoute: "/apps/vary-image",
@@ -236,11 +259,23 @@ export const features: FeatureTile[] = [
     slug: "mockup",
     title: "Mockup Generator",
     description: "Place your design on real-world products — apparel, mugs, screens, signage.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.apparel,
     category: "Image",
     status: "implemented",
     appRoute: "/apps/mockup",
     projectKind: "mockup",
+    badge: "New",
+  },
+  {
+    slug: "create-ad",
+    title: "Create Ad",
+    description: "Generate ad creatives from scratch or variations of an existing ad.",
+    image: mediaAssets.campaignWall,
+    category: "Image",
+    starterKit: "Marketing",
+    status: "implemented",
+    appRoute: "/apps/create-ad",
+    projectKind: "create_ad",
     badge: "New",
   },
 
@@ -249,7 +284,7 @@ export const features: FeatureTile[] = [
     slug: "text-to-speech",
     title: "Text to Speech",
     description: "Generate spoken audio from text.",
-    image: "/hero-mockup.png",
+    image: mediaAssets.productWorkspace,
     category: "Audio",
     status: "coming_soon",
     appRoute: "/apps/text-to-speech",
@@ -258,7 +293,7 @@ export const features: FeatureTile[] = [
     slug: "lip-sync",
     title: "Lip Sync",
     description: "Sync speech to a character or performance.",
-    image: "/storyboard-feature.png",
+    image: mediaAssets.socialShoot,
     category: "Audio",
     status: "coming_soon",
     appRoute: "/apps/lip-sync",
@@ -270,7 +305,7 @@ export const features: FeatureTile[] = [
     title: "Custom Agent",
     description:
       "Create a custom assistant for repeatable creative workflows.",
-    image: "/rendering-feature.png",
+    image: mediaAssets.productWorkspace,
     category: "Custom",
     status: "coming_soon",
     appRoute: "/apps/custom-agent",
@@ -282,20 +317,11 @@ export const features: FeatureTile[] = [
     title: "Model Library",
     description:
       "Choose generation models and compare capabilities.",
-    image: "/storyboard-feature.png",
+    image: mediaAssets.editDesk,
     category: "Models",
     status: "coming_soon",
     appRoute: "/apps/model-library",
   },
-];
-
-export const modelOptions = [
-  "Aleph 2.0",
-  "Seedance 2.0",
-  "Multi-Shot Video",
-  "Runway Characters",
-  "Gen-4.5",
-  "Kling 3.0",
 ];
 
 export function getFeatureBySlug(slug: string): FeatureTile | undefined {

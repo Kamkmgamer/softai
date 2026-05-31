@@ -167,12 +167,12 @@ export function MultiShotVideoForm() {
               Multi-Shot Video
             </strong>
           </div>
-          <div className="rounded-full bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
+          <div className="rounded-md bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
             <button
               type="button"
               onClick={() => setMode("auto")}
               className={cn(
-                "rounded-full px-3 py-1.5 transition-colors",
+                "rounded-sm px-3 py-1.5 transition-colors",
                 mode === "auto"
                   ? "bg-surface-raised text-text"
                   : "hover:text-text",
@@ -184,7 +184,7 @@ export function MultiShotVideoForm() {
               type="button"
               onClick={() => setMode("custom")}
               className={cn(
-                "rounded-full px-3 py-1.5 transition-colors",
+                "rounded-sm px-3 py-1.5 transition-colors",
                 mode === "custom"
                   ? "bg-surface-raised text-text"
                   : "hover:text-text",
@@ -243,7 +243,7 @@ export function MultiShotVideoForm() {
               {shots.map((shot, index) => (
                 <div key={shot.id} className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+                    <label className="text-xs font-medium text-text-tertiary">
                       Shot {index + 1}
                     </label>
                     {shots.length > 2 ? (
@@ -291,7 +291,7 @@ export function MultiShotVideoForm() {
         <div className="-mx-5 mt-4 flex flex-col gap-3 border-t border-border bg-surface px-5 pb-0 pt-3 lg:-mx-6 lg:px-6">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-text-secondary">
             <span
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
+               className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
               onClick={cycleAspectRatio}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") cycleAspectRatio();
@@ -303,7 +303,7 @@ export function MultiShotVideoForm() {
               {aspectRatio}
             </span>
             <span
-              className="inline-flex cursor-pointer rounded-full border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
+               className="inline-flex cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
               onClick={cycleDuration}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") cycleDuration();
@@ -314,7 +314,7 @@ export function MultiShotVideoForm() {
               {duration}
             </span>
             <span
-              className="inline-flex cursor-pointer rounded-full border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
+               className="inline-flex cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
               onClick={cycleResolution}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") cycleResolution();
@@ -326,7 +326,7 @@ export function MultiShotVideoForm() {
             </span>
             <span
               className={cn(
-                "inline-flex cursor-pointer rounded-full border px-2.5 py-1.5 transition-colors",
+                "inline-flex cursor-pointer rounded-md border px-2.5 py-1.5 transition-colors",
                 audioOn
                   ? "border-border-strong bg-surface-raised text-text"
                   : "border-border bg-bg",

@@ -1244,16 +1244,19 @@ export async function createGenerationJob(
 export async function updateGenerationJob(
   jobId: string,
   patch: Partial<Pick<GenerationJobRecord, "status" | "responsePayload" | "errorMessage" | "providerJobId" | "providerKey" | "modelKey" | "costEstimate" | "attempts">>,
+  opts?: { onlyIfStatus?: JobStatus[] },
 ) {
   if (!databaseEnabled() || !db) {
     const job = getState().generationJobs.find((entry) => entry.id === jobId);
     if (!job) return null;
+    if (opts?.onlyIfStatus && !opts.onlyIfStatus.includes(job.status)) return null;
     Object.assign(job, patch, { updatedAt: now() });
     return job;
   }
   await ensureDatabase();
   const existing = await db.query.generationJobs.findFirst({ where: eq(schema.generationJobs.id, jobId) });
   if (!existing) return null;
+  if (opts?.onlyIfStatus && !opts.onlyIfStatus.includes(existing.status as JobStatus)) return null;
   await db.update(schema.generationJobs).set({ ...patch, updatedAt: new Date() }).where(eq(schema.generationJobs.id, jobId));
   revalidateProjectData(existing.userId, existing.projectId);
   return { ...mapJob(existing), ...patch, updatedAt: now() };
@@ -1262,10 +1265,12 @@ export async function updateGenerationJob(
 export async function updateGenerationJobByProviderJobId(
   providerJobId: string,
   patch: Partial<Pick<GenerationJobRecord, "status" | "responsePayload" | "errorMessage">>,
+  opts?: { onlyIfStatus?: JobStatus[] },
 ) {
   if (!databaseEnabled() || !db) {
     const job = getState().generationJobs.find((entry) => entry.providerJobId === providerJobId);
     if (!job) return null;
+    if (opts?.onlyIfStatus && !opts.onlyIfStatus.includes(job.status)) return null;
     Object.assign(job, patch, { updatedAt: now() });
     return job;
   }
@@ -1274,6 +1279,7 @@ export async function updateGenerationJobByProviderJobId(
     where: eq(schema.generationJobs.providerJobId, providerJobId),
   });
   if (!existing) return null;
+  if (opts?.onlyIfStatus && !opts.onlyIfStatus.includes(existing.status as JobStatus)) return null;
   await db.update(schema.generationJobs).set({ ...patch, updatedAt: new Date() }).where(eq(schema.generationJobs.id, existing.id));
   revalidateProjectData(existing.userId, existing.projectId);
   return { ...mapJob(existing), ...patch, updatedAt: now() };

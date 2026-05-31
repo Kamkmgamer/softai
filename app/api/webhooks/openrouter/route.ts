@@ -1,5 +1,7 @@
 import { apiError, apiSuccess } from "@/lib/api";
+import { refundVideoCredits, settleVideoCredits } from "@/lib/credits";
 import { getEnv } from "@/lib/env";
+import { extractVideoUrlFromUnsignedUrls } from "@/lib/openrouter";
 import { createOutput, updateGenerationJobByProviderJobId } from "@/lib/store";
 import crypto from "crypto";
 
@@ -76,7 +78,7 @@ export async function POST(request: Request) {
     const status = normalizeStatus(data?.status);
 
     const url =
-      data?.unsigned_urls?.[0] ??
+      extractVideoUrlFromUnsignedUrls(data?.unsigned_urls) ??
       data?.url ??
       data?.video_url ??
       data?.output?.url ??
@@ -91,7 +93,7 @@ export async function POST(request: Request) {
       status,
       responsePayload: payload,
       errorMessage: status === "failed" ? JSON.stringify(data?.error ?? payload) : null,
-    });
+    }, { onlyIfStatus: ["queued", "submitted", "processing"] });
 
     if (job && status === "completed" && url) {
       await createOutput(job.userId, job.projectId, {
@@ -99,6 +101,11 @@ export async function POST(request: Request) {
         title: "OpenRouter final render",
         url,
       });
+      await settleVideoCredits(job.userId, job.projectId);
+    }
+
+    if (job && status === "failed") {
+      await refundVideoCredits(job.userId, job.projectId);
     }
 
     return apiSuccess({

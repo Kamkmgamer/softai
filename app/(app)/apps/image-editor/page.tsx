@@ -6,7 +6,6 @@ export default function ImageEditorPage() {
       <CreativeAppForm
         app="image-editor"
         title="AI Image Editor"
-        eyebrow="Image editing"
         description="Upload one reference image, then restyle, relight, reshoot, or change the backdrop with a plain-English instruction."
         placeholder="Keep the product exactly recognizable, replace the background with a warm kitchen counter scene, add golden-hour light, and make it feel like a premium direct-to-consumer ad."
         presets={["Reshoot product", "Change backdrop", "Relight scene", "Change image style", "Remove distractions"]}

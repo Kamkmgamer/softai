@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Clock3, ImagePlus, Layers3, Play, Volume2 } from "lucide-react";
 import { ImageCreativeProject } from "@/components/project-detail/image-creative-project";
+import { ImageToVideoProject } from "@/components/project-detail/image-to-video-project";
 import { MultiShotVideoProject } from "@/components/project-detail/multi-shot-video-project";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
@@ -11,6 +12,7 @@ import { getAppSession } from "@/lib/auth";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { getProjectPageData } from "@/lib/store";
+import { mediaAssets } from "@/lib/features";
 
 export default async function ProjectDetailPage({
   params,
@@ -33,10 +35,15 @@ export default async function ProjectDetailPage({
     return <MultiShotVideoProject projectId={projectId} bundle={bundle} />;
   }
 
+  if (bundle.project.kind === "image_to_video") {
+    return <ImageToVideoProject projectId={projectId} bundle={bundle} />;
+  }
+
   if (
     bundle.project.kind === "text_to_image" ||
     bundle.project.kind === "image_edit" ||
-    bundle.project.kind === "mockup"
+    bundle.project.kind === "mockup" ||
+    bundle.project.kind === "create_ad"
   ) {
     return <ImageCreativeProject bundle={bundle} />;
   }
@@ -51,7 +58,7 @@ export default async function ProjectDetailPage({
   );
   const posterUrl =
     bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ??
-    "/rendering-feature.png";
+    mediaAssets.socialShoot;
   const totalDuration = bundle.scenes.reduce(
     (total, scene) => total + scene.durationSeconds,
     0,
@@ -94,15 +101,15 @@ export default async function ProjectDetailPage({
 
         <div className="-mx-4 mt-4 border-t border-border bg-surface px-4 pt-3">
           <div className="mb-3 flex flex-wrap justify-end gap-2 text-xs font-semibold text-text-secondary">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
               <Volume2 className="h-3.5 w-3.5" />
               On
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
               <Layers3 className="h-3.5 w-3.5" />
               {bundle.scenes.length || 3} shots
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5">
               <Clock3 className="h-3.5 w-3.5" />
               {totalDuration || 10}s
             </span>
@@ -194,16 +201,18 @@ export default async function ProjectDetailPage({
 
 function getProjectAppLabel(kind: string) {
   if (kind === "text_to_image") return "Text to Image";
+  if (kind === "image_to_video") return "Image to Video";
   if (kind === "image_edit") return "AI Image Editor";
   if (kind === "video_edit") return "Edit Studio";
   if (kind === "mockup") return "Mockup Generator";
+  if (kind === "create_ad") return "Create Ad";
   return "Campaign Ad";
 }
 
 function BriefRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-bg px-3 py-2.5 ring-1 ring-border">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
+      <p className="text-xs font-medium text-text-tertiary">
         {label}
       </p>
       <p className="mt-1 text-[13px] font-semibold leading-snug text-text">
