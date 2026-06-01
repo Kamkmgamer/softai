@@ -8,6 +8,7 @@ import { MultiShotVideoProject } from "@/components/project-detail/multi-shot-vi
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
+import { AppBackButton } from "@/components/app-back-button";
 import { getAppSession } from "@/lib/auth";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
@@ -69,9 +70,9 @@ export default async function ProjectDetailPage({
     <div className="grid min-h-[calc(100dvh-4rem)] bg-bg lg:min-h-dvh lg:grid-cols-[464px_1fr]">
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-4 lg:py-4">
         <div className="flex items-center justify-between gap-3 px-1">
-          <div className="text-sm text-text-secondary">
-            Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">{appLabel}</strong>
+          <div className="flex items-center gap-3">
+            <AppBackButton />
+            <h1 className="text-[15px] font-semibold text-text">{appLabel}</h1>
           </div>
           <StatusBadge status={bundle.project.status} />
         </div>

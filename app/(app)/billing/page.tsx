@@ -7,6 +7,7 @@ import { localizePath, type Locale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { getBillingSummary } from "@/lib/store";
 import { softaiClerkAppearance } from "@/lib/clerk-appearance";
+import { AppBackButton } from "@/components/app-back-button";
 import { PricingTable } from "@/components/pricing-table";
 import { EmptyState, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatCredits, formatDate } from "@/lib/utils";
@@ -68,8 +69,9 @@ export default async function BillingPage() {
   return (
     <div className="thin-scrollbar h-full overflow-y-auto px-5 py-8 lg:px-10 lg:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
-        <header className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+        <header className="flex flex-wrap items-start gap-4">
+          <AppBackButton className="mt-1" />
+          <div className="flex-1">
             <h1 className="text-2xl font-semibold tracking-tight text-text">
               {formatCredits(balance, locale)}{" "}
               {dictionary.billing.availableCredits}

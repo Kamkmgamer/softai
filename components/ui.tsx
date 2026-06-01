@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { AppBackButton } from "@/components/app-back-button";
 
 /* ─── Page header ────────────────────────────────────────── */
 
@@ -7,14 +8,17 @@ export function PageHeader({
   title,
   description,
   action,
+  backButton,
 }: {
   title: string;
   description?: string;
   action?: React.ReactNode;
+  backButton?: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4">
-      <div className="min-w-0">
+    <div className="flex items-start gap-3">
+      {backButton ? <AppBackButton className="mt-1" /> : null}
+      <div className="flex-1 min-w-0">
         <h1 className="text-xl font-semibold tracking-tight text-text text-balance">
           {title}
         </h1>

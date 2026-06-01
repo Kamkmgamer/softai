@@ -2,11 +2,16 @@
 
 import { useState, useTransition } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { ImagePlus, Plus, Trash2, Settings2 } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
+import { AppBackButton } from "@/components/app-back-button";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 
 type Mode = "auto" | "custom";
 
@@ -23,6 +28,8 @@ const defaultShots: Shot[] = [
 
 export function MultiShotVideoForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
   const [isPending, startTransition] = useTransition();
   const [mode, setMode] = useState<Mode>("auto");
   const [autoPrompt, setAutoPrompt] = useState("");
@@ -149,7 +156,7 @@ export function MultiShotVideoForm() {
           return;
         }
 
-        router.push(`/projects/${result.project.id}`);
+        router.push(localizePath(`/projects/${result.project.id}`, locale));
       } catch {
         setError("Something went wrong. Please try again.");
       }
@@ -162,14 +169,9 @@ export function MultiShotVideoForm() {
       <aside className="flex min-h-0 w-full flex-col border-border bg-surface px-5 py-6 lg:w-116 lg:border-r lg:px-6 lg:py-8">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between gap-3 px-1">
-          <div className="text-sm text-text-secondary">
-            <Link href="/dashboard" className="hover:text-text transition-colors">
-              Apps
-            </Link>{" "}
-            <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">
-              Multi-Shot Video
-            </strong>
+          <div className="flex items-center gap-3">
+            <AppBackButton />
+            <h1 className="text-[15px] font-semibold text-text">Multi-Shot Video</h1>
           </div>
           <div className="rounded-md bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
             <button

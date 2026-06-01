@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ArrowRight, Film, ImagePlus, LinkIcon } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
+import { AppBackButton } from "@/components/app-back-button";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 
 type FrameMode = "first_frame" | "first_last_frames";
 type FrameSlot = "first" | "last";
@@ -15,6 +21,8 @@ const resolutions = ["720p", "1080p"];
 
 export function ImageToVideoForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
   const [isPending, startTransition] = useTransition();
   const [mode, setMode] = useState<FrameMode>("first_frame");
   const [prompt, setPrompt] = useState("");
@@ -61,7 +69,7 @@ export function ImageToVideoForm() {
           return;
         }
 
-        router.push(`/projects/${result.project.id}`);
+        router.push(localizePath(`/projects/${result.project.id}`, locale));
       } catch {
         setError("Something went wrong. Please try again.");
       }
@@ -82,15 +90,15 @@ export function ImageToVideoForm() {
   return (
     <div className="grid h-full min-h-0 bg-bg lg:grid-cols-[464px_minmax(0,1fr)]">
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-6 lg:py-8">
-        <div className="mb-5 space-y-3 px-1">
-          <div className="text-sm text-text-secondary">
-            Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">Image to Video</strong>
+        <div className="mb-5 flex items-start gap-3 px-1">
+          <AppBackButton className="mt-0.5" />
+          <div className="space-y-2">
+            <h1 className="text-[15px] font-semibold text-text">Image to Video</h1>
+            <p className="text-[13px] leading-5 text-text-secondary">
+              Start from a pasted or uploaded image, or lock both start and end
+              frames so the AI only creates the motion between them.
+            </p>
           </div>
-          <p className="text-[13px] leading-5 text-text-secondary">
-            Start from a pasted or uploaded image, or lock both start and end
-            frames so the AI only creates the motion between them.
-          </p>
         </div>
 
         <div className="thin-scrollbar flex-1 space-y-5 overflow-y-auto pr-1">

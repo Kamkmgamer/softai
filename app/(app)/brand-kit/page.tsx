@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BrandKitForm } from "@/components/brand-kit-form";
+import { AppBackButton } from "@/components/app-back-button";
 import type { BrandKitRecord } from "@/lib/types";
 
 export default function BrandKitPage() {
@@ -42,6 +43,9 @@ export default function BrandKitPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
+      <div className="mb-4">
+        <AppBackButton />
+      </div>
       <BrandKitForm kit={activeKit} onSave={handleSave} />
     </div>
   );

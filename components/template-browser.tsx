@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { FileText, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTemplatesByKit, type Template } from "@/lib/templates";
 import type { StarterKit } from "@/lib/features";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 
 type TemplateBrowserProps = {
   kit: StarterKit;
@@ -13,6 +18,8 @@ type TemplateBrowserProps = {
 
 export function TemplateBrowser({ kit }: TemplateBrowserProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const templates = getTemplatesByKit(kit);
 
@@ -34,7 +41,7 @@ export function TemplateBrowser({ kit }: TemplateBrowserProps) {
       preset: template.presets[0] ?? "",
       aspect: template.aspectRatio,
     });
-    router.push(`/apps/${template.appSlug}?${params.toString()}`);
+    router.push(localizePath(`/apps/${template.appSlug}?${params.toString()}`, locale));
   }
 
   return (

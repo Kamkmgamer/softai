@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getAppSession } from "@/lib/auth";
 import { getRecentAdminData, takedownOutput, banUser } from "@/lib/store";
+import { localizePath } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/server-locale";
 import { PageHeader, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatDate } from "@/lib/utils";
 
@@ -10,7 +12,8 @@ export const dynamic = "force-dynamic";
 export default async function AdminPage() {
   const session = await getAppSession();
   if (!session?.isAdmin) {
-    redirect("/dashboard");
+    const locale = await getRequestLocale();
+    redirect(localizePath("/dashboard", locale));
   }
 
   const { users, reports, auditEvents, outputs } = await getRecentAdminData();
@@ -31,7 +34,7 @@ export default async function AdminPage() {
 
   return (
     <div className="space-y-10">
-      <PageHeader title="Admin Console" />
+      <PageHeader title="Admin Console" backButton />
 
       <div className="grid gap-8 lg:grid-cols-2">
         <section className="space-y-4">

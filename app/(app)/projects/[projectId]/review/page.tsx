@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/ui";
 import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
 import { getAppSession } from "@/lib/auth";
 import { burnStoryboardCredits } from "@/lib/credits";
+import { localizePath } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/server-locale";
 import { assertPromptAllowed, buildProjectModerationText } from "@/lib/moderation";
 import { generateStoryboard } from "@/lib/openrouter";
 import { createGenerationJob, getProjectBundle, saveStoryboard } from "@/lib/store";
@@ -23,7 +25,8 @@ export default async function ReviewPage({
 
   // Multi-shot projects have storyboard pre-approved at creation; skip review
   if (bundle.project.kind === "multi_shot_video") {
-    redirect(`/projects/${projectId}`);
+    const locale = await getRequestLocale();
+    redirect(localizePath(`/projects/${projectId}`, locale));
   }
 
   if (!bundle.storyboard || bundle.scenes.length === 0) {
@@ -67,6 +70,7 @@ export default async function ReviewPage({
       <PageHeader
         title={`Review: ${bundle.project.title}`}
         description="Tighten the hook, narration, and visual direction before rendering."
+        backButton
       />
 
       <StoryboardReviewForm projectId={projectId} initialBundle={bundle} />

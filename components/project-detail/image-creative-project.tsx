@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import { StatusBadge } from "@/components/ui";
+import { AppBackButton } from "@/components/app-back-button";
 import type { ProjectBundle } from "@/lib/types";
 
 type Props = {
@@ -37,9 +38,9 @@ export function ImageCreativeProject({ bundle }: Props) {
       <div className="grid min-h-full lg:grid-cols-[360px_minmax(0,1fr)]">
         <aside className="border-border bg-surface px-5 py-5 lg:border-r lg:px-6">
           <div className="flex items-center justify-between gap-3">
-            <div className="text-sm text-text-secondary">
-              Apps <span className="text-text-tertiary">/</span>{" "}
-              <strong className="font-semibold text-text">{appLabel}</strong>
+            <div className="flex items-center gap-3">
+              <AppBackButton />
+              <h1 className="text-[15px] font-semibold text-text">{appLabel}</h1>
             </div>
             <StatusBadge status={bundle.project.status} />
           </div>

@@ -2,11 +2,17 @@
 
 import { useState, useTransition, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { UploadCloud } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
 import type { BrandKitRecord } from "@/lib/types";
+import { AppBackButton } from "@/components/app-back-button";
+import {
+  DEFAULT_LOCALE,
+  getLocaleFromPathname,
+  localizePath,
+} from "@/lib/i18n";
 
 type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad" | "batch-social" | "carousel-builder" | "hook-generator" | "platform-resizer" | "lesson-to-video" | "explainer-video" | "whiteboard-animation" | "course-trailer" | "style-transfer" | "surreal-scene" | "visual-remix" | "loop-generator" | "script-to-storyboard" | "ab-variants" | "seasonal-transform";
 
@@ -39,6 +45,8 @@ export function CreativeAppForm({
   allowUpload,
 }: CreativeAppFormProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
   const [isPending, startTransition] = useTransition();
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState(presets[0] ?? "Commercial ad");
@@ -116,7 +124,7 @@ export function CreativeAppForm({
           return;
         }
 
-        router.push(`/projects/${result.project.id}`);
+        router.push(localizePath(`/projects/${result.project.id}`, locale));
       } catch {
         setError("Something went wrong. Please try again.");
       }
@@ -126,16 +134,16 @@ export function CreativeAppForm({
   return (
     <div className="grid h-full min-h-0 bg-bg lg:grid-cols-[464px_minmax(0,1fr)]">
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-6 lg:py-8">
-        <div className="mb-5 space-y-2 px-1">
-          <div className="text-sm text-text-secondary">
-            Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">{title}</strong>
+        <div className="mb-5 flex items-start gap-3 px-1">
+          <AppBackButton className="mt-0.5" />
+          <div className="space-y-2">
+            <h1 className="text-[15px] font-semibold text-text">{title}</h1>
+            {description ? (
+              <p className="text-[13px] leading-5 text-text-secondary">
+                {description}
+              </p>
+            ) : null}
           </div>
-          {description ? (
-            <p className="text-[13px] leading-5 text-text-secondary">
-              {description}
-            </p>
-          ) : null}
         </div>
 
         <div className="thin-scrollbar flex-1 space-y-5 overflow-y-auto pr-1">

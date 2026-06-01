@@ -1,9 +1,9 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Clock3, Layers3, Play, Volume2 } from "lucide-react";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
+import { AppBackButton } from "@/components/app-back-button";
 import { mediaAssets } from "@/lib/features";
 import type { ProjectBundle } from "@/lib/types";
 
@@ -54,14 +54,9 @@ export function MultiShotVideoProject({ projectId, bundle }: Props) {
     <div className="grid min-h-[calc(100dvh-4rem)] bg-bg lg:min-h-dvh lg:grid-cols-[464px_1fr]">
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-4 lg:py-4">
         <div className="flex items-center justify-between gap-3 px-1">
-          <div className="text-sm text-text-secondary">
-            <Link href="/dashboard" className="hover:text-text transition-colors">
-              Apps
-            </Link>{" "}
-            <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">
-              Multi-Shot Video
-            </strong>
+          <div className="flex items-center gap-3">
+            <AppBackButton />
+            <h1 className="text-[15px] font-semibold text-text">Multi-Shot Video</h1>
           </div>
           <StatusBadge status={bundle.project.status} />
         </div>

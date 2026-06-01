@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 import { ImagePlus, SlidersHorizontal, Volume2 } from "lucide-react";
 import { FieldLabel } from "@/components/ui";
 import { getDictionary } from "@/lib/dictionaries";
+import { AppBackButton } from "@/components/app-back-button";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -64,12 +64,9 @@ export function ProjectCreationForm() {
       className="flex min-h-[calc(100dvh-2rem)] flex-col gap-4"
     >
       <div className="flex items-center justify-between gap-3 px-1">
-        <div className="text-sm text-text-secondary">
-          <Link href="/dashboard" className="hover:text-text transition-colors">
-            Apps
-          </Link>{" "}
-          <span className="text-text-tertiary">/</span>{" "}
-          <strong className="font-semibold text-text">Multi-Shot Video</strong>
+        <div className="flex items-center gap-3">
+          <AppBackButton />
+          <h1 className="text-[15px] font-semibold text-text">Multi-Shot Video</h1>
         </div>
         <div className="rounded-md bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
           <span className="inline-flex rounded-sm bg-surface-raised px-3 py-1.5 text-text">

@@ -95,7 +95,7 @@ export function DashboardFeatureBrowser({
 
   function openFeature(feature: FeatureTile) {
     setSelectedFeature(feature.slug);
-    router.push(feature.appRoute);
+    router.push(localizePath(feature.appRoute, locale));
   }
 
   return (

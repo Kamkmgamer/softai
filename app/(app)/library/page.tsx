@@ -23,6 +23,7 @@ export default async function LibraryPage() {
         <PageHeader
           title={dictionary.library.title}
           description={dictionary.library.description}
+          backButton
         />
 
         {completedProjects.length === 0 ? (

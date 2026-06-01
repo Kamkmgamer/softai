@@ -6,6 +6,7 @@ import { getDictionary } from "@/lib/dictionaries";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { softaiClerkAppearance } from "@/lib/clerk-appearance";
+import { AppBackButton } from "@/components/app-back-button";
 import { SectionHeader } from "@/components/ui";
 
 export default async function SettingsPage() {
@@ -17,13 +18,16 @@ export default async function SettingsPage() {
   return (
     <div className="thin-scrollbar h-full overflow-y-auto px-5 py-8 lg:px-10 lg:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
-        <header>
-          <h1 className="text-2xl font-semibold tracking-tight text-text">
-            {dictionary.settings.accountProfile}
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-text-secondary">
-            {dictionary.settings.description}
-          </p>
+        <header className="flex items-start gap-3">
+          <AppBackButton className="mt-1" />
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-text">
+              {dictionary.settings.accountProfile}
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-text-secondary">
+              {dictionary.settings.description}
+            </p>
+          </div>
         </header>
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">

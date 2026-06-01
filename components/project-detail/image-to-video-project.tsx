@@ -1,6 +1,7 @@
 import { ArrowRight, Clock3, Film, Gauge, Play } from "lucide-react";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
+import { AppBackButton } from "@/components/app-back-button";
 import { mediaAssets } from "@/lib/features";
 import type { ProjectBundle } from "@/lib/types";
 
@@ -43,9 +44,9 @@ export function ImageToVideoProject({ projectId, bundle }: Props) {
     <div className="grid min-h-[calc(100dvh-4rem)] bg-bg lg:min-h-dvh lg:grid-cols-[464px_1fr]">
       <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-4 lg:py-4">
         <div className="flex items-center justify-between gap-3 px-1">
-          <div className="text-sm text-text-secondary">
-            Apps <span className="text-text-tertiary">/</span>{" "}
-            <strong className="font-semibold text-text">Image to Video</strong>
+          <div className="flex items-center gap-3">
+            <AppBackButton />
+            <h1 className="text-[15px] font-semibold text-text">Image to Video</h1>
           </div>
           <StatusBadge status={bundle.project.status} />
         </div>

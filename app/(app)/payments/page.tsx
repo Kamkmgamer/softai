@@ -6,6 +6,7 @@ import { getDictionary } from "@/lib/dictionaries";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { softaiClerkAppearance } from "@/lib/clerk-appearance";
+import { AppBackButton } from "@/components/app-back-button";
 
 export default async function PaymentsPage() {
   const locale = await getRequestLocale();
@@ -16,8 +17,9 @@ export default async function PaymentsPage() {
   return (
     <div className="thin-scrollbar h-full overflow-y-auto px-5 py-8 lg:px-10 lg:py-10">
       <div className="mx-auto max-w-[920px] space-y-6">
-        <header className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+        <header className="flex flex-wrap items-start gap-4">
+          <AppBackButton className="mt-1" />
+          <div className="flex-1">
             <h1 className="text-2xl font-semibold tracking-tight text-text">
               {dictionary.payments.accountPanel}
             </h1>
