@@ -1,15 +1,18 @@
 import Image from "next/image";
-import { Clock3, Layers3, Play, Volume2 } from "lucide-react";
+import { Clock3, Download, Layers3, Play, Volume2 } from "lucide-react";
 import { ProjectActions } from "@/components/project-actions";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
 import { AppBackButton } from "@/components/app-back-button";
 import { mediaAssets } from "@/lib/features";
+import { getDictionary } from "@/lib/dictionaries";
+import type { Locale } from "@/lib/i18n";
 import type { ProjectBundle } from "@/lib/types";
 
 type Props = {
   projectId: string;
   bundle: ProjectBundle;
+  locale: Locale;
 };
 
 type MultiShotMetadata = {
@@ -26,7 +29,8 @@ function getMultiShotMetadata(value: unknown): MultiShotMetadata {
   return value as MultiShotMetadata;
 }
 
-export function MultiShotVideoProject({ projectId, bundle }: Props) {
+export function MultiShotVideoProject({ projectId, bundle, locale }: Props) {
+  const dictionary = getDictionary(locale);
   const metadata = getMultiShotMetadata(bundle.project.metadata);
   const storyboardReady = Boolean(
     bundle.storyboard && bundle.scenes.length > 0,
@@ -164,6 +168,16 @@ export function MultiShotVideoProject({ projectId, bundle }: Props) {
               )}
             </div>
           </div>
+
+          {finalVideo ? (
+            <a
+              href={`/api/projects/${projectId}/outputs/${finalVideo.id}/download`}
+              className="btn btn-secondary mx-auto max-w-48"
+            >
+              <Download className="h-4 w-4" />
+              {dictionary.library.downloadVideo}
+            </a>
+          ) : null}
 
           <div className="mx-auto flex max-w-190 gap-2 overflow-hidden">
             {(bundle.scenes.length

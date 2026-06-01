@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Blocks,
+  Clock,
   CreditCard,
   LibraryBig,
   Menu,
@@ -53,6 +54,13 @@ const links: Array<{
     labelKey: "library",
     shortLabel: "Library",
     icon: LibraryBig,
+    group: "create",
+  },
+  {
+    href: "/history",
+    labelKey: "history",
+    shortLabel: "History",
+    icon: Clock,
     group: "create",
   },
   {

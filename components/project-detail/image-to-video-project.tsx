@@ -1,13 +1,16 @@
-import { ArrowRight, Clock3, Film, Gauge, Play } from "lucide-react";
+import { ArrowRight, Clock3, Download, Film, Gauge, Play } from "lucide-react";
 import { StatusBadge } from "@/components/ui";
 import { VideoPlayer } from "@/components/video-player";
 import { AppBackButton } from "@/components/app-back-button";
 import { mediaAssets } from "@/lib/features";
+import { getDictionary } from "@/lib/dictionaries";
+import type { Locale } from "@/lib/i18n";
 import type { ProjectBundle } from "@/lib/types";
 
 type Props = {
   projectId: string;
   bundle: ProjectBundle;
+  locale: Locale;
 };
 
 type ImageToVideoMetadata = {
@@ -24,7 +27,8 @@ function getMetadata(value: unknown): ImageToVideoMetadata {
   return value as ImageToVideoMetadata;
 }
 
-export function ImageToVideoProject({ projectId, bundle }: Props) {
+export function ImageToVideoProject({ projectId, bundle, locale }: Props) {
+  const dictionary = getDictionary(locale);
   const metadata = getMetadata(bundle.project.metadata);
   const firstFrameUrl =
     metadata.firstFrameUrl ??
@@ -129,6 +133,16 @@ export function ImageToVideoProject({ projectId, bundle }: Props) {
               )}
             </div>
           </div>
+
+          {finalVideo ? (
+            <a
+              href={`/api/projects/${projectId}/outputs/${finalVideo.id}/download`}
+              className="btn btn-secondary mx-auto max-w-48"
+            >
+              <Download className="h-4 w-4" />
+              {dictionary.library.downloadVideo}
+            </a>
+          ) : null}
 
           <div className="mx-auto grid max-w-190 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
             <Thumbnail label="First" imageUrl={firstFrameUrl} />

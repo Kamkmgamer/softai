@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { FolderArchive, Download } from "lucide-react";
+import { FolderArchive } from "lucide-react";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import { localizePath } from "@/lib/i18n";
@@ -7,6 +7,7 @@ import { getRequestLocale } from "@/lib/server-locale";
 import { listProjects } from "@/lib/store";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { formatDate } from "@/lib/utils";
+import { LibraryDownloadButton } from "@/components/library-download-button";
 
 export default async function LibraryPage() {
   const locale = await getRequestLocale();
@@ -49,10 +50,10 @@ export default async function LibraryPage() {
                   >
                     {dictionary.library.view}
                   </a>
-                  <button type="button" className="btn btn-primary btn-sm px-2">
-                    <Download className="h-4 w-4" />
-                    <span className="sr-only">{dictionary.library.downloadAll}</span>
-                  </button>
+                  <LibraryDownloadButton
+                    projectId={project.id}
+                    label={dictionary.library.downloadAll}
+                  />
                 </div>
               </div>
             ))}

@@ -247,6 +247,20 @@ export type DashboardStats = {
   monthlyCredits: number;
 };
 
+export type OutputWithProject = OutputRecord & {
+  projectTitle: string;
+  projectKind: string;
+};
+
+export type ShareTokenRecord = {
+  id: string;
+  outputId: string;
+  createdBy: string;
+  token: string;
+  expiresAt: string | null;
+  createdAt: string;
+};
+
 export type BrandKitRecord = {
   id: string;
   userId: string;

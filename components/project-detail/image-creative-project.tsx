@@ -1,11 +1,14 @@
 import Image from "next/image";
-import { ImageIcon } from "lucide-react";
+import { Download, ImageIcon } from "lucide-react";
 import { StatusBadge } from "@/components/ui";
 import { AppBackButton } from "@/components/app-back-button";
+import { getDictionary } from "@/lib/dictionaries";
+import type { Locale } from "@/lib/i18n";
 import type { ProjectBundle } from "@/lib/types";
 
 type Props = {
   bundle: ProjectBundle;
+  locale: Locale;
 };
 
 type CreativeMetadata = {
@@ -20,7 +23,8 @@ function getCreativeMetadata(value: unknown): CreativeMetadata {
   return value as CreativeMetadata;
 }
 
-export function ImageCreativeProject({ bundle }: Props) {
+export function ImageCreativeProject({ bundle, locale }: Props) {
+  const dictionary = getDictionary(locale);
   const metadata = getCreativeMetadata(bundle.project.metadata);
   const sourceImageUrl =
     metadata.sourceImageUrl ??
@@ -28,6 +32,9 @@ export function ImageCreativeProject({ bundle }: Props) {
     null;
   const generatedImage =
     bundle.outputs.find((output) => output.type === "scene_image") ?? null;
+  const downloadUrl = generatedImage
+    ? `/api/projects/${bundle.project.id}/outputs/${generatedImage.id}/download`
+    : undefined;
   const appLabel =
     bundle.project.kind === "image_edit" ? "AI Image Editor" : bundle.project.kind === "mockup" ? "Mockup Generator" : bundle.project.kind === "create_ad" ? "Create Ad" : "Text to Image";
   const promptLabel =
@@ -99,6 +106,8 @@ export function ImageCreativeProject({ bundle }: Props) {
                 imageUrl={generatedImage?.url ?? null}
                 primary
                 emptyLabel="Image generation is still pending"
+                downloadUrl={downloadUrl}
+                downloadLabel={dictionary.library.downloadImage}
               />
             </div>
           ) : (
@@ -108,6 +117,8 @@ export function ImageCreativeProject({ bundle }: Props) {
                 imageUrl={generatedImage?.url ?? null}
                 primary
                 emptyLabel="Image generation is still pending"
+                downloadUrl={downloadUrl}
+                downloadLabel={dictionary.library.downloadImage}
               />
             </div>
           )}
@@ -122,17 +133,29 @@ function ImagePanel({
   imageUrl,
   primary = false,
   emptyLabel,
+  downloadUrl,
+  downloadLabel,
 }: {
   title: string;
   imageUrl: string | null;
   primary?: boolean;
   emptyLabel: string;
+  downloadUrl?: string;
+  downloadLabel?: string;
 }) {
   return (
     <section className="flex min-h-0 flex-col rounded-xl border border-border bg-surface p-3">
       <div className="mb-2 flex items-center justify-between px-1">
         <h2 className="text-sm font-semibold text-text">{title}</h2>
-        {primary ? (
+        {primary && downloadUrl ? (
+          <a
+            href={downloadUrl}
+            className="inline-flex items-center gap-1 rounded-md border border-border bg-bg px-2 py-1 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-raised hover:text-text"
+          >
+            <Download className="h-3 w-3" />
+            {downloadLabel}
+          </a>
+        ) : primary ? (
           <span className="text-xs font-medium text-text-tertiary">
             Result
           </span>

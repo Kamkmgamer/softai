@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Clock3, ImagePlus, Layers3, Play, Volume2 } from "lucide-react";
+import { Clock3, Download, ImagePlus, Layers3, Play, Volume2 } from "lucide-react";
+import { getDictionary } from "@/lib/dictionaries";
 import { ImageCreativeProject } from "@/components/project-detail/image-creative-project";
 import { ImageToVideoProject } from "@/components/project-detail/image-to-video-project";
 import { MultiShotVideoProject } from "@/components/project-detail/multi-shot-video-project";
@@ -25,6 +26,7 @@ export default async function ProjectDetailPage({
     getRequestLocale(),
     getAppSession(),
   ]);
+  const dictionary = getDictionary(locale);
 
   const { bundle } = await getProjectPageData(session.userId, projectId);
 
@@ -33,11 +35,11 @@ export default async function ProjectDetailPage({
   }
 
   if (bundle.project.kind === "multi_shot_video") {
-    return <MultiShotVideoProject projectId={projectId} bundle={bundle} />;
+    return <MultiShotVideoProject projectId={projectId} bundle={bundle} locale={locale} />;
   }
 
   if (bundle.project.kind === "image_to_video") {
-    return <ImageToVideoProject projectId={projectId} bundle={bundle} />;
+    return <ImageToVideoProject projectId={projectId} bundle={bundle} locale={locale} />;
   }
 
   if (
@@ -46,7 +48,7 @@ export default async function ProjectDetailPage({
     bundle.project.kind === "mockup" ||
     bundle.project.kind === "create_ad"
   ) {
-    return <ImageCreativeProject bundle={bundle} />;
+    return <ImageCreativeProject bundle={bundle} locale={locale} />;
   }
 
   const storyboardReady = Boolean(
@@ -165,6 +167,16 @@ export default async function ProjectDetailPage({
               )}
             </div>
           </div>
+
+          {finalVideo ? (
+            <a
+              href={`/api/projects/${projectId}/outputs/${finalVideo.id}/download`}
+              className="btn btn-secondary mx-auto max-w-48"
+            >
+              <Download className="h-4 w-4" />
+              {dictionary.library.downloadVideo}
+            </a>
+          ) : null}
 
           <div className="mx-auto flex max-w-190 gap-2 overflow-hidden">
             {(bundle.scenes.length

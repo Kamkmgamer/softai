@@ -296,6 +296,17 @@ export const auditEvents = pgTable("audit_events", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const shareTokens = pgTable("share_tokens", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  outputId: uuid("output_id").notNull(),
+  token: varchar("token", { length: 64 }).notNull().unique(),
+  createdBy: uuid("created_by").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  index("share_tokens_output_idx").on(table.outputId),
+]);
+
 export const brandKits = pgTable("brand_kits", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: text("user_id").notNull(),

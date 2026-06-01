@@ -23,11 +23,13 @@ import type {
   JobType,
   OutputRecord,
   OutputType,
+  OutputWithProject,
   ProjectBundle,
   ProjectKind,
   ProjectRecord,
   ProjectStatus,
   SceneRecord,
+  ShareTokenRecord,
   StoryboardRecord,
   SubscriptionRecord,
   UserRecord,
@@ -51,6 +53,7 @@ type DatabaseState = {
   abuseReports: AbuseReportRecord[];
   adminActions: AdminActionRecord[];
   auditEvents: AuditEventRecord[];
+  shareTokens: ShareTokenRecord[];
 };
 
 type ClerkWebhookEventRecord = {
@@ -288,6 +291,7 @@ function createSeedStore(): DatabaseState {
     abuseReports: [],
     adminActions: [],
     auditEvents: [],
+    shareTokens: [],
   };
 }
 
@@ -297,6 +301,7 @@ function getState() {
   }
   globalThis.softaiStore.chatConversations ??= [];
   globalThis.softaiStore.chatMessages ??= [];
+  globalThis.softaiStore.shareTokens ??= [];
   return globalThis.softaiStore;
 }
 
@@ -813,6 +818,84 @@ export async function listOutputsForUser(userId: string) {
     where: and(eq(schema.outputs.userId, userId), isNull(schema.outputs.removedAt)),
   });
   return rows.map(mapOutput);
+}
+
+const HISTORY_PAGE_SIZE = 20;
+
+export async function getGenerationHistory(
+  userId: string,
+  opts?: { type?: OutputType; before?: string },
+): Promise<{ items: OutputWithProject[]; nextCursor: string | null }> {
+  if (!databaseEnabled() || !db) {
+    const state = getState();
+    const outputs = state.outputs
+      .filter((entry) => entry.userId === userId && !entry.removedAt)
+      .filter((entry) => (opts?.type ? entry.type === opts.type : true))
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+    const filtered = opts?.before
+      ? outputs.filter((entry) => entry.createdAt < opts.before!)
+      : outputs;
+
+    const items = filtered.slice(0, HISTORY_PAGE_SIZE);
+    const nextCursor = filtered.length > HISTORY_PAGE_SIZE
+      ? filtered[HISTORY_PAGE_SIZE - 1].createdAt
+      : null;
+
+    const projectIds = [...new Set(items.map((o) => o.projectId))];
+    const projectMap = new Map<string, { title: string; kind: string }>();
+    for (const pid of projectIds) {
+      const project = state.projects.find((p) => p.id === pid);
+      if (project) {
+        projectMap.set(pid, { title: project.title, kind: project.kind });
+      }
+    }
+
+    return {
+      items: items.map((o) => ({
+        ...o,
+        projectTitle: projectMap.get(o.projectId)?.title ?? "Unknown project",
+        projectKind: projectMap.get(o.projectId)?.kind ?? "campaign_ad",
+      })),
+      nextCursor,
+    };
+  }
+
+  await ensureDatabase();
+  const conditions = [
+    eq(schema.outputs.userId, userId),
+    isNull(schema.outputs.removedAt),
+    ...(opts?.type ? [eq(schema.outputs.type, opts.type)] : []),
+    ...(opts?.before ? [sql`${schema.outputs.createdAt} < ${new Date(opts.before)}`] : []),
+  ];
+
+  const rows = await db.query.outputs.findMany({
+    where: and(...conditions),
+    orderBy: [desc(schema.outputs.createdAt)],
+    limit: HISTORY_PAGE_SIZE + 1,
+  });
+
+  const hasMore = rows.length > HISTORY_PAGE_SIZE;
+  const items = hasMore ? rows.slice(0, HISTORY_PAGE_SIZE) : rows;
+  const nextCursor = hasMore ? toIso(items[items.length - 1].createdAt) : null;
+
+  const projectIds = [...new Set(items.map((r) => r.projectId))];
+  const projectRows = projectIds.length > 0
+    ? await db.query.projects.findMany({
+        where: sql`${schema.projects.id} IN ${projectIds}`,
+        columns: { id: true, title: true, kind: true },
+      })
+    : [];
+  const projectMap = new Map(projectRows.map((p) => [p.id, { title: p.title, kind: p.kind }]));
+
+  return {
+    items: items.map((row) => ({
+      ...mapOutput(row),
+      projectTitle: projectMap.get(row.projectId)?.title ?? "Unknown project",
+      projectKind: projectMap.get(row.projectId)?.kind ?? "campaign_ad",
+    })),
+    nextCursor,
+  };
 }
 
 export async function listProjects(userId: string) {
@@ -1346,6 +1429,106 @@ export async function createAbuseReport(reporterUserId: string, input: Pick<Abus
   });
   await addAuditEvent(reporterUserId, input.projectId, "abuse.reported", input);
   return { id, reporterUserId, ...input, projectId: input.projectId ?? null, outputId: input.outputId ?? null, createdAt: now() };
+}
+
+function generateShareToken(): string {
+  return randomUUID().replace(/-/g, "") + randomUUID().replace(/-/g, "").slice(0, 8);
+}
+
+export async function createShareToken(
+  userId: string,
+  outputId: string,
+  expiresAt?: Date | null,
+): Promise<ShareTokenRecord | null> {
+  const token = generateShareToken();
+  const id = randomUUID();
+
+  if (!databaseEnabled() || !db) {
+    const state = getState();
+    const output = state.outputs.find((o) => o.id === outputId && o.userId === userId && !o.removedAt);
+    if (!output) return null;
+
+    const record: ShareTokenRecord = {
+      id,
+      outputId,
+      createdBy: userId,
+      token,
+      expiresAt: expiresAt?.toISOString() ?? null,
+      createdAt: now(),
+    };
+    state.shareTokens.unshift(record);
+    return record;
+  }
+
+  await ensureDatabase();
+  const output = await db.query.outputs.findFirst({
+    where: and(eq(schema.outputs.id, outputId), eq(schema.outputs.userId, userId), isNull(schema.outputs.removedAt)),
+  });
+  if (!output) return null;
+
+  await db.insert(schema.shareTokens).values({
+    id,
+    outputId,
+    createdBy: userId,
+    token,
+    expiresAt: expiresAt ?? null,
+    createdAt: new Date(),
+  });
+
+  return {
+    id,
+    outputId,
+    createdBy: userId,
+    token,
+    expiresAt: expiresAt?.toISOString() ?? null,
+    createdAt: now(),
+  };
+}
+
+export async function getShareOutputByToken(token: string): Promise<{
+  output: OutputRecord;
+  projectTitle: string;
+  projectKind: string;
+} | null> {
+  if (!databaseEnabled() || !db) {
+    const state = getState();
+    const shareToken = state.shareTokens.find((s) => s.token === token);
+    if (!shareToken) return null;
+    if (shareToken.expiresAt && new Date(shareToken.expiresAt) < new Date()) return null;
+
+    const output = state.outputs.find((o) => o.id === shareToken.outputId && !o.removedAt);
+    if (!output) return null;
+
+    const project = state.projects.find((p) => p.id === output.projectId);
+    return {
+      output,
+      projectTitle: project?.title ?? "Unknown project",
+      projectKind: project?.kind ?? "campaign_ad",
+    };
+  }
+
+  await ensureDatabase();
+  const shareRow = await db.query.shareTokens.findFirst({
+    where: eq(schema.shareTokens.token, token),
+  });
+  if (!shareRow) return null;
+  if (shareRow.expiresAt && new Date(shareRow.expiresAt) < new Date()) return null;
+
+  const outputRow = await db.query.outputs.findFirst({
+    where: and(eq(schema.outputs.id, shareRow.outputId), isNull(schema.outputs.removedAt)),
+  });
+  if (!outputRow) return null;
+
+  const projectRow = await db.query.projects.findFirst({
+    where: eq(schema.projects.id, outputRow.projectId),
+    columns: { title: true, kind: true },
+  });
+
+  return {
+    output: mapOutput(outputRow),
+    projectTitle: projectRow?.title ?? "Unknown project",
+    projectKind: projectRow?.kind ?? "campaign_ad",
+  };
 }
 
 async function projectBelongsToUser(userId: string, projectId: string): Promise<boolean> {
