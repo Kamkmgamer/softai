@@ -8,6 +8,7 @@ import {
   CreditCard,
   LibraryBig,
   Menu,
+  Palette,
   PlusSquare,
   Settings,
   Shield,
@@ -52,6 +53,13 @@ const links: Array<{
     labelKey: "library",
     shortLabel: "Library",
     icon: LibraryBig,
+    group: "create",
+  },
+  {
+    href: "/brand-kit",
+    labelKey: "brandKit",
+    shortLabel: "Brand",
+    icon: Palette,
     group: "create",
   },
   {

@@ -22,6 +22,8 @@ import {
   starterKits,
   getDefaultFeatureForCategory,
 } from "@/lib/features";
+import { TemplateBrowser } from "@/components/template-browser";
+import { templates } from "@/lib/templates";
 
 type DashboardBillingSummary = {
   balance: number;
@@ -63,7 +65,8 @@ export function DashboardFeatureBrowser({
   const visibleStarterKits = useMemo(
     () =>
       starterKits.filter((kit) =>
-        implementedFeatures.some((feature) => feature.starterKit === kit.title),
+        implementedFeatures.some((feature) => feature.starterKit === kit.title) ||
+        templates.some((t) => t.kit === kit.title),
       ),
     [implementedFeatures],
   );
@@ -323,6 +326,10 @@ export function DashboardFeatureBrowser({
               {activeFeature.description}
             </p>
           </div>
+
+          {activeCategory === "Starter Kits" ? (
+            <TemplateBrowser kit={activeStarterKit} />
+          ) : null}
 
           <button
             type="button"

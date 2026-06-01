@@ -10,7 +10,7 @@ declare global {
 
 const env = getEnv();
 const hasDatabase = Boolean(env.databaseUrl);
-const DB_BOOTSTRAP_VERSION = 2;
+const DB_BOOTSTRAP_VERSION = 3;
 
 export const neonSql = hasDatabase ? neon(env.databaseUrl as string) : null;
 export const db = hasDatabase && neonSql ? drizzle(neonSql, { schema }) : null;
@@ -392,6 +392,19 @@ export async function ensureDatabase() {
         sql`CREATE INDEX IF NOT EXISTS outputs_project_removed_created_idx ON outputs (project_id, removed_at, created_at)`,
         sql`CREATE INDEX IF NOT EXISTS avatars_project_created_idx ON avatars (project_id, created_at)`,
         sql`CREATE INDEX IF NOT EXISTS brand_assets_project_created_idx ON brand_assets (project_id, created_at)`,
+        sql`CREATE TABLE IF NOT EXISTS brand_kits (
+          id uuid PRIMARY KEY,
+          user_id text NOT NULL,
+          name varchar(100) NOT NULL,
+          logo_url text NULL,
+          primary_color varchar(7) NULL,
+          secondary_color varchar(7) NULL,
+          fonts jsonb NULL,
+          tone_of_voice varchar(50) NULL,
+          created_at timestamptz NOT NULL DEFAULT now(),
+          updated_at timestamptz NOT NULL DEFAULT now()
+        )`,
+        sql`CREATE INDEX IF NOT EXISTS brand_kits_user_idx ON brand_kits (user_id)`,
       ]);
     })();
     const retryableReady = ready.catch((error) => {

@@ -246,3 +246,16 @@ export type DashboardStats = {
   creditBalance: number;
   monthlyCredits: number;
 };
+
+export type BrandKitRecord = {
+  id: string;
+  userId: string;
+  name: string;
+  logoUrl: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  fonts: { heading?: string; body?: string } | null;
+  toneOfVoice: string | null;
+  createdAt: string;
+  updatedAt: string;
+};

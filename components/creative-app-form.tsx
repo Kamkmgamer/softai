@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { UploadCloud } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
+import type { BrandKitRecord } from "@/lib/types";
 
-type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad";
+type CreativeAppKind = "text-to-image" | "image-editor" | "edit-studio" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad" | "batch-social" | "carousel-builder" | "hook-generator" | "platform-resizer" | "lesson-to-video" | "explainer-video" | "whiteboard-animation" | "course-trailer" | "style-transfer" | "surreal-scene" | "visual-remix" | "loop-generator" | "script-to-storyboard" | "ab-variants" | "seasonal-transform";
 
 type CreativeAppFormProps = {
   app: CreativeAppKind;
@@ -21,6 +22,12 @@ type CreativeAppFormProps = {
 
 const aspectRatios = ["9:16", "1:1", "16:9"];
 const durations = ["10s", "15s", "20s"];
+const shortDurations = ["5s", "10s", "15s"];
+const videoDurations = ["30s", "60s", "90s"];
+const trailerDurations = ["15s", "30s", "60s"];
+const seasons = ["Summer", "Winter", "Spring", "Fall", "Holiday", "Back to school"];
+const batchSocialPlatforms = ["instagram", "tiktok", "linkedin", "twitter", "facebook"];
+const hookPlatforms = ["instagram", "tiktok", "youtube"];
 
 export function CreativeAppForm({
   app,
@@ -37,9 +44,22 @@ export function CreativeAppForm({
   const [style, setStyle] = useState(presets[0] ?? "Commercial ad");
   const [aspectRatio, setAspectRatio] = useState("9:16");
   const [duration, setDuration] = useState("10s");
+  const [platform, setPlatform] = useState("instagram");
+  const [postCount, setPostCount] = useState(5);
+  const [slideCount, setSlideCount] = useState(5);
+  const [variantCount, setVariantCount] = useState(4);
+  const [season, setSeason] = useState("Summer");
   const [sourceUrl, setSourceUrl] = useState<string | null>(null);
   const [sourceName, setSourceName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [brandKit, setBrandKit] = useState<BrandKitRecord | null>(null);
+
+  useEffect(() => {
+    fetch("/api/brand-kit")
+      .then((r) => r.json())
+      .then((data) => setBrandKit(data.kits?.[0] ?? null))
+      .catch(() => {});
+  }, []);
 
   const canSubmit = prompt.trim().length >= 10 && (!requiresUpload || sourceUrl);
   const uploadType = requiresUpload ?? allowUpload;
@@ -59,9 +79,27 @@ export function CreativeAppForm({
       prompt: prompt.trim(),
       style,
       aspectRatio,
+      brandKit: brandKit ? {
+        name: brandKit.name,
+        primaryColor: brandKit.primaryColor,
+        secondaryColor: brandKit.secondaryColor,
+        toneOfVoice: brandKit.toneOfVoice,
+        fonts: brandKit.fonts,
+      } : null,
       ...(app === "image-editor" || app === "expand-image" || app === "stylize-image" || app === "product-reshoot" || app === "vary-image" || app === "mockup" ? { sourceImageUrl: sourceUrl } : null),
       ...(app === "create-ad" && sourceUrl ? { sourceImageUrl: sourceUrl } : null),
       ...(app === "edit-studio" ? { sourceVideoUrl: sourceUrl, duration } : null),
+      ...(app === "batch-social" ? { platform, postCount } : null),
+      ...(app === "carousel-builder" ? { slideCount } : null),
+      ...(app === "hook-generator" ? { platform } : null),
+      ...(app === "platform-resizer" ? { sourceImageUrl: sourceUrl, targetPlatform: platform } : null),
+      ...(app === "style-transfer" || app === "visual-remix" || app === "seasonal-transform" ? { sourceImageUrl: sourceUrl } : null),
+      ...(app === "seasonal-transform" ? { season } : null),
+      ...(app === "ab-variants" ? { sourceImageUrl: sourceUrl, variantCount } : null),
+      ...(app === "visual-remix" ? { variationCount: variantCount } : null),
+      ...(app === "lesson-to-video" || app === "explainer-video" || app === "whiteboard-animation" ? { duration } : null),
+      ...(app === "course-trailer" ? { duration } : null),
+      ...(app === "loop-generator" ? { duration } : null),
     };
 
     startTransition(async () => {
@@ -216,7 +254,140 @@ export function CreativeAppForm({
                 {option}
               </button>
             )) : null}
+            {(app === "lesson-to-video" || app === "explainer-video" || app === "whiteboard-animation") ? videoDurations.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setDuration(option)}
+                className={cn(
+                  "rounded-md border px-2.5 py-2 transition-colors",
+                  duration === option
+                    ? "border-accent bg-accent-soft text-accent-text"
+                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                )}
+              >
+                {option}
+              </button>
+            )) : null}
+            {app === "course-trailer" ? trailerDurations.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setDuration(option)}
+                className={cn(
+                  "rounded-md border px-2.5 py-2 transition-colors",
+                  duration === option
+                    ? "border-accent bg-accent-soft text-accent-text"
+                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                )}
+              >
+                {option}
+              </button>
+            )) : null}
+            {app === "loop-generator" ? shortDurations.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setDuration(option)}
+                className={cn(
+                  "rounded-md border px-2.5 py-2 transition-colors",
+                  duration === option
+                    ? "border-accent bg-accent-soft text-accent-text"
+                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                )}
+              >
+                {option}
+              </button>
+            )) : null}
           </div>
+
+          {(app === "batch-social" || app === "hook-generator" || app === "platform-resizer") ? (
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-semibold text-text-tertiary">Platform</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(app === "hook-generator" ? hookPlatforms : batchSocialPlatforms).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setPlatform(p)}
+                    className={cn(
+                      "rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors capitalize",
+                      platform === p
+                        ? "border-accent bg-accent-soft text-accent-text"
+                        : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                    )}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {app === "batch-social" ? (
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-semibold text-text-tertiary">Posts: {postCount}</p>
+              <input
+                type="range"
+                min={3}
+                max={7}
+                value={postCount}
+                onChange={(e) => setPostCount(Number(e.target.value))}
+                className="w-full accent-accent"
+              />
+            </div>
+          ) : null}
+
+          {app === "carousel-builder" ? (
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-semibold text-text-tertiary">Slides: {slideCount}</p>
+              <input
+                type="range"
+                min={3}
+                max={10}
+                value={slideCount}
+                onChange={(e) => setSlideCount(Number(e.target.value))}
+                className="w-full accent-accent"
+              />
+            </div>
+          ) : null}
+
+          {(app === "ab-variants" || app === "visual-remix") ? (
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-semibold text-text-tertiary">Variants: {variantCount}</p>
+              <input
+                type="range"
+                min={2}
+                max={6}
+                value={variantCount}
+                onChange={(e) => setVariantCount(Number(e.target.value))}
+                className="w-full accent-accent"
+              />
+            </div>
+          ) : null}
+
+          {app === "seasonal-transform" ? (
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-semibold text-text-tertiary">Season</p>
+              <div className="flex flex-wrap gap-1.5">
+                {seasons.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSeason(s)}
+                    className={cn(
+                      "rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
+                      season === s
+                        ? "border-accent bg-accent-soft text-accent-text"
+                        : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                    )}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           {error ? <div className="rounded-md bg-danger-soft p-3 text-[13px] text-danger">{error}</div> : null}
 

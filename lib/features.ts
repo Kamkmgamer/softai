@@ -279,6 +279,199 @@ export const features: FeatureTile[] = [
     badge: "New",
   },
 
+  // ── Social ────────────────────────────────────────────────
+  {
+    slug: "batch-social",
+    title: "Batch Social Generator",
+    description:
+      "Generate a week of platform-specific social posts from one idea.",
+    image: mediaAssets.socialShoot,
+    category: "Image",
+    starterKit: "Social",
+    status: "implemented",
+    appRoute: "/apps/batch-social",
+    projectKind: "text_to_image",
+    badge: "New",
+  },
+  {
+    slug: "carousel-builder",
+    title: "Carousel Builder",
+    description:
+      "Create multi-slide carousel posts for Instagram and LinkedIn.",
+    image: mediaAssets.campaignWall,
+    category: "Image",
+    starterKit: "Social",
+    status: "implemented",
+    appRoute: "/apps/carousel-builder",
+    projectKind: "text_to_image",
+  },
+  {
+    slug: "hook-generator",
+    title: "Short-Form Hook Generator",
+    description:
+      "Generate viral hook variations for Reels and TikToks.",
+    image: mediaAssets.socialShoot,
+    category: "Image",
+    starterKit: "Social",
+    status: "implemented",
+    appRoute: "/apps/hook-generator",
+    projectKind: "text_to_image",
+  },
+  {
+    slug: "platform-resizer",
+    title: "Platform Resizer",
+    description:
+      "Adapt any image to fit every social platform's dimensions.",
+    image: mediaAssets.productPhoto,
+    category: "Image",
+    starterKit: "Social",
+    status: "implemented",
+    appRoute: "/apps/platform-resizer",
+    projectKind: "image_edit",
+  },
+
+  // ── Educational content ───────────────────────────────────
+  {
+    slug: "lesson-to-video",
+    title: "Lesson to Video",
+    description:
+      "Turn lesson plans into structured teaching videos with scenes and visuals.",
+    image: mediaAssets.productWorkspace,
+    category: "Video",
+    starterKit: "Educational content",
+    status: "implemented",
+    appRoute: "/apps/lesson-to-video",
+    projectKind: "multi_shot_video",
+    badge: "New",
+  },
+  {
+    slug: "explainer-video",
+    title: "Explainer Video Builder",
+    description:
+      "Create step-by-step explainer videos from a concept description.",
+    image: mediaAssets.editDesk,
+    category: "Video",
+    starterKit: "Educational content",
+    status: "implemented",
+    appRoute: "/apps/explainer-video",
+    projectKind: "multi_shot_video",
+  },
+  {
+    slug: "whiteboard-animation",
+    title: "Whiteboard Animation",
+    description:
+      "Generate whiteboard-style teaching videos from a script.",
+    image: mediaAssets.productWorkspace,
+    category: "Video",
+    starterKit: "Educational content",
+    status: "implemented",
+    appRoute: "/apps/whiteboard-animation",
+    projectKind: "multi_shot_video",
+  },
+  {
+    slug: "course-trailer",
+    title: "Course Trailer",
+    description:
+      "Create a compelling trailer to promote your online course.",
+    image: mediaAssets.editDesk,
+    category: "Video",
+    starterKit: "Educational content",
+    status: "implemented",
+    appRoute: "/apps/course-trailer",
+    projectKind: "multi_shot_video",
+  },
+
+  // ── Experimental art ──────────────────────────────────────
+  {
+    slug: "style-transfer",
+    title: "Style Transfer",
+    description:
+      "Transform any image into a new artistic style — oil painting, anime, cyberpunk, and more.",
+    image: mediaAssets.studioBottle,
+    category: "Image",
+    starterKit: "Experimental art",
+    status: "implemented",
+    appRoute: "/apps/style-transfer",
+    projectKind: "image_edit",
+    badge: "New",
+  },
+  {
+    slug: "surreal-scene",
+    title: "Surreal Scene Builder",
+    description:
+      "Generate dreamlike, impossible scenes from text prompts.",
+    image: mediaAssets.campaignWall,
+    category: "Image",
+    starterKit: "Experimental art",
+    status: "implemented",
+    appRoute: "/apps/surreal-scene",
+    projectKind: "text_to_image",
+  },
+  {
+    slug: "visual-remix",
+    title: "Visual Remix",
+    description:
+      "Upload an image and generate multiple styled variations.",
+    image: mediaAssets.packaging,
+    category: "Image",
+    starterKit: "Experimental art",
+    status: "implemented",
+    appRoute: "/apps/visual-remix",
+    projectKind: "image_edit",
+  },
+  {
+    slug: "loop-generator",
+    title: "Loop Generator",
+    description:
+      "Create perfect looping visual art for backgrounds and social.",
+    image: mediaAssets.socialShoot,
+    category: "Video",
+    starterKit: "Experimental art",
+    status: "implemented",
+    appRoute: "/apps/loop-generator",
+    projectKind: "multi_shot_video",
+  },
+
+  // ── Film or shorts additions ──────────────────────────────
+  {
+    slug: "script-to-storyboard",
+    title: "Script to Storyboard",
+    description:
+      "Paste a script and get a full storyboard with scene breakdowns.",
+    image: mediaAssets.productWorkspace,
+    category: "Video",
+    starterKit: "Film or shorts",
+    status: "implemented",
+    appRoute: "/apps/script-to-storyboard",
+    projectKind: "multi_shot_video",
+  },
+
+  // ── Marketing additions ───────────────────────────────────
+  {
+    slug: "ab-variants",
+    title: "A/B Variant Generator",
+    description:
+      "Generate multiple ad variations from one concept to test.",
+    image: mediaAssets.campaignWall,
+    category: "Image",
+    starterKit: "Marketing",
+    status: "implemented",
+    appRoute: "/apps/ab-variants",
+    projectKind: "create_ad",
+  },
+  {
+    slug: "seasonal-transform",
+    title: "Seasonal Campaign Transformer",
+    description:
+      "Transform an existing ad into a seasonal version automatically.",
+    image: mediaAssets.productPhoto,
+    category: "Image",
+    starterKit: "Marketing",
+    status: "implemented",
+    appRoute: "/apps/seasonal-transform",
+    projectKind: "image_edit",
+  },
+
   // ── Audio ─────────────────────────────────────────────────
   {
     slug: "text-to-speech",

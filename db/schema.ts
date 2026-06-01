@@ -295,3 +295,18 @@ export const auditEvents = pgTable("audit_events", {
   payload: jsonb("payload").$type<unknown>(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const brandKits = pgTable("brand_kits", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id").notNull(),
+  name: varchar("name", { length: 100 }).notNull(),
+  logoUrl: text("logo_url"),
+  primaryColor: varchar("primary_color", { length: 7 }),
+  secondaryColor: varchar("secondary_color", { length: 7 }),
+  fonts: jsonb("fonts").$type<{ heading?: string; body?: string }>(),
+  toneOfVoice: varchar("tone_of_voice", { length: 50 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  index("brand_kits_user_idx").on(table.userId),
+]);

@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+export const brandKitContextSchema = z.object({
+  name: z.string().optional(),
+  primaryColor: z.string().nullable().optional(),
+  secondaryColor: z.string().nullable().optional(),
+  toneOfVoice: z.string().nullable().optional(),
+  fonts: z.object({
+    heading: z.string().optional(),
+    body: z.string().optional(),
+  }).nullable().optional(),
+}).nullable().optional();
+
 export const createProjectSchema = z.object({
   title: z.string().min(2),
   productName: z.string().min(2),
@@ -118,6 +129,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     prompt: z.string().min(10).max(4000),
     style: z.string().min(2).max(80).default("Commercial product ad"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("image-editor"),
@@ -125,6 +137,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Keep product identity"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("edit-studio"),
@@ -133,6 +146,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     style: z.string().min(2).max(80).default("Cinematic commercial edit"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
     duration: z.enum(["10s", "15s", "20s"]).default("10s"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("expand-image"),
@@ -140,6 +154,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Seamless extension"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("stylize-image"),
@@ -147,6 +162,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Artistic transformation"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("product-reshoot"),
@@ -154,6 +170,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Premium product photography"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("1:1"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("vary-image"),
@@ -161,6 +178,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Creative variation"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("mockup"),
@@ -168,6 +186,7 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url(),
     style: z.string().min(2).max(80).default("Photorealistic"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("1:1"),
+    brandKit: brandKitContextSchema,
   }),
   z.object({
     app: z.literal("create-ad"),
@@ -175,6 +194,135 @@ export const creativeAppSchema = z.discriminatedUnion("app", [
     sourceImageUrl: z.string().url().optional().nullable(),
     style: z.string().min(2).max(80).default("Social media ad"),
     aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    brandKit: brandKitContextSchema,
+  }),
+  // ── Social Kit ──────────────────────────────────────────
+  z.object({
+    app: z.literal("batch-social"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Social media content"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    platform: z.enum(["instagram", "tiktok", "linkedin", "twitter", "facebook"]).default("instagram"),
+    postCount: z.number().int().min(3).max(7).default(5),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("carousel-builder"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Professional carousel"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("1:1"),
+    slideCount: z.number().int().min(3).max(10).default(5),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("hook-generator"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Viral hook"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    platform: z.enum(["instagram", "tiktok", "youtube"]).default("tiktok"),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("platform-resizer"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url(),
+    style: z.string().min(2).max(80).default("Smart crop"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    targetPlatform: z.string().default("instagram"),
+    brandKit: brandKitContextSchema,
+  }),
+  // ── Educational Kit ─────────────────────────────────────
+  z.object({
+    app: z.literal("lesson-to-video"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Educational lesson"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    duration: z.enum(["30s", "60s", "90s"]).default("60s"),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("explainer-video"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Step-by-step explainer"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    duration: z.enum(["30s", "60s", "90s"]).default("60s"),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("whiteboard-animation"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Whiteboard drawing"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    duration: z.enum(["30s", "60s", "90s"]).default("60s"),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("course-trailer"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Course promotion"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    duration: z.enum(["15s", "30s", "60s"]).default("30s"),
+    brandKit: brandKitContextSchema,
+  }),
+  // ── Experimental Art Kit ────────────────────────────────
+  z.object({
+    app: z.literal("style-transfer"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url(),
+    style: z.string().min(2).max(80).default("Artistic style transfer"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("surreal-scene"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Surrealist dreamscape"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("visual-remix"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url(),
+    style: z.string().min(2).max(80).default("Creative remix"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    variationCount: z.number().int().min(2).max(6).default(4),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("loop-generator"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Seamless loop"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("1:1"),
+    duration: z.enum(["5s", "10s", "15s"]).default("5s"),
+    brandKit: brandKitContextSchema,
+  }),
+  // ── Film Kit additions ──────────────────────────────────
+  z.object({
+    app: z.literal("script-to-storyboard"),
+    prompt: z.string().min(10).max(4000),
+    style: z.string().min(2).max(80).default("Cinematic storyboard"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("16:9"),
+    brandKit: brandKitContextSchema,
+  }),
+  // ── Marketing additions ─────────────────────────────────
+  z.object({
+    app: z.literal("ab-variants"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url().optional().nullable(),
+    style: z.string().min(2).max(80).default("Ad variant"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    variantCount: z.number().int().min(2).max(6).default(4),
+    brandKit: brandKitContextSchema,
+  }),
+  z.object({
+    app: z.literal("seasonal-transform"),
+    prompt: z.string().min(10).max(4000),
+    sourceImageUrl: z.string().url(),
+    style: z.string().min(2).max(80).default("Seasonal theme"),
+    aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16"),
+    season: z.string().min(2).max(50).default("Summer"),
+    brandKit: brandKitContextSchema,
   }),
 ]);
 
