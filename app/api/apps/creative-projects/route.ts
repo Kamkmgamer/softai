@@ -18,6 +18,8 @@ import { creativeAppSchema } from "@/lib/validators";
 
 type CreativeInput = Awaited<ReturnType<typeof readCreativeInput>>;
 
+type ImageAppInput = Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad" | "batch-social" | "carousel-builder" | "hook-generator" | "platform-resizer" | "style-transfer" | "surreal-scene" | "visual-remix" | "ab-variants" | "seasonal-transform" }>;
+
 function readCreativeInput(request: Request) {
   return readJson(request, creativeAppSchema);
 }
@@ -92,7 +94,7 @@ function getAppLabel(app: CreativeInput["app"]) {
   return "Edit Studio";
 }
 
-function buildImagePrompt(input: Extract<CreativeInput, { app: "text-to-image" | "image-editor" | "expand-image" | "stylize-image" | "product-reshoot" | "vary-image" | "mockup" | "create-ad" | "batch-social" | "carousel-builder" | "hook-generator" | "platform-resizer" | "style-transfer" | "surreal-scene" | "visual-remix" | "ab-variants" | "seasonal-transform" }>) {
+function buildImagePrompt(input: ImageAppInput) {
   const brandContext = buildBrandContext(input.brandKit);
 
   if (input.app === "expand-image") {
@@ -494,10 +496,11 @@ export async function POST(request: Request) {
     heldImageCreditsForProject = project.id;
 
     const route = getProviderRoute("image");
-    const prompt = buildImagePrompt(input);
+    const imageInput = input as ImageAppInput;
+    const prompt = buildImagePrompt(imageInput);
     const sourceImageUrl =
-      input.app !== "text-to-image"
-        ? input.sourceImageUrl
+      imageInput.app !== "text-to-image" && "sourceImageUrl" in imageInput
+        ? imageInput.sourceImageUrl
         : null;
     const job = await createGenerationJob(user.id, project.id, {
       type: "image",
