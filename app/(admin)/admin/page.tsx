@@ -4,18 +4,21 @@ import { getAppSession } from "@/lib/auth";
 import { getRecentAdminData, takedownOutput, banUser } from "@/lib/store";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
+import { getDictionary } from "@/lib/dictionaries";
 import { PageHeader, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  const locale = await getRequestLocale();
   const session = await getAppSession();
   if (!session?.isAdmin) {
-    const locale = await getRequestLocale();
     redirect(localizePath("/dashboard", locale));
   }
 
+  const dictionary = getDictionary(locale);
+  const admin = dictionary.admin;
   const { users, reports, auditEvents, outputs } = await getRecentAdminData();
 
   async function handleTakedown(formData: FormData) {
@@ -34,18 +37,18 @@ export default async function AdminPage() {
 
   return (
     <div className="space-y-10">
-      <PageHeader title="Admin Console" backButton />
+      <PageHeader title={admin.consoleTitle} backButton />
 
       <div className="grid gap-8 lg:grid-cols-2">
         <section className="space-y-4">
-          <SectionHeader title="Reported abuse" count={reports.length} />
+          <SectionHeader title={admin.reportedAbuse} count={reports.length} />
           <div className="overflow-x-auto rounded-lg border border-border bg-surface">
             <table className="w-full text-left text-[13px]">
               <thead className="border-b border-border bg-surface-raised text-xs font-medium text-text-secondary">
                 <tr>
-                  <th className="px-4 py-3">Project</th>
-                  <th className="px-4 py-3">Reason</th>
-                  <th className="px-4 py-3 text-right">Date</th>
+                  <th className="px-4 py-3">{admin.project}</th>
+                  <th className="px-4 py-3">{admin.reason}</th>
+                  <th className="px-4 py-3 text-right">{admin.date}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -71,7 +74,7 @@ export default async function AdminPage() {
                       colSpan={3}
                       className="px-4 py-8 text-center text-text-tertiary"
                     >
-                      No reports found.
+                      {admin.noReports}
                     </td>
                   </tr>
                 )}
@@ -81,14 +84,14 @@ export default async function AdminPage() {
         </section>
 
         <section className="space-y-4">
-          <SectionHeader title="Recent outputs" count={outputs.length} />
+          <SectionHeader title={admin.recentOutputs} count={outputs.length} />
           <div className="overflow-x-auto rounded-lg border border-border bg-surface">
             <table className="w-full text-left text-[13px]">
               <thead className="border-b border-border bg-surface-raised text-xs font-medium text-text-secondary">
                 <tr>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">URL</th>
-                  <th className="px-4 py-3 text-right">Action</th>
+                  <th className="px-4 py-3">{admin.type}</th>
+                  <th className="px-4 py-3">{admin.url}</th>
+                  <th className="px-4 py-3 text-right">{admin.action}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -120,7 +123,7 @@ export default async function AdminPage() {
                             type="submit"
                             className="text-xs font-medium text-danger hover:underline"
                           >
-                            Takedown
+                            {admin.takedown}
                           </button>
                         </form>
                       )}
@@ -133,14 +136,14 @@ export default async function AdminPage() {
         </section>
 
         <section className="space-y-4">
-          <SectionHeader title="Users" count={users.length} />
+          <SectionHeader title={admin.users} count={users.length} />
           <div className="overflow-x-auto rounded-lg border border-border bg-surface">
             <table className="w-full text-left text-[13px]">
               <thead className="border-b border-border bg-surface-raised text-xs font-medium text-text-secondary">
                 <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3 text-right">Action</th>
+                  <th className="px-4 py-3">{admin.name}</th>
+                  <th className="px-4 py-3">{admin.email}</th>
+                  <th className="px-4 py-3 text-right">{admin.action}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -165,7 +168,7 @@ export default async function AdminPage() {
                             type="submit"
                             className="text-xs font-medium text-danger hover:underline"
                           >
-                            Ban user
+                            {admin.banUser}
                           </button>
                         </form>
                       )}
@@ -178,13 +181,13 @@ export default async function AdminPage() {
         </section>
 
         <section className="space-y-4">
-          <SectionHeader title="Audit log" count={auditEvents.length} />
+          <SectionHeader title={admin.auditLog} count={auditEvents.length} />
           <div className="overflow-x-auto rounded-lg border border-border bg-surface">
             <table className="w-full text-left text-[13px]">
               <thead className="border-b border-border bg-surface-raised text-xs font-medium text-text-secondary">
                 <tr>
-                  <th className="px-4 py-3">Action</th>
-                  <th className="px-4 py-3 text-right">Date</th>
+                  <th className="px-4 py-3">{admin.action}</th>
+                  <th className="px-4 py-3 text-right">{admin.date}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

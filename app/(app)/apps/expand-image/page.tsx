@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function ExpandImagePage() {
+export default async function ExpandImagePage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["expand-image"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="expand-image"
-        title="Expand Image"
-        description="Upload an image and describe how to extend it beyond its original borders — add scenery, extend backgrounds, or widen compositions."
-        placeholder="Extend this product photo to the right with a matching marble countertop, soft natural light, and subtle bokeh in the background."
-        presets={["Extend background", "Widen composition", "Add scenery", "Panoramic extend", "Fill canvas"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         requiresUpload="image"
       />
     </div>

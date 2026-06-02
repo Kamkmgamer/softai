@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function BatchSocialPage() {
+export default async function BatchSocialPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["batch-social"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="batch-social"
-        title="Batch Social Generator"
-        description="Describe your brand or product and generate a week of platform-specific social posts with matching visuals."
-        placeholder="e.g., A organic skincare brand targeting millennials. Products: vitamin C serum, retinol night cream. Tone: friendly, educational, empowering."
-        presets={["Instagram focus", "TikTok trends", "LinkedIn professional", "Multi-platform"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
       />
     </div>
   );

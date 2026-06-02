@@ -5,6 +5,8 @@ import {
   Megaphone,
   Share2,
 } from "lucide-react";
+import { type Locale } from "@/lib/i18n";
+import { getDictionary } from "@/lib/dictionaries";
 
 export type FeatureCategory =
   | "Starter Kits"
@@ -517,32 +519,63 @@ export const features: FeatureTile[] = [
   },
 ];
 
-export function getFeatureBySlug(slug: string): FeatureTile | undefined {
-  return features.find((f) => f.slug === slug);
+export function getFeatureBySlug(slug: string, locale: Locale = "en"): FeatureTile | undefined {
+  const dict = getDictionary(locale);
+  const base = features.find((f) => f.slug === slug);
+  if (!base) return undefined;
+  const localized = dict.features[slug as keyof typeof dict.features];
+  return {
+    ...base,
+    title: localized?.title ?? base.title,
+    description: localized?.description ?? base.description,
+  };
 }
 
-export function getImplementedFeatures(): FeatureTile[] {
-  return features.filter((f) => f.status === "implemented");
+export function getImplementedFeatures(locale: Locale = "en"): FeatureTile[] {
+  const dict = getDictionary(locale);
+  return features
+    .filter((f) => f.status === "implemented")
+    .map((f) => {
+      const localized = dict.features[f.slug as keyof typeof dict.features];
+      return {
+        ...f,
+        title: localized?.title ?? f.title,
+        description: localized?.description ?? f.description,
+      };
+    });
 }
 
 export function getFeaturesByCategory(
   category: FeatureCategory,
   starterKit?: StarterKit,
+  locale: Locale = "en",
 ): FeatureTile[] {
+  const dict = getDictionary(locale);
+  let filtered: FeatureTile[];
   if (category === "Starter Kits" && starterKit) {
-    return features.filter((f) => f.starterKit === starterKit);
+    filtered = features.filter((f) => f.starterKit === starterKit);
+  } else {
+    filtered = features.filter((f) => f.category === category);
   }
-  return features.filter((f) => f.category === category);
+  return filtered.map((f) => {
+    const localized = dict.features[f.slug as keyof typeof dict.features];
+    return {
+      ...f,
+      title: localized?.title ?? f.title,
+      description: localized?.description ?? f.description,
+    };
+  });
 }
 
 export function getDefaultFeatureForCategory(
   category: FeatureCategory,
   starterKit?: StarterKit,
+  locale: Locale = "en",
 ): FeatureTile {
-  const list = getFeaturesByCategory(category, starterKit);
+  const list = getFeaturesByCategory(category, starterKit, locale);
   return (
     list.find((f) => f.status === "implemented") ??
     list[0] ??
-    features.find((f) => f.slug === "multi-shot-video")!
+    getFeatureBySlug("multi-shot-video", locale)!
   );
 }

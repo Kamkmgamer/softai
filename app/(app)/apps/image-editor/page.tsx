@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function ImageEditorPage() {
+export default async function ImageEditorPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["image-editor"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="image-editor"
-        title="AI Image Editor"
-        description="Upload one reference image, then restyle, relight, reshoot, or change the backdrop with a plain-English instruction."
-        placeholder="Keep the product exactly recognizable, replace the background with a warm kitchen counter scene, add golden-hour light, and make it feel like a premium direct-to-consumer ad."
-        presets={["Reshoot product", "Change backdrop", "Relight scene", "Change image style", "Remove distractions"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         requiresUpload="image"
       />
     </div>

@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function LessonToVideoPage() {
+export default async function LessonToVideoPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["lesson-to-video"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="lesson-to-video"
-        title="Lesson to Video"
-        description="Describe your lesson topic and key points. The AI will generate a structured teaching video with scenes, visuals, and narration."
-        placeholder="e.g., Introduction to photosynthesis: how plants convert sunlight into energy. Cover the light reactions, Calvin cycle, and real-world applications."
-        presets={["Science lesson", "Math concept", "History overview", "Language tutorial"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
       />
     </div>
   );

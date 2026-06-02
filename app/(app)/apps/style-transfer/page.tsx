@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function StyleTransferPage() {
+export default async function StyleTransferPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["style-transfer"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="style-transfer"
-        title="Style Transfer"
-        description="Upload any image and transform it into a new artistic style. Choose from oil painting, watercolor, anime, cyberpunk, and more."
-        placeholder="Transform this photo into a vibrant watercolor painting with soft edges, flowing colors, and a dreamy atmosphere."
-        presets={["Oil painting", "Watercolor", "Anime style", "Cyberpunk neon", "Vintage film", "Pencil sketch"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         requiresUpload="image"
       />
     </div>

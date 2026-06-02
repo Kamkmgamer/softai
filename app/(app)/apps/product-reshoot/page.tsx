@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function ProductReshootPage() {
+export default async function ProductReshootPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["product-reshoot"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="product-reshoot"
-        title="Product Reshoot"
-        description="Upload your product photo and describe a new setting, lighting, or angle — get a studio-quality reshoot without the studio."
-        placeholder="Place this product on a rustic wooden table with warm morning sunlight streaming through a window, soft shadows, and a blurred kitchen background."
-        presets={["Studio white", "Lifestyle scene", "Outdoor natural", "Dramatic lighting", "Flat lay", "Close-up macro"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         requiresUpload="image"
       />
     </div>

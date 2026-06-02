@@ -8,6 +8,7 @@ import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
 import type { BrandKitRecord } from "@/lib/types";
 import { AppBackButton } from "@/components/app-back-button";
+import { getDictionary } from "@/lib/dictionaries";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -21,7 +22,7 @@ type CreativeAppFormProps = {
   title: string;
   description: string;
   placeholder: string;
-  presets: string[];
+  presets: readonly string[];
   requiresUpload?: "image" | "video";
   allowUpload?: "image" | "video";
 };
@@ -47,6 +48,8 @@ export function CreativeAppForm({
   const router = useRouter();
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
+  const formDict = dictionary.apps._form;
   const [isPending, startTransition] = useTransition();
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState(presets[0] ?? "Commercial ad");
@@ -71,7 +74,7 @@ export function CreativeAppForm({
 
   const canSubmit = prompt.trim().length >= 10 && (!requiresUpload || sourceUrl);
   const uploadType = requiresUpload ?? allowUpload;
-  const uploadLabel = uploadType === "video" ? "Drop source video here" : "Drop source image here";
+  const uploadLabel = uploadType === "video" ? formDict.dropVideo : formDict.dropImage;
   const uploadedPreviewIsImage = uploadType === "image" && sourceUrl;
 
   function getUploadedUrl(file: { ufsUrl?: string; url?: string; serverData?: { url?: string } | null }) {
@@ -120,13 +123,13 @@ export function CreativeAppForm({
         const result = await response.json();
 
         if (!response.ok) {
-          setError(result.error ?? "Failed to create project.");
+          setError(result.error ?? formDict.failedToCreate);
           return;
         }
 
         router.push(localizePath(`/projects/${result.project.id}`, locale));
       } catch {
-        setError("Something went wrong. Please try again.");
+        setError(formDict.somethingWrong);
       }
     });
   }
@@ -151,7 +154,7 @@ export function CreativeAppForm({
             <div className="space-y-2 px-1">
               <div className="flex items-center gap-1.5 text-[13px] font-medium text-text">
                 <UploadCloud className="h-3.5 w-3.5" />
-                {requiresUpload ? "Source" : "Optional source"} {uploadType}
+                {requiresUpload ? formDict.sourceRequired : formDict.sourceOptional} {uploadType}
               </div>
               <UploadDropzone
                 endpoint="mediaReferenceUploader"
@@ -170,14 +173,14 @@ export function CreativeAppForm({
                 }}
                 content={{
                   label: uploadLabel,
-                  allowedContent: uploadType === "video" ? "MP4/WebM up to 64MB" : "PNG, JPG, or WebP up to 8MB",
+                  allowedContent: uploadType === "video" ? formDict.allowedVideo : formDict.allowedImage,
                 }}
                 onClientUploadComplete={(files) => {
                   const firstFile = files[0];
                   if (!firstFile) return;
                   const uploadedUrl = getUploadedUrl(firstFile);
                   if (!uploadedUrl) {
-                    setError("Upload completed, but no URL returned.");
+                    setError(formDict.uploadNoUrl);
                     return;
                   }
                   setSourceUrl(uploadedUrl);
@@ -188,18 +191,18 @@ export function CreativeAppForm({
               />
               {uploadedPreviewIsImage ? (
                 <div className="overflow-hidden rounded-xl border border-border bg-bg">
-                  <Image src={sourceUrl} alt="Source reference" width={640} height={360} className="h-32 w-full object-cover" />
+                  <Image src={sourceUrl} alt={formDict.sourceRef} width={640} height={360} className="h-32 w-full object-cover" />
                 </div>
               ) : sourceName ? (
                 <div className="rounded-xl border border-border bg-bg px-3 py-2 text-xs font-semibold text-text-secondary">
-                  {sourceName} uploaded
+                  {formDict.uploaded.replace("{name}", sourceName)}
                 </div>
               ) : null}
             </div>
           ) : null}
 
           <div className="space-y-2 px-1">
-            <label className="text-[13px] font-medium text-text">Describe the result</label>
+            <label className="text-[13px] font-medium text-text">{formDict.describeResult}</label>
             <textarea
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
@@ -209,7 +212,7 @@ export function CreativeAppForm({
           </div>
 
           <div className="space-y-2 px-1">
-            <p className="text-[13px] font-medium text-text">Quick tools</p>
+            <p className="text-[13px] font-medium text-text">{formDict.quickTools}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {presets.map((preset) => (
                 <button
@@ -311,7 +314,7 @@ export function CreativeAppForm({
 
           {(app === "batch-social" || app === "hook-generator" || app === "platform-resizer") ? (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-text-tertiary">Platform</p>
+              <p className="text-[11px] font-semibold text-text-tertiary">{formDict.platform}</p>
               <div className="flex flex-wrap gap-1.5">
                 {(app === "hook-generator" ? hookPlatforms : batchSocialPlatforms).map((p) => (
                   <button
@@ -334,7 +337,7 @@ export function CreativeAppForm({
 
           {app === "batch-social" ? (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-text-tertiary">Posts: {postCount}</p>
+              <p className="text-[11px] font-semibold text-text-tertiary">{formDict.posts.replace("{count}", String(postCount))}</p>
               <input
                 type="range"
                 min={3}
@@ -348,7 +351,7 @@ export function CreativeAppForm({
 
           {app === "carousel-builder" ? (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-text-tertiary">Slides: {slideCount}</p>
+              <p className="text-[11px] font-semibold text-text-tertiary">{formDict.slides.replace("{count}", String(slideCount))}</p>
               <input
                 type="range"
                 min={3}
@@ -362,7 +365,7 @@ export function CreativeAppForm({
 
           {(app === "ab-variants" || app === "visual-remix") ? (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-text-tertiary">Variants: {variantCount}</p>
+              <p className="text-[11px] font-semibold text-text-tertiary">{formDict.variants.replace("{count}", String(variantCount))}</p>
               <input
                 type="range"
                 min={2}
@@ -376,7 +379,7 @@ export function CreativeAppForm({
 
           {app === "seasonal-transform" ? (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-text-tertiary">Season</p>
+              <p className="text-[11px] font-semibold text-text-tertiary">{formDict.season}</p>
               <div className="flex flex-wrap gap-1.5">
                 {seasons.map((s) => (
                   <button
@@ -405,7 +408,7 @@ export function CreativeAppForm({
             disabled={isPending || !canSubmit}
             className="btn-primary mb-2 w-full rounded-xl px-5 py-3 text-sm"
           >
-            {isPending ? "Creating..." : app === "edit-studio" ? "Create edit plan" : "Generate"}
+            {isPending ? formDict.creating : app === "edit-studio" ? formDict.createEditPlan : formDict.generate}
           </button>
         </div>
       </aside>

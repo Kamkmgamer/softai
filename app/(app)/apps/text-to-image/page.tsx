@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function TextToImagePage() {
+export default async function TextToImagePage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["text-to-image"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="text-to-image"
-        title="Text to Image"
-        description="Generate ad-ready image plates from a prompt, with clean space for copy and platform crops."
-        placeholder="A premium skincare bottle on wet black stone, soft morning window light, condensation, warm beige background, clean empty space at top for offer copy."
-        presets={["Product hero", "Social ad", "Editorial still", "Luxury studio", "Bold ecommerce"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
       />
     </div>
   );

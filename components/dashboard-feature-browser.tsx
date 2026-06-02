@@ -21,6 +21,7 @@ import {
   mediaAssets,
   starterKits,
   getDefaultFeatureForCategory,
+  getImplementedFeatures,
 } from "@/lib/features";
 import { TemplateBrowser } from "@/components/template-browser";
 import { templates } from "@/lib/templates";
@@ -51,22 +52,36 @@ export function DashboardFeatureBrowser({
     [],
   );
 
+  const localizedFeatureMap = (() => {
+    const localizedFeatures = getImplementedFeatures(locale);
+    const map = new Map<string, FeatureTile>();
+    for (const feature of localizedFeatures) {
+      map.set(feature.slug, feature);
+    }
+    return map;
+  })();
+
   const visibleCategories = useMemo(
     () =>
       categories.filter((category) => {
         if (category === "Starter Kits") {
           return implementedFeatures.some((feature) => feature.starterKit);
         }
-        return implementedFeatures.some((feature) => feature.category === category);
+        return implementedFeatures.some(
+          (feature) => feature.category === category,
+        );
       }),
     [implementedFeatures],
   );
 
   const visibleStarterKits = useMemo(
     () =>
-      starterKits.filter((kit) =>
-        implementedFeatures.some((feature) => feature.starterKit === kit.title) ||
-        templates.some((t) => t.kit === kit.title),
+      starterKits.filter(
+        (kit) =>
+          implementedFeatures.some(
+            (feature) => feature.starterKit === kit.title,
+          ) ||
+          templates.some((t) => t.kit === kit.title),
       ),
     [implementedFeatures],
   );
@@ -93,6 +108,9 @@ export function DashboardFeatureBrowser({
     visibleFeatures[0] ??
     implementedFeatures.find((f) => f.slug === "multi-shot-video")!;
 
+  const localizedActiveFeature =
+    localizedFeatureMap.get(activeFeature.slug) ?? activeFeature;
+
   function openFeature(feature: FeatureTile) {
     setSelectedFeature(feature.slug);
     router.push(localizePath(feature.appRoute, locale));
@@ -104,7 +122,7 @@ export function DashboardFeatureBrowser({
         <div className="mx-auto flex h-full max-w-104 flex-col">
           <div className="space-y-4 px-1">
             <h1 className="text-center text-2xl font-semibold text-text">
-              What do you want to create?
+              {dictionary.shared.whatToCreate}
             </h1>
             <label className="flex h-10.75 items-center gap-2 rounded-xl border border-border-strong bg-surface-raised/80 px-3 text-text-secondary shadow-(--shadow-sm) transition-colors focus-within:border-border-strong">
               <Search className="h-4 w-4" />
@@ -112,7 +130,7 @@ export function DashboardFeatureBrowser({
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 className="min-w-0 flex-1 bg-transparent text-sm text-text placeholder:text-text-tertiary"
-                placeholder="Search apps and tools"
+                placeholder={dictionary.shared.searchApps}
               />
             </label>
           </div>
@@ -130,6 +148,7 @@ export function DashboardFeatureBrowser({
                     const next = getDefaultFeatureForCategory(
                       category,
                       activeStarterKit,
+                      locale,
                     );
                     setSelectedFeature(next.slug);
                   }}
@@ -161,6 +180,7 @@ export function DashboardFeatureBrowser({
                         const next = getDefaultFeatureForCategory(
                           "Starter Kits",
                           kit.title,
+                          locale,
                         );
                         setSelectedFeature(next.slug);
                       }}
@@ -188,10 +208,11 @@ export function DashboardFeatureBrowser({
                 {visibleFeatures.length > 0 ? (
                   <div className="space-y-2 pt-2">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
-                      Tools in this kit
+                      {dictionary.shared.toolsInKit}
                     </p>
                     {visibleFeatures.map((feature) => {
                       const active = feature.slug === selectedFeature;
+                      const localized = localizedFeatureMap.get(feature.slug) ?? feature;
                       return (
                         <button
                           key={feature.slug}
@@ -213,7 +234,7 @@ export function DashboardFeatureBrowser({
                           />
                           <span className="min-w-0 self-center">
                             <span className="flex items-center gap-2 text-sm font-semibold text-text">
-                              {feature.title}
+                              {localized.title}
                               {feature.badge ? (
                                 <span className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
                                   {feature.badge}
@@ -221,7 +242,7 @@ export function DashboardFeatureBrowser({
                               ) : null}
                             </span>
                             <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                              {feature.description}
+                              {localized.description}
                             </span>
                           </span>
                         </button>
@@ -230,13 +251,14 @@ export function DashboardFeatureBrowser({
                   </div>
                 ) : (
                   <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
-                    No tools in this kit yet.
+                    {dictionary.shared.noToolsInKit}
                   </div>
                 )}
               </>
             ) : visibleFeatures.length ? (
               visibleFeatures.map((feature) => {
                 const active = feature.slug === activeFeature.slug;
+                const localized = localizedFeatureMap.get(feature.slug) ?? feature;
                 return (
                   <button
                     key={feature.slug}
@@ -258,7 +280,7 @@ export function DashboardFeatureBrowser({
                     />
                     <span className="min-w-0 self-center">
                       <span className="flex items-center gap-2 text-sm font-semibold text-text">
-                        {feature.title}
+                        {localized.title}
                         {feature.badge ? (
                           <span className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
                             {feature.badge}
@@ -266,7 +288,7 @@ export function DashboardFeatureBrowser({
                         ) : null}
                       </span>
                       <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                        {feature.description}
+                        {localized.description}
                       </span>
                     </span>
                   </button>
@@ -274,7 +296,7 @@ export function DashboardFeatureBrowser({
               })
             ) : (
               <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
-                No tools match that search.
+                {dictionary.shared.noToolsMatch}
               </div>
             )}
           </div>
@@ -292,14 +314,14 @@ export function DashboardFeatureBrowser({
                 <strong className="font-semibold text-text">
                   {formatCredits(billingSummary.balance, locale)}
                 </strong>
-                credits
+                {dictionary.shared.credits}
               </span>
               <span className="inline-flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-text-tertiary" />
                 <strong className="font-semibold text-text">
                   {billingSummary.plan}
                 </strong>
-                plan
+                {dictionary.shared.plan}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -320,10 +342,10 @@ export function DashboardFeatureBrowser({
 
           <div>
             <h2 className="text-[28px] font-semibold text-text sm:text-[32px]">
-              {activeFeature.title}
+              {localizedActiveFeature.title}
             </h2>
             <p className="mt-2 max-w-xl text-sm text-text-secondary">
-              {activeFeature.description}
+              {localizedActiveFeature.description}
             </p>
           </div>
 
@@ -348,7 +370,7 @@ export function DashboardFeatureBrowser({
               <span className="absolute inset-x-0 top-0 h-1 bg-success" />
               <span className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
               <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-md bg-bg/85 px-3 py-2 text-xs font-medium text-text ring-1 ring-border">
-                Open generator
+                {dictionary.shared.openGenerator}
               </span>
             </span>
           </button>
@@ -359,7 +381,7 @@ export function DashboardFeatureBrowser({
               onClick={() => openFeature(activeFeature)}
               className="btn btn-primary"
             >
-              Open {activeFeature.title}
+              {dictionary.shared.openFeature.replace("{title}", activeFeature.title)}
             </button>
           </div>
         </div>

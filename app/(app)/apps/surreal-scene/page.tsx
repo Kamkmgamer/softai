@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function SurrealScenePage() {
+export default async function SurrealScenePage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["surreal-scene"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="surreal-scene"
-        title="Surreal Scene Builder"
-        description="Generate dreamlike, impossible scenes from text prompts. Push the boundaries of reality with floating objects, ethereal lighting, and fantasy landscapes."
-        placeholder="e.g., A floating city made of crystals above a serene ocean at sunset, with bioluminescent jellyfish drifting between the buildings."
-        presets={["Dreamscape", "Impossible geometry", "Fantasy world", "Sci-fi surrealism"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
       />
     </div>
   );

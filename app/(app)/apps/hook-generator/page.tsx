@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function HookGeneratorPage() {
+export default async function HookGeneratorPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["hook-generator"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="hook-generator"
-        title="Short-Form Hook Generator"
-        description="Generate scroll-stopping hook images for Instagram Reels, TikToks, and YouTube Shorts."
-        placeholder="e.g., A fitness transformation story. Hook should create curiosity about the before/after results."
-        presets={["Curiosity gap", "Bold claim", "Question hook", "Contrarian take"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
       />
     </div>
   );

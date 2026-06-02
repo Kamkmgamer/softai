@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function PlatformResizerPage() {
+export default async function PlatformResizerPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["platform-resizer"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="platform-resizer"
-        title="Platform Resizer"
-        description="Upload an image and adapt it for any social platform. Smart crop and reframe preserve the most important visual elements."
-        placeholder="e.g., Adapt this image for Instagram Reels format while keeping the product centered."
-        presets={["Instagram Reel", "TikTok", "YouTube Short", "LinkedIn", "Story format"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         requiresUpload="image"
       />
     </div>

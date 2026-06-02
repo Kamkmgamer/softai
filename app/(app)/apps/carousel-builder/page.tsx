@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function CarouselBuilderPage() {
+export default async function CarouselBuilderPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["carousel-builder"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="carousel-builder"
-        title="Carousel Builder"
-        description="Create multi-slide carousel posts for Instagram and LinkedIn. Describe your topic and get a cohesive set of slides."
-        placeholder="e.g., 5 tips for small business owners to improve their social media presence. Include practical, actionable advice."
-        presets={["How-to guide", "Data storytelling", "Tips & tricks", "Case study"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
       />
     </div>
   );

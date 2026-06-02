@@ -8,31 +8,28 @@ import { getImplementedFeatures, mediaAssets } from "@/lib/features";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 
-const workflowSteps = [
-  {
-    title: "Choose a focused tool",
-    description:
-      "Start from a real production task: image edit, product reshoot, mockup, ad creative, or multi-shot video.",
-  },
-  {
-    title: "Add the product context",
-    description:
-      "Upload a reference when needed, write the commercial direction, then pick the crop that matches the channel.",
-  },
-  {
-    title: "Generate campaign assets",
-    description:
-      "Open the finished project, review outputs, and keep billing, settings, and exports one click away.",
-  },
-];
-
 export default async function MarketingPage() {
   const locale = await getRequestLocale();
   const dictionary = getDictionary(locale);
   const marketing = dictionary.marketing;
   const session = await getAppSession().catch(() => null);
   const hasAccess = session !== null;
-  const implementedFeatures = getImplementedFeatures().slice(0, 6);
+  const implementedFeatures = getImplementedFeatures(locale).slice(0, 6);
+
+  const workflowSteps = [
+    {
+      title: marketing.workflow.step1Title,
+      description: marketing.workflow.step1Description,
+    },
+    {
+      title: marketing.workflow.step2Title,
+      description: marketing.workflow.step2Description,
+    },
+    {
+      title: marketing.workflow.step3Title,
+      description: marketing.workflow.step3Description,
+    },
+  ];
 
   return (
     <div className="flex min-h-screen flex-col bg-bg text-text selection:bg-accent-soft selection:text-text">
@@ -64,9 +61,9 @@ export default async function MarketingPage() {
             </div>
             <div className="mt-8 grid max-w-xl gap-2 text-sm text-text-secondary sm:grid-cols-3">
               {[
-                "Product-aware prompts",
-                "Implemented tools only",
-                "Credits visible in-app",
+                marketing.trustBadges.productAwarePrompts,
+                marketing.trustBadges.implementedToolsOnly,
+                marketing.trustBadges.creditsVisibleInApp,
               ].map((item) => (
                 <span key={item} className="inline-flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-success" />
@@ -90,18 +87,18 @@ export default async function MarketingPage() {
                 <div className="absolute inset-0 bg-linear-to-t from-bg/80 via-bg/10 to-transparent" />
                 <div className="absolute inset-x-4 bottom-4 rounded-xl border border-border bg-surface/95 p-4 shadow-(--shadow-sm)">
                   <p className="text-lg font-semibold tracking-tight text-text">
-                    Launch a 9:16 product ad for the spring offer.
+                    {marketing.heroOverlay.headline}
                   </p>
                   <p className="mt-2 text-sm text-text-secondary">
-                    Product reshoot, create ad, social crop
+                    {marketing.heroOverlay.tags}
                   </p>
                 </div>
               </div>
               <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {[
-                  [mediaAssets.productPhoto, "Reference product"],
-                  [mediaAssets.studioBottle, "Studio lighting"],
-                  [mediaAssets.socialShoot, "Short video cut"],
+                  [mediaAssets.productPhoto, marketing.heroThumbnails.referenceProduct],
+                  [mediaAssets.studioBottle, marketing.heroThumbnails.studioLighting],
+                  [mediaAssets.socialShoot, marketing.heroThumbnails.shortVideoCut],
                 ].map(([src, label]) => (
                   <div
                     key={label}
@@ -160,14 +157,14 @@ export default async function MarketingPage() {
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="text-3xl font-semibold tracking-tight text-text">
-                Implemented production tools
+                {marketing.tools.heading}
               </h2>
             </div>
             <Link
               href={localizePath("/dashboard", locale)}
               className="btn btn-secondary"
             >
-              Browse tools
+              {marketing.tools.browseCta}
             </Link>
           </div>
 

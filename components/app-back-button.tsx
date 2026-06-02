@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { getDictionary } from "@/lib/dictionaries";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -15,13 +16,15 @@ const defaultClassName =
 
 export function AppBackButton({
   className,
-  label = "Back to dashboard",
+  label,
 }: {
   className?: string;
   label?: string;
 }) {
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
+  const resolvedLabel = label ?? dictionary.shared.backToDashboard;
 
   return (
     <Link
@@ -29,7 +32,7 @@ export function AppBackButton({
       className={cn(defaultClassName, className)}
     >
       <ArrowLeft className="h-4 w-4" />
-      <span className="sr-only">{label}</span>
+      <span className="sr-only">{resolvedLabel}</span>
     </Link>
   );
 }

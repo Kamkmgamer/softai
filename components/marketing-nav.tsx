@@ -47,7 +47,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
             href={localizePath("/pricing", locale)}
             className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
           >
-            {dictionary.app.billing === "الفوترة" ? "الأسعار" : "Pricing"}
+            {dictionary.shared.pricing}
           </Link>
           {hasAccess ? (
             <Link
@@ -62,13 +62,13 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
                 href={localizePath("/sign-in", locale)}
                 className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
               >
-                {locale === "ar" ? "تسجيل الدخول" : "Log in"}
+                {dictionary.shared.logIn}
               </Link>
               <Link
                 href={localizePath("/sign-up", locale)}
                 className="btn-primary"
               >
-                {locale === "ar" ? "ابدأ الآن" : "Sign up"}
+                {dictionary.shared.signUp}
               </Link>
             </div>
           )}
@@ -104,7 +104,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
               className="text-[15px] font-medium text-text-secondary hover:text-text transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {locale === "ar" ? "الأسعار" : "Pricing"}
+              {dictionary.shared.pricing}
             </Link>
             <div className="pt-4 border-t border-border">
               {hasAccess ? (
@@ -113,7 +113,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
                   className="btn-primary w-full justify-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {dictionary.app.dashboard}
+                  {dictionary.shared.dashboard}
                 </Link>
               ) : (
                 <div className="flex flex-col gap-3">
@@ -122,14 +122,14 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
                     className="btn-secondary w-full justify-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {locale === "ar" ? "تسجيل الدخول" : "Log in"}
+                    {dictionary.shared.logIn}
                   </Link>
                   <Link
                     href={localizePath("/sign-up", locale)}
                     className="btn-primary w-full justify-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {locale === "ar" ? "ابدأ الآن" : "Sign up"}
+                    {dictionary.shared.signUp}
                   </Link>
                 </div>
               )}

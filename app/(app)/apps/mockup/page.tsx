@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function MockupPage() {
+export default async function MockupPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["mockup"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="mockup"
-        title="Product Mockup"
-        description="Upload a design or logo and describe where it should be placed on a real-world product."
-        placeholder="e.g., A white ceramic coffee mug on a wooden desk with a plant."
-        presets={["Apparel", "Print media", "Digital screens", "Outdoor signage"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         requiresUpload="image"
       />
     </div>

@@ -1,14 +1,20 @@
 import { CreativeAppForm } from "@/components/creative-app-form";
+import { getDictionary } from "@/lib/dictionaries";
+import { getRequestLocale } from "@/lib/server-locale";
 
-export default function AbVariantsPage() {
+export default async function AbVariantsPage() {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+  const appDict = dictionary.apps["ab-variants"];
+
   return (
     <div className="h-full min-h-0 overflow-hidden bg-bg">
       <CreativeAppForm
         app="ab-variants"
-        title="A/B Variant Generator"
-        description="Generate multiple ad variations from one concept. Test different visual approaches to find what converts best."
-        placeholder="e.g., A summer sale ad for a fitness app. Generate variants with different color palettes, focal points, and layouts."
-        presets={["Color test", "Layout variants", "CTA variations", "Audience splits"]}
+        title={appDict.title}
+        description={appDict.description}
+        placeholder={appDict.placeholder}
+        presets={appDict.presets}
         allowUpload="image"
       />
     </div>

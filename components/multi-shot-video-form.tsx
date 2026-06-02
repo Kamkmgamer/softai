@@ -7,6 +7,7 @@ import { ImagePlus, Plus, Trash2, Settings2 } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
 import { AppBackButton } from "@/components/app-back-button";
+import { getDictionary } from "@/lib/dictionaries";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -30,6 +31,9 @@ export function MultiShotVideoForm() {
   const router = useRouter();
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
+  const formDict = dictionary.apps._form;
+  const appDict = dictionary.apps["multi-shot-video"];
   const [isPending, startTransition] = useTransition();
   const [mode, setMode] = useState<Mode>("auto");
   const [autoPrompt, setAutoPrompt] = useState("");
@@ -152,13 +156,13 @@ export function MultiShotVideoForm() {
         const result = await response.json();
 
         if (!response.ok) {
-          setError(result.error ?? "Failed to create project.");
+          setError(result.error ?? formDict.failedToCreate);
           return;
         }
 
         router.push(localizePath(`/projects/${result.project.id}`, locale));
       } catch {
-        setError("Something went wrong. Please try again.");
+        setError(formDict.somethingWrong);
       }
     });
   }
@@ -171,7 +175,9 @@ export function MultiShotVideoForm() {
         <div className="mb-5 flex items-center justify-between gap-3 px-1">
           <div className="flex items-center gap-3">
             <AppBackButton />
-            <h1 className="text-[15px] font-semibold text-text">Multi-Shot Video</h1>
+            <h1 className="text-[15px] font-semibold text-text">
+              {appDict.title}
+            </h1>
           </div>
           <div className="rounded-md bg-bg p-0.5 text-xs font-semibold text-text-secondary ring-1 ring-border">
             <button
@@ -184,7 +190,7 @@ export function MultiShotVideoForm() {
                   : "hover:text-text",
               )}
             >
-              Auto
+              {formDict.auto}
             </button>
             <button
               type="button"
@@ -196,7 +202,7 @@ export function MultiShotVideoForm() {
                   : "hover:text-text",
               )}
             >
-              Custom
+              {formDict.custom}
             </button>
           </div>
         </div>
@@ -206,14 +212,14 @@ export function MultiShotVideoForm() {
           {mode === "auto" ? (
             <div className="space-y-3 px-1">
               <label className="text-[13px] font-medium text-text">
-                Describe your sequence
+                {formDict.describeSequence}
               </label>
               <div className="flex min-h-75 flex-col rounded-xl border border-border bg-bg-subtle p-3 transition-colors focus-within:border-border-strong focus-within:shadow-(--focus-ring)">
                 <textarea
                   value={autoPrompt}
                   onChange={(e) => setAutoPrompt(e.target.value)}
                   className="min-h-65 flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-text placeholder:text-text-tertiary"
-                  placeholder="A lone astronaut walks across a vast red desert under a pink sky. She stops, kneels, and picks up a glowing object half-buried in the sand. Close-up on her face as she looks up, a massive structure emerges from the dust on the horizon."
+                  placeholder={appDict.autoPlaceholder}
                 />
               </div>
               <FirstFrameUpload
@@ -221,6 +227,7 @@ export function MultiShotVideoForm() {
                 uploadMessage={uploadMessage}
                 uploadAppearance={uploadAppearance}
                 getUploadedUrl={getUploadedUrl}
+                formDict={formDict}
                 onUploaded={(url, name) => {
                   setFirstFrameUrl(url);
                   setUploadMessage(`${name} uploaded as first frame.`);
@@ -233,7 +240,7 @@ export function MultiShotVideoForm() {
             <div className="space-y-4 px-1">
               <div className="flex items-center justify-between">
                 <label className="text-[13px] font-medium text-text">
-                  Shot list
+                  {formDict.shotList}
                 </label>
                 <button
                   type="button"
@@ -242,7 +249,7 @@ export function MultiShotVideoForm() {
                   className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-raised hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Plus className="h-3 w-3" />
-                  Add shot
+                  {formDict.addShot}
                 </button>
               </div>
 
@@ -250,7 +257,7 @@ export function MultiShotVideoForm() {
                 <div key={shot.id} className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-medium text-text-tertiary">
-                      Shot {index + 1}
+                      {formDict.shot.replace("{n}", String(index + 1))}
                     </label>
                     {shots.length > 2 ? (
                       <button
@@ -269,10 +276,13 @@ export function MultiShotVideoForm() {
                     className="w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-2.5 text-[14px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-(--focus-ring)"
                     placeholder={
                       index === 0
-                        ? "Opening shot: the character enters the scene..."
+                        ? appDict.openingShot
                         : index === shots.length - 1
-                          ? "Final shot: the reveal, the payoff..."
-                          : `Describe shot ${index + 1}...`
+                          ? appDict.finalShot
+                          : appDict.describeShot.replace(
+                              "{n}",
+                              String(index + 1),
+                            )
                     }
                   />
                 </div>
@@ -282,6 +292,7 @@ export function MultiShotVideoForm() {
                 uploadMessage={uploadMessage}
                 uploadAppearance={uploadAppearance}
                 getUploadedUrl={getUploadedUrl}
+                formDict={formDict}
                 onUploaded={(url, name) => {
                   setFirstFrameUrl(url);
                   setUploadMessage(`${name} uploaded as first frame.`);
@@ -297,7 +308,7 @@ export function MultiShotVideoForm() {
         <div className="-mx-5 mt-4 flex flex-col gap-3 border-t border-border bg-surface px-5 pb-0 pt-3 lg:-mx-6 lg:px-6">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-text-secondary">
             <span
-               className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
               onClick={cycleAspectRatio}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") cycleAspectRatio();
@@ -309,7 +320,7 @@ export function MultiShotVideoForm() {
               {aspectRatio}
             </span>
             <span
-               className="inline-flex cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
+              className="inline-flex cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
               onClick={cycleDuration}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") cycleDuration();
@@ -320,7 +331,7 @@ export function MultiShotVideoForm() {
               {duration}
             </span>
             <span
-               className="inline-flex cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
+              className="inline-flex cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
               onClick={cycleResolution}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") cycleResolution();
@@ -345,7 +356,8 @@ export function MultiShotVideoForm() {
               aria-checked={audioOn}
               tabIndex={0}
             >
-              Audio {audioOn ? "On" : "Off"}
+              {dictionary.shared.audio}{" "}
+              {audioOn ? formDict.audioOn : formDict.audioOff}
             </span>
           </div>
 
@@ -361,7 +373,7 @@ export function MultiShotVideoForm() {
             disabled={isPending || !canSubmit()}
             className="btn-primary mb-2 w-full rounded-xl px-5 py-3 text-sm"
           >
-            {isPending ? "Generating..." : "Generate"}
+            {isPending ? formDict.generating : formDict.generate}
           </button>
         </div>
       </aside>
@@ -371,17 +383,17 @@ export function MultiShotVideoForm() {
         <div className="w-full max-w-245 space-y-6 text-center">
           <div>
             <h1 className="text-[28px] font-semibold tracking-tighter text-text sm:text-[32px]">
-              Multi-Shot Video
+              {appDict.heroHeading}
             </h1>
             <p className="mt-2 text-sm text-text-secondary">
-              Write a simple prompt, get a multiple shots video.
+              {appDict.heroSubtext}
             </p>
           </div>
 
           <div className="mx-auto overflow-hidden rounded-md border border-border bg-surface shadow-(--shadow-lg)">
             <div className="relative aspect-video bg-bg-subtle">
               <div className="absolute inset-0 flex items-center justify-center text-sm text-text-tertiary">
-                Your generated video will appear here
+                {formDict.videoWillAppear}
               </div>
               <div className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
             </div>
@@ -394,7 +406,7 @@ export function MultiShotVideoForm() {
                 className="relative h-20 flex-1 overflow-hidden rounded-lg border border-border bg-surface"
               >
                 <div className="flex h-full items-center justify-center text-xs font-semibold text-text-tertiary">
-                  Shot {n}
+                  {formDict.shot.replace("{n}", String(n))}
                 </div>
               </div>
             ))}
@@ -410,6 +422,7 @@ function FirstFrameUpload({
   uploadMessage,
   uploadAppearance,
   getUploadedUrl,
+  formDict,
   onUploaded,
   onError,
 }: {
@@ -421,6 +434,7 @@ function FirstFrameUpload({
     url?: string;
     serverData?: { url?: string } | null;
   }) => string | null;
+  formDict: Record<string, string>;
   onUploaded: (url: string, name: string) => void;
   onError: (message: string) => void;
 }) {
@@ -428,22 +442,22 @@ function FirstFrameUpload({
     <div className="space-y-2">
       <div className="flex items-center gap-1.5 text-[13px] font-medium text-text">
         <ImagePlus className="h-3.5 w-3.5" />
-        Optional first frame
+        {formDict.optionalFirstFrame}
       </div>
       <UploadDropzone
         endpoint="brandAssetUploader"
         config={{ mode: "auto" }}
         appearance={uploadAppearance}
         content={{
-          label: "Drop image here, or click to choose",
-          allowedContent: "PNG, JPG, or WebP up to 8MB",
+          label: formDict.dropOrClick,
+          allowedContent: formDict.allowedImage,
         }}
         onClientUploadComplete={(files) => {
           const firstFile = files[0];
           if (!firstFile) return;
           const uploadedUrl = getUploadedUrl(firstFile);
           if (!uploadedUrl) {
-            onError("Upload completed, but no URL returned.");
+            onError(formDict.uploadNoUrl);
             return;
           }
           onUploaded(uploadedUrl, firstFile.name);
@@ -454,7 +468,7 @@ function FirstFrameUpload({
         <div className="overflow-hidden rounded-xl border border-border bg-surface">
           <Image
             src={firstFrameUrl}
-            alt="First frame reference"
+            alt={formDict.firstFrameRef}
             width={640}
             height={360}
             className="h-28 w-full object-cover"

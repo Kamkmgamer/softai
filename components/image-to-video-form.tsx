@@ -6,6 +6,7 @@ import { ArrowRight, Film, ImagePlus, LinkIcon } from "lucide-react";
 import { UploadDropzone } from "@/components/uploadthing";
 import { cn } from "@/lib/utils";
 import { AppBackButton } from "@/components/app-back-button";
+import { getDictionary } from "@/lib/dictionaries";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -23,6 +24,9 @@ export function ImageToVideoForm() {
   const router = useRouter();
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
+  const dictionary = getDictionary(locale);
+  const formDict = dictionary.apps._form;
+  const appDict = dictionary.apps["image-to-video"];
   const [isPending, startTransition] = useTransition();
   const [mode, setMode] = useState<FrameMode>("first_frame");
   const [prompt, setPrompt] = useState("");
@@ -65,13 +69,13 @@ export function ImageToVideoForm() {
         const result = await response.json().catch(() => null);
 
         if (!response.ok) {
-          setError(result?.error ?? "Failed to generate video.");
+          setError(result?.error ?? formDict.failedToGenerate);
           return;
         }
 
         router.push(localizePath(`/projects/${result.project.id}`, locale));
       } catch {
-        setError("Something went wrong. Please try again.");
+        setError(formDict.somethingWrong);
       }
     });
   }
@@ -93,10 +97,9 @@ export function ImageToVideoForm() {
         <div className="mb-5 flex items-start gap-3 px-1">
           <AppBackButton className="mt-0.5" />
           <div className="space-y-2">
-            <h1 className="text-[15px] font-semibold text-text">Image to Video</h1>
+            <h1 className="text-[15px] font-semibold text-text">{appDict.title}</h1>
             <p className="text-[13px] leading-5 text-text-secondary">
-              Start from a pasted or uploaded image, or lock both start and end
-              frames so the AI only creates the motion between them.
+              {appDict.description}
             </p>
           </div>
         </div>
@@ -105,31 +108,33 @@ export function ImageToVideoForm() {
           <div className="grid gap-2 px-1 text-xs font-semibold text-text-secondary sm:grid-cols-2">
             <ModeButton
               active={mode === "first_frame"}
-              title="First frame"
-              description="Animate from one image"
+              title={appDict.firstFrameMode}
+              description={appDict.firstFrameModeDesc}
               onClick={() => setMode("first_frame")}
             />
             <ModeButton
               active={mode === "first_last_frames"}
-              title="First + last"
-              description="Fill the in-between"
+              title={appDict.firstLastMode}
+              description={appDict.firstLastModeDesc}
               onClick={() => setMode("first_last_frames")}
             />
           </div>
 
           <FrameInput
-            label="First frame"
+            label={formDict.firstFrame}
             value={firstFrameUrl}
             uploadedName={firstFrameName}
+            dict={dictionary}
             onChange={(url, name) => updateFrame("first", url, name)}
             onError={setError}
           />
 
           {needsLastFrame ? (
             <FrameInput
-              label="Last frame"
+              label={formDict.lastFrame}
               value={lastFrameUrl}
               uploadedName={lastFrameName}
+              dict={dictionary}
               onChange={(url, name) => updateFrame("last", url, name)}
               onError={setError}
             />
@@ -137,7 +142,7 @@ export function ImageToVideoForm() {
 
           <div className="space-y-2 px-1">
             <label className="text-[13px] font-medium text-text">
-              Motion direction
+              {formDict.motionDirection}
             </label>
             <textarea
               value={prompt}
@@ -145,8 +150,8 @@ export function ImageToVideoForm() {
               className="min-h-50 w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-3 text-[15px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-[var(--focus-ring)]"
               placeholder={
                 needsLastFrame
-                  ? "A smooth premium camera move connects the first product photo to the final hero angle, with subtle light sweeps and no product distortion."
-                  : "The camera slowly pushes in, condensation glints on the bottle, background light drifts softly, product remains sharp and unchanged."
+                  ? appDict.motionPlaceholderDual
+                  : appDict.motionPlaceholderSingle
               }
             />
           </div>
@@ -156,7 +161,7 @@ export function ImageToVideoForm() {
           <div className="space-y-3">
             <div className="space-y-1.5">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
-                Aspect Ratio
+                {formDict.aspectRatio}
               </span>
               <div className="flex gap-1 rounded-xl border border-border bg-bg p-1">
                 {aspectRatios.map((option) => (
@@ -178,7 +183,7 @@ export function ImageToVideoForm() {
             </div>
             <div className="space-y-1.5">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
-                Duration
+                {formDict.duration}
               </span>
               <div className="flex gap-1 rounded-xl border border-border bg-bg p-1">
                 {durations.map((option) => (
@@ -200,7 +205,7 @@ export function ImageToVideoForm() {
             </div>
             <div className="space-y-1.5">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
-                Resolution
+                {formDict.resolution}
               </span>
               <div className="flex gap-1 rounded-xl border border-border bg-bg p-1">
                 {resolutions.map((option) => (
@@ -234,7 +239,7 @@ export function ImageToVideoForm() {
             disabled={isPending || !canSubmit}
             className="btn-primary mb-2 w-full rounded-xl px-5 py-3 text-sm"
           >
-            {isPending ? "Generating..." : "Generate video"}
+            {isPending ? formDict.generating : formDict.generateVideo}
           </button>
         </div>
       </aside>
@@ -244,20 +249,19 @@ export function ImageToVideoForm() {
         <div className="relative mx-auto flex min-h-full max-w-245 flex-col justify-center space-y-8">
           <div>
             <h1 className="max-w-170 text-[34px] font-semibold tracking-tighter text-text sm:text-[48px]">
-              Turn a still image into motion without losing the source frame.
+              {appDict.heroHeading}
             </h1>
             <p className="mt-3 max-w-145 text-sm leading-6 text-text-secondary">
-              Use a product shot as the opening frame, or upload a beginning
-              and ending frame for controlled interpolation.
+              {appDict.heroSubtext}
             </p>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-            <PreviewCard label="First frame" imageUrl={firstFrameUrl} />
+            <PreviewCard label={formDict.firstFrame} imageUrl={firstFrameUrl} />
             <div className="hidden h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text-secondary shadow-(--shadow-md) lg:flex">
               {needsLastFrame ? <ArrowRight className="h-4 w-4" /> : <Film className="h-4 w-4" />}
             </div>
-            <PreviewCard label={needsLastFrame ? "Last frame" : "Generated motion"} imageUrl={needsLastFrame ? lastFrameUrl : null} />
+            <PreviewCard label={needsLastFrame ? formDict.lastFrame : formDict.generatedMotion} imageUrl={needsLastFrame ? lastFrameUrl : null} />
           </div>
         </div>
       </section>
@@ -299,15 +303,18 @@ function FrameInput({
   label,
   value,
   uploadedName,
+  dict,
   onChange,
   onError,
 }: {
   label: string;
   value: string;
   uploadedName: string | null;
+  dict: { apps: { _form: Record<string, string> } };
   onChange: (url: string, name?: string | null) => void;
   onError: (message: string) => void;
 }) {
+  const formDict = dict.apps._form;
   return (
     <div className="space-y-2 px-1">
       <div className="flex items-center gap-1.5 text-[13px] font-medium text-text">
@@ -321,7 +328,7 @@ function FrameInput({
           value={value}
           onChange={(event) => onChange(event.target.value, null)}
           className="min-w-0 flex-1 bg-transparent text-sm text-text placeholder:text-text-tertiary"
-          placeholder="Paste image URL"
+          placeholder={formDict.pasteImageUrl}
         />
       </div>
       <UploadDropzone
@@ -340,15 +347,15 @@ function FrameInput({
           button: { display: "none" },
         }}
         content={{
-          label: "Drop image here, or click to choose",
-          allowedContent: "PNG, JPG, or WebP up to 8MB",
+          label: formDict.dropOrClick,
+          allowedContent: formDict.allowedImage,
         }}
         onClientUploadComplete={(files) => {
           const file = files[0];
           if (!file) return;
           const uploadedUrl = file.ufsUrl ?? file.serverData?.url ?? file.url ?? null;
           if (!uploadedUrl) {
-            onError("Upload completed, but no URL returned.");
+            onError(formDict.uploadNoUrl);
             return;
           }
           onChange(uploadedUrl, file.name);
@@ -365,7 +372,7 @@ function FrameInput({
           />
           {uploadedName ? (
             <p className="px-3 py-2 text-xs font-medium text-text-secondary">
-              {uploadedName} uploaded
+              {formDict.uploaded.replace("{name}", uploadedName)}
             </p>
           ) : null}
         </div>
