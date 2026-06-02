@@ -10,7 +10,7 @@ export type AiProviderRoute = {
   isDemo: boolean;
 };
 
-const DEFAULT_TEXT_MODEL = "minimax/minimax-m2.5:free";
+const DEFAULT_TEXT_MODEL = "minimax/minimax-m3:free";
 const FALLBACK_TEXT_MODELS = [
   "deepseek/deepseek-v4-flash:free",
   "moonshotai/kimi-k2.6:free",
@@ -23,7 +23,10 @@ const DEFAULT_IMAGE_MODEL = "google/gemini-2.5-flash-image";
 const DEFAULT_VIDEO_MODEL = "x-ai/grok-imagine-video";
 const DEMO_MODEL = "deterministic-demo";
 
-const modelByCapability: Record<Exclude<AiCapability, "audio" | "edit">, string> = {
+const modelByCapability: Record<
+  Exclude<AiCapability, "audio" | "edit">,
+  string
+> = {
   text: DEFAULT_TEXT_MODEL,
   image: DEFAULT_IMAGE_MODEL,
   video: DEFAULT_VIDEO_MODEL,
@@ -35,10 +38,16 @@ export function getConfiguredTextModel() {
 
 export function getTextFallbackModels() {
   const primaryModel = getConfiguredTextModel();
-  return [primaryModel, ...FALLBACK_TEXT_MODELS.filter((model) => model !== primaryModel)];
+  return [
+    primaryModel,
+    ...FALLBACK_TEXT_MODELS.filter((model) => model !== primaryModel),
+  ];
 }
 
-export function getProviderRoute(capability: AiCapability, modelOverride?: string): AiProviderRoute {
+export function getProviderRoute(
+  capability: AiCapability,
+  modelOverride?: string,
+): AiProviderRoute {
   const env = getEnv();
 
   if (!env.openRouterApiKey) {
@@ -50,19 +59,25 @@ export function getProviderRoute(capability: AiCapability, modelOverride?: strin
     };
   }
 
-  const fallbackModel = capability in modelByCapability
-    ? modelByCapability[capability as keyof typeof modelByCapability]
-    : DEMO_MODEL;
+  const fallbackModel =
+    capability in modelByCapability
+      ? modelByCapability[capability as keyof typeof modelByCapability]
+      : DEMO_MODEL;
 
   return {
     providerKey: "openrouter",
-    modelKey: modelOverride ?? (capability === "text" ? getConfiguredTextModel() : fallbackModel),
+    modelKey:
+      modelOverride ??
+      (capability === "text" ? getConfiguredTextModel() : fallbackModel),
     capability,
     isDemo: false,
   };
 }
 
-export function getProviderJobMetadata(route: AiProviderRoute, costEstimate: number | null = null) {
+export function getProviderJobMetadata(
+  route: AiProviderRoute,
+  costEstimate: number | null = null,
+) {
   return {
     providerKey: route.providerKey,
     modelKey: route.modelKey,
@@ -85,8 +100,12 @@ export function isRetryableProviderError(error: unknown): boolean {
   );
 }
 
-export function normalizeProviderError(error: unknown, fallbackMessage: string) {
+export function normalizeProviderError(
+  error: unknown,
+  fallbackMessage: string,
+) {
   if (!(error instanceof Error)) return fallbackMessage;
-  if (error.message.toLowerCase().includes("content policy")) return "This request was blocked by the provider safety policy.";
+  if (error.message.toLowerCase().includes("content policy"))
+    return "This request was blocked by the provider safety policy.";
   return error.message || fallbackMessage;
 }

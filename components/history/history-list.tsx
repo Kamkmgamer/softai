@@ -1,4 +1,4 @@
-import { Download, Film, ImageIcon } from "lucide-react";
+import { Download, Film, ImageIcon, Play } from "lucide-react";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils";
@@ -39,11 +39,32 @@ export function HistoryList({ items, locale }: Props) {
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-bg-subtle">
               {isVideo ? (
-                <video
-                  src={`/api/projects/${item.projectId}/outputs/${item.id}/media`}
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
+                <>
+                  <video
+                    key={item.id}
+                    src={`/api/projects/${item.projectId}/outputs/${item.id}/media`}
+                    poster={items.find((i) => i.projectId === item.projectId && i.type === "thumbnail")?.url}
+                    preload="none"
+                    muted
+                    playsInline
+                    loop
+                    className="h-full w-full object-cover"
+                    onMouseEnter={(e) => {
+                      const v = e.currentTarget;
+                      v.play().catch(() => {});
+                    }}
+                    onMouseLeave={(e) => {
+                      const v = e.currentTarget;
+                      v.pause();
+                      v.currentTime = 0;
+                    }}
+                  />
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-bg/0 transition-colors group-hover:bg-bg/20">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-text/25 text-text shadow-(--shadow-md) backdrop-blur transition-opacity group-hover:opacity-0">
+                      <Play className="h-4 w-4 fill-current" />
+                    </span>
+                  </div>
+                </>
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

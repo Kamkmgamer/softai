@@ -8,6 +8,7 @@ import {
   getProjectBundle,
   updateGenerationJob,
 } from "@/lib/store";
+import { storeVideoDurably } from "@/lib/media-storage";
 import { buildFinalVideoPrompt, submitVideoRender, pollVideoStatus } from "@/lib/openrouter";
 
 const POLL_INTERVAL_MS = 10_000;
@@ -112,20 +113,23 @@ export async function POST(
     );
 
     await updateGenerationJob(job.id, {
-      status: result.status === "completed" ? "completed" : "submitted",
+      status: result.status === "completed" && result.url ? "processing" : "submitted",
       modelKey: result.provider,
       providerJobId: result.id,
       responsePayload: result.responsePayload,
     });
 
     if (result.status === "completed" && result.url) {
+      const title = `${bundle.project.title} final render`;
+      const durableUrl = await storeVideoDurably({ sourceUrl: result.url, title });
+      await updateGenerationJob(job.id, { status: "completed" });
       await createOutput(user.id, projectId, {
         type: "final_video",
-        title: `${bundle.project.title} final render`,
-        url: result.url,
+        title,
+        url: durableUrl,
       });
       await settleVideoCredits(user.id, projectId);
-      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: result.url, status: "completed" });
+      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: durableUrl, status: "completed" });
     }
 
     if (!result.pollingUrl) {
@@ -165,14 +169,16 @@ export async function POST(
     }
 
     if (finalStatus === "completed" && videoUrl) {
+      const title = `${bundle.project.title} final render`;
+      const durableUrl = await storeVideoDurably({ sourceUrl: videoUrl, title });
       await updateGenerationJob(job.id, { status: "completed" });
       await createOutput(user.id, projectId, {
         type: "final_video",
-        title: `${bundle.project.title} final render`,
-        url: videoUrl,
+        title,
+        url: durableUrl,
       });
       await settleVideoCredits(user.id, projectId);
-      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: videoUrl, status: "completed" });
+      return apiSuccess({ jobId: job.id, providerJobId: result.id, url: durableUrl, status: "completed" });
     }
 
     // Timeout — job remains "submitted", webhook or page refresh will complete it

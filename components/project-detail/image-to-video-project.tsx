@@ -119,12 +119,16 @@ export function ImageToVideoProject({ projectId, bundle, locale }: Props) {
                 />
               ) : (
                 <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={posterUrl}
-                    alt="Video preview"
-                    className="h-full w-full object-cover"
-                  />
+                  {posterUrl ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={posterUrl}
+                        alt="Video preview"
+                        className="h-full w-full object-cover"
+                      />
+                    </>
+                  ) : null}
                   <div className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
                   <div className="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center rounded-full bg-text/25 text-text backdrop-blur">
                     <Play className="h-5 w-5 fill-current" />

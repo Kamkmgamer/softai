@@ -14,7 +14,7 @@ import { getAppSession } from "@/lib/auth";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { getProjectPageData } from "@/lib/store";
-import { mediaAssets } from "@/lib/features";
+
 
 export default async function ProjectDetailPage({
   params,
@@ -60,8 +60,7 @@ export default async function ProjectDetailPage({
     (output) => output.type === "final_video",
   );
   const posterUrl =
-    bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ??
-    mediaAssets.socialShoot;
+    bundle.scenes.find((scene) => scene.imageUrl)?.imageUrl ?? undefined;
   const totalDuration = bundle.scenes.reduce(
     (total, scene) => total + scene.durationSeconds,
     0,
@@ -152,13 +151,15 @@ export default async function ProjectDetailPage({
                 />
               ) : (
                 <>
-                  <Image
-                    src={posterUrl}
-                    alt="Generated video preview"
-                    fill
-                    sizes="(min-width: 1024px) 980px, 100vw"
-                    className="object-cover"
-                  />
+                  {posterUrl ? (
+                    <Image
+                      src={posterUrl}
+                      alt="Generated video preview"
+                      fill
+                      sizes="(min-width: 1024px) 980px, 100vw"
+                      className="object-cover"
+                    />
+                  ) : null}
                   <div className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
                   <div className="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center rounded-full bg-text/25 text-text backdrop-blur">
                     <Play className="h-5 w-5 fill-current" />

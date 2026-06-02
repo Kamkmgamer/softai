@@ -1414,6 +1414,26 @@ export async function createOutput(
   return { id, projectId, userId, type: input.type, title: input.title, url: input.url, metadataTag: input.metadataTag ?? SOFTAI_METADATA_TAG, removedAt: null, createdAt: now() };
 }
 
+export async function updateOutputUrl(outputId: string, url: string): Promise<OutputRecord | null> {
+  if (!databaseEnabled() || !db) {
+    const output = getState().outputs.find((entry) => entry.id === outputId && !entry.removedAt);
+    if (!output) return null;
+    output.url = url;
+    revalidateProjectData(output.userId, output.projectId);
+    return output;
+  }
+
+  await ensureDatabase();
+  const existing = await db.query.outputs.findFirst({
+    where: and(eq(schema.outputs.id, outputId), isNull(schema.outputs.removedAt)),
+  });
+  if (!existing) return null;
+
+  await db.update(schema.outputs).set({ url }).where(eq(schema.outputs.id, outputId));
+  revalidateProjectData(existing.userId, existing.projectId);
+  return { ...mapOutput(existing), url };
+}
+
 export async function createAbuseReport(reporterUserId: string, input: Pick<AbuseReportRecord, "projectId" | "outputId" | "reason" | "details">) {
   if (!databaseEnabled() || !db) {
     const report: AbuseReportRecord = { id: randomUUID(), reporterUserId, ...input, createdAt: now() };
@@ -1529,6 +1549,22 @@ export async function getShareOutputByToken(token: string): Promise<{
     projectTitle: projectRow?.title ?? "Unknown project",
     projectKind: projectRow?.kind ?? "campaign_ad",
   };
+}
+
+export async function getThumbnailForProject(projectId: string): Promise<string | null> {
+  if (!databaseEnabled() || !db) {
+    const thumb = getState().outputs.find((o) => o.projectId === projectId && o.type === "thumbnail" && !o.removedAt);
+    return thumb?.url ?? null;
+  }
+  await ensureDatabase();
+  const thumb = await db.query.outputs.findFirst({
+    where: and(
+      eq(schema.outputs.projectId, projectId),
+      eq(schema.outputs.type, "thumbnail"),
+      isNull(schema.outputs.removedAt)
+    ),
+  });
+  return thumb?.url ?? null;
 }
 
 async function projectBelongsToUser(userId: string, projectId: string): Promise<boolean> {

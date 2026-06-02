@@ -1,8 +1,9 @@
 import { apiError, apiSuccess } from "@/lib/api";
 import { refundVideoCredits, settleVideoCredits } from "@/lib/credits";
 import { getEnv } from "@/lib/env";
+import { storeVideoDurably } from "@/lib/media-storage";
 import { extractVideoUrlFromUnsignedUrls } from "@/lib/openrouter";
-import { createOutput, updateGenerationJobByProviderJobId } from "@/lib/store";
+import { createOutput, updateGenerationJob, updateGenerationJobByProviderJobId } from "@/lib/store";
 import crypto from "crypto";
 
 const FIVE_MINUTES_IN_SECONDS = 300;
@@ -89,17 +90,23 @@ export async function POST(request: Request) {
       return apiSuccess({ received: true, provider: "openrouter", ignored: true, payload });
     }
 
+    let outputUrl = url;
+
     const job = await updateGenerationJobByProviderJobId(providerJobId, {
-      status,
+      status: status === "completed" && url ? "processing" : status,
       responsePayload: payload,
       errorMessage: status === "failed" ? JSON.stringify(data?.error ?? payload) : null,
     }, { onlyIfStatus: ["queued", "submitted", "processing"] });
 
     if (job && status === "completed" && url) {
+      const title = "OpenRouter final render";
+      const durableUrl = await storeVideoDurably({ sourceUrl: url, title });
+      outputUrl = durableUrl;
+      await updateGenerationJob(job.id, { status: "completed" });
       await createOutput(job.userId, job.projectId, {
         type: "final_video",
-        title: "OpenRouter final render",
-        url,
+        title,
+        url: durableUrl,
       });
       await settleVideoCredits(job.userId, job.projectId);
     }
@@ -114,7 +121,7 @@ export async function POST(request: Request) {
       providerJobId,
       status,
       matchedJob: job?.id ?? null,
-      outputUrl: url,
+      outputUrl,
     });
   } catch (error) {
     return apiError(error);

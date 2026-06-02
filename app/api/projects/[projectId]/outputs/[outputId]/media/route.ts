@@ -1,10 +1,12 @@
 import { apiError, requireAppUser } from "@/lib/api";
-import { getEnv } from "@/lib/env";
+import { ensureDurableVideoOutputUrl } from "@/lib/media-storage";
 import { getProjectBundle } from "@/lib/store";
-
-type ResolvedVideo =
-  | { kind: "data"; contentType: string; body: Buffer }
-  | { kind: "remote"; url: string };
+import {
+  addProviderAuthHeaders,
+  isAcceptableVideoResponse,
+  normalizeVideoContentType,
+  forwardRangeHeaders,
+} from "@/lib/video-proxy";
 
 export async function GET(
   request: Request,
@@ -14,129 +16,136 @@ export async function GET(
     const user = await requireAppUser();
     const { projectId, outputId } = await params;
     const bundle = await getProjectBundle(user.id, projectId);
-    const output = bundle?.outputs.find((entry) => entry.id === outputId && entry.type === "final_video");
-
+    if (!bundle) {
+      return apiError(new Error("Project not found."), 404);
+    }
+    const output = bundle.outputs.find((entry) => entry.id === outputId);
     if (!output) {
-      return apiError(new Error("Output not found."), 404);
+      return apiError(new Error("Output not found in project."), 404);
     }
 
-    const resolved = await resolveVideo(output.url);
-    if (!resolved) {
-      return apiError(new Error("Video URL is not playable."), 422);
-    }
+    const url = await ensureDurableVideoOutputUrl(output);
 
-    if (resolved.kind === "data") {
-      return new Response(resolved.body as BodyInit, {
+    // Data-URL: decode inline, no HTTP fetch.
+    if (typeof url === "string" && url.trimStart().startsWith("data:video/")) {
+      const decoded = decodeDataUrl(url.trim());
+      if (!decoded) {
+        return apiError(new Error("Invalid video data URL."), 422);
+      }
+      return new Response(decoded.body as BodyInit, {
         headers: {
-          "Content-Type": resolved.contentType,
+          "Content-Type": decoded.contentType,
           "Cache-Control": "private, max-age=300",
         },
       });
     }
 
-    const headers = new Headers();
-    const range = request.headers.get("range");
-    if (range) headers.set("Range", range);
-    addProviderAuthHeaders(resolved.url, headers);
-
-    const upstream = await fetch(resolved.url, { cache: "no-store", headers });
-    if (!upstream.ok || !isVideoContentType(upstream.headers.get("content-type"))) {
+    // Must be an HTTP(S) URL.
+    if (typeof url !== "string" || !isHttpUrl(url)) {
       return apiError(new Error("Video URL is not playable."), 422);
     }
 
-    const responseHeaders = new Headers({
-      "Content-Type": upstream.headers.get("content-type") ?? "video/mp4",
-      "Cache-Control": "private, max-age=300",
-    });
-    for (const header of ["accept-ranges", "content-length", "content-range"]) {
-      const value = upstream.headers.get(header);
-      if (value) responseHeaders.set(header, value);
+    // Single fetch — no probe. This matches what the download route does and
+    // avoids the double-fetch bug where resolveVideo would probe the URL
+    // (consuming the connection / single-use token) and then the handler
+    // would fetch it again and get a 404 or timeout.
+    const headers = new Headers();
+    const range = request.headers.get("range");
+    if (range) headers.set("Range", range);
+    addProviderAuthHeaders(url, headers);
+
+    const upstream = await fetch(url, { cache: "no-store", headers });
+
+    if (!upstream.ok) {
+      return apiError(new Error(`Upstream video returned ${upstream.status}.`), 502);
     }
 
-    return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
+    const upstreamCt = upstream.headers.get("content-type");
+
+    // Happy path: upstream is video or octet-stream from a known provider.
+    if (isAcceptableVideoResponse(upstreamCt, url)) {
+      const responseHeaders = new Headers({
+        "Content-Type": normalizeVideoContentType(upstreamCt),
+        "Cache-Control": "private, max-age=300",
+      });
+      forwardRangeHeaders(upstream.headers, responseHeaders);
+      return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
+    }
+
+    // Fallback: upstream returned JSON/text (some providers wrap the real URL
+    // in a JSON envelope). Try to extract a video URL and follow it once.
+    const lower = upstreamCt?.toLowerCase() ?? "";
+    if (lower.includes("json") || lower.startsWith("text/")) {
+      const text = await upstream.text().catch(() => "");
+      const innerUrl = extractVideoUrlFromText(text);
+      if (innerUrl) {
+        const innerHeaders = new Headers();
+        if (range) innerHeaders.set("Range", range);
+        addProviderAuthHeaders(innerUrl, innerHeaders);
+        const inner = await fetch(innerUrl, { cache: "no-store", headers: innerHeaders });
+        if (inner.ok && isAcceptableVideoResponse(inner.headers.get("content-type"), innerUrl)) {
+          const responseHeaders = new Headers({
+            "Content-Type": normalizeVideoContentType(inner.headers.get("content-type")),
+            "Cache-Control": "private, max-age=300",
+          });
+          forwardRangeHeaders(inner.headers, responseHeaders);
+          return new Response(inner.body, { status: inner.status, headers: responseHeaders });
+        }
+      }
+    }
+
+    return apiError(new Error("Video URL is not playable."), 422);
   } catch (error) {
     return apiError(error);
   }
 }
 
-async function resolveVideo(value: unknown, depth = 0): Promise<ResolvedVideo | null> {
-  if (depth > 8) return null;
+// ---------------------------------------------------------------------------
+// Helpers (kept local — only this route needs them)
+// ---------------------------------------------------------------------------
 
-  const direct = getDirectVideo(value);
-  if (direct) return direct;
+/** Try to find a video URL inside a JSON or text blob. */
+function extractVideoUrlFromText(text: string): string | null {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
 
-  const parsed = parseEmbeddedJson(value);
-  if (parsed) return resolveVideo(parsed, depth + 1);
+  const parsed = parseJson(trimmed);
+  if (!parsed) return null;
 
-  if (typeof value === "string" && isHttpUrl(value)) {
-    const headers = new Headers();
-    addProviderAuthHeaders(value, headers);
-    const response = await fetch(value, { cache: "no-store", headers }).catch(() => null);
-    if (!response) return null;
+  return findNestedUrl(parsed, 0);
+}
 
-    const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
-    if (isVideoContentType(contentType)) return { kind: "remote", url: value };
-    if (!contentType.includes("json") && !contentType.startsWith("text/")) return null;
+function findNestedUrl(value: unknown, depth: number): string | null {
+  if (depth > 6) return null;
 
-    const text = await response.text().catch(() => "");
-    return resolveVideo(text, depth + 1);
+  if (typeof value === "string") {
+    const url = value.trim();
+    if (isHttpUrl(url) || url.startsWith("data:video/")) return url;
+    return null;
   }
 
   if (Array.isArray(value)) {
     for (const item of value) {
-      const resolved = await resolveVideo(item, depth + 1);
-      if (resolved) return resolved;
+      const found = findNestedUrl(item, depth + 1);
+      if (found) return found;
     }
     return null;
   }
 
   if (value && typeof value === "object") {
     const record = value as Record<string, unknown>;
-    for (const key of ["video_url", "videoUrl", "url", "file", "download_url", "downloadUrl", "unsigned_urls", "videos", "output", "data", "result", "media", "content", "generations", "generation"]) {
-      const resolved = await resolveVideo(record[key], depth + 1);
-      if (resolved) return resolved;
+    for (const key of [
+      "video_url", "videoUrl", "url", "file",
+      "download_url", "downloadUrl", "unsigned_urls",
+      "videos", "output", "data", "result", "media",
+      "content", "generations", "generation",
+    ]) {
+      const found = findNestedUrl(record[key], depth + 1);
+      if (found) return found;
     }
   }
 
   return null;
-}
-
-function getDirectVideo(value: unknown): ResolvedVideo | null {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-
-  if (trimmed.startsWith("data:video/")) {
-    return decodeDataUrl(trimmed);
-  }
-
-  if (isHttpUrl(trimmed) && /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/i.test(trimmed)) {
-    return { kind: "remote", url: trimmed };
-  }
-
-  return null;
-}
-
-function parseEmbeddedJson(value: unknown) {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-
-  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-    return parseJson(trimmed);
-  }
-
-  const dataJsonPrefix = "data:application/json";
-  if (!trimmed.toLowerCase().startsWith(dataJsonPrefix)) return null;
-
-  const commaIndex = trimmed.indexOf(",");
-  if (commaIndex === -1) return null;
-
-  const metadata = trimmed.slice(0, commaIndex).toLowerCase();
-  const payload = trimmed.slice(commaIndex + 1);
-  const json = metadata.includes(";base64")
-    ? Buffer.from(payload, "base64").toString("utf8")
-    : decodeURIComponent(payload);
-
-  return parseJson(json);
 }
 
 function parseJson(json: string) {
@@ -147,7 +156,9 @@ function parseJson(json: string) {
   }
 }
 
-function decodeDataUrl(url: string): ResolvedVideo | null {
+type DecodedDataUrl = { contentType: string; body: Buffer };
+
+function decodeDataUrl(url: string): DecodedDataUrl | null {
   const commaIndex = url.indexOf(",");
   if (commaIndex === -1) return null;
 
@@ -158,26 +169,9 @@ function decodeDataUrl(url: string): ResolvedVideo | null {
     ? Buffer.from(payload, "base64")
     : Buffer.from(decodeURIComponent(payload), "binary");
 
-  return { kind: "data", contentType, body };
+  return { contentType, body };
 }
 
 function isHttpUrl(value: string) {
   return value.startsWith("http://") || value.startsWith("https://");
-}
-
-function isVideoContentType(value: string | null) {
-  return value?.toLowerCase().startsWith("video/") ?? false;
-}
-
-function addProviderAuthHeaders(url: string, headers: Headers) {
-  const apiKey = getEnv().openRouterApiKey;
-  if (!apiKey) return;
-
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname.endsWith("openrouter.ai")) {
-      headers.set("Authorization", `Bearer ${apiKey}`);
-    }
-  } catch {
-  }
 }

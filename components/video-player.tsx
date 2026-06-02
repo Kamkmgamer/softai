@@ -26,13 +26,13 @@ export function VideoPlayer({ src, poster, className }: Props) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  async function togglePlay() {
+  function togglePlay() {
     const video = videoRef.current;
     if (!video) return;
 
     if (video.paused) {
-      await video.play();
       setIsPlaying(true);
+      video.play().catch(() => setIsPlaying(false));
       return;
     }
 
@@ -75,7 +75,7 @@ export function VideoPlayer({ src, poster, className }: Props) {
         ref={videoRef}
         src={src}
         poster={poster}
-        preload="metadata"
+        preload="none"
         playsInline
         className="h-full w-full object-cover"
         onClick={togglePlay}

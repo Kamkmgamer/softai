@@ -1,6 +1,7 @@
 import { apiError, apiSuccess, readJson, requireAppUser } from "@/lib/api";
 import { getProviderJobMetadata, getProviderRoute } from "@/lib/ai-provider-router";
 import { holdVideoCredits, refundVideoCredits, settleVideoCredits } from "@/lib/credits";
+import { storeVideoDurably } from "@/lib/media-storage";
 import { assertPromptAllowed } from "@/lib/moderation";
 import { pollVideoStatus, submitVideoRender, type VideoFrameReference } from "@/lib/openrouter";
 import {
@@ -157,21 +158,24 @@ export async function POST(request: Request) {
     const result = await submitVideoRender(prompt, frameReferences, "en", options);
 
     await updateGenerationJob(job.id, {
-      status: result.status === "completed" ? "completed" : "submitted",
+      status: result.status === "completed" && result.url ? "processing" : "submitted",
       modelKey: result.provider,
       providerJobId: result.id,
       responsePayload: result.responsePayload,
     });
 
     if (result.status === "completed" && result.url) {
+      const title = `${project.title} video`;
+      const durableUrl = await storeVideoDurably({ sourceUrl: result.url, title });
+      await updateGenerationJob(job.id, { status: "completed" });
       await createOutput(user.id, project.id, {
         type: "final_video",
-        title: `${project.title} video`,
-        url: result.url,
+        title,
+        url: durableUrl,
       });
       await settleVideoCredits(user.id, project.id);
       heldVideoCreditsForProject = null;
-      return apiSuccess({ project: { id: project.id, title: project.title, kind: project.kind }, url: result.url }, { status: 201 });
+      return apiSuccess({ project: { id: project.id, title: project.title, kind: project.kind }, url: durableUrl }, { status: 201 });
     }
 
     if (result.pollingUrl) {
@@ -180,16 +184,18 @@ export async function POST(request: Request) {
         const poll = await pollVideoStatus(result.pollingUrl);
 
         if (poll.status === "completed" && poll.url) {
+          const title = `${project.title} video`;
+          const durableUrl = await storeVideoDurably({ sourceUrl: poll.url, title });
           const updated = await updateGenerationJob(job.id, { status: "completed" }, { onlyIfStatus: NON_FINAL_STATUSES });
           if (!updated) break;
           await createOutput(user.id, project.id, {
             type: "final_video",
-            title: `${project.title} video`,
-            url: poll.url,
+            title,
+            url: durableUrl,
           });
           await settleVideoCredits(user.id, project.id);
           heldVideoCreditsForProject = null;
-          return apiSuccess({ project: { id: project.id, title: project.title, kind: project.kind }, url: poll.url }, { status: 201 });
+          return apiSuccess({ project: { id: project.id, title: project.title, kind: project.kind }, url: durableUrl }, { status: 201 });
         }
 
         if (poll.status === "failed") {

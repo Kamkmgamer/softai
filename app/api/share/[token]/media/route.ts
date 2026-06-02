@@ -1,6 +1,11 @@
 import { apiError, requireAppUser } from "@/lib/api";
-import { getEnv } from "@/lib/env";
+import { ensureDurableVideoOutputUrl } from "@/lib/media-storage";
 import { getShareOutputByToken } from "@/lib/store";
+import {
+  addProviderAuthHeaders,
+  forwardRangeHeaders,
+  normalizeVideoContentType,
+} from "@/lib/video-proxy";
 
 export async function GET(
   request: Request,
@@ -15,9 +20,9 @@ export async function GET(
       return apiError(new Error("Share link not found or expired."), 404);
     }
 
-    const outputUrl = result.output.url;
     const isVideo = result.output.type === "final_video";
     const isDownload = new URL(request.url).searchParams.get("download") === "1";
+    const outputUrl = await ensureDurableVideoOutputUrl(result.output);
 
     const upstreamHeaders = new Headers();
     if (isVideo && !isDownload) {
@@ -28,10 +33,13 @@ export async function GET(
 
     const upstream = await fetch(outputUrl, { cache: "no-store", headers: upstreamHeaders });
     if (!upstream.ok) {
-      return apiError(new Error("Failed to fetch media."), 502);
+      return apiError(new Error(`Failed to fetch media: upstream returned ${upstream.status}.`), 502);
     }
 
-    const contentType = upstream.headers.get("content-type") ?? (isVideo ? "video/mp4" : "image/png");
+    const upstreamCt = upstream.headers.get("content-type");
+    const contentType = isVideo
+      ? normalizeVideoContentType(upstreamCt)
+      : upstreamCt ?? "image/png";
     const ext = getExtensionFromContentType(contentType);
     const filename = `${sanitizeFilename(result.output.title)}${ext ? `.${ext}` : ""}`;
 
@@ -43,11 +51,9 @@ export async function GET(
       responseHeaders.set("Content-Disposition", `attachment; filename="${filename}"`);
     }
 
+    // Always forward range headers for video so seeking works reliably.
     if (isVideo && !isDownload) {
-      for (const header of ["content-length", "content-range", "accept-ranges"]) {
-        const value = upstream.headers.get(header);
-        if (value) responseHeaders.set(header, value);
-      }
+      forwardRangeHeaders(upstream.headers, responseHeaders);
     } else {
       const contentLength = upstream.headers.get("content-length");
       if (contentLength) responseHeaders.set("Content-Length", contentLength);
@@ -57,18 +63,6 @@ export async function GET(
   } catch (error) {
     return apiError(error);
   }
-}
-
-function addProviderAuthHeaders(url: string, headers: Headers) {
-  const apiKey = getEnv().openRouterApiKey;
-  if (!apiKey) return;
-
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname.endsWith("openrouter.ai")) {
-      headers.set("Authorization", `Bearer ${apiKey}`);
-    }
-  } catch {}
 }
 
 function sanitizeFilename(title: string): string {
