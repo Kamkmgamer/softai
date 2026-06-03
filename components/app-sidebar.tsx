@@ -190,7 +190,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-58 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:px-3 lg:py-3">
+      <aside className="max-lg:hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-58 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:px-3 lg:py-3">
         {/* Logo */}
         <Link
           href={localizePath("/dashboard", locale)}
@@ -228,7 +228,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
       </aside>
 
       {/* Viewport-wide top bar and drawer */}
-      <div className="app-mobile-menu fixed inset-x-0 top-0 z-1000 lg:hidden">
+      <div className="app-mobile-menu fixed inset-x-0 top-0 z-1000 max-lg:block">
         <div className="flex h-16 items-center justify-between border-b border-border bg-surface/95 px-5 backdrop-blur-md">
           <Link
             href={localizePath("/dashboard", locale)}
@@ -314,7 +314,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         </div>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-1000 border-t border-border bg-surface/95 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-(--shadow-lg) backdrop-blur-md lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-1000 max-lg:flex border-t border-border bg-surface/95 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-(--shadow-lg) backdrop-blur-md">
         <div className="mx-auto flex max-w-110 gap-1">
           {bottomLinks.map(renderBottomLink)}
         </div>
