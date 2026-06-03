@@ -46,7 +46,7 @@ const links: Array<{
   {
     href: "/projects/new",
     labelKey: "newProject",
-    shortLabel: "Custom",
+    shortLabel: "New",
     icon: PlusSquare,
     group: "create",
   },
@@ -182,7 +182,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         )}
       >
         <Icon className="h-4.5 w-4.5 shrink-0" />
-        <span className="max-w-full truncate">{link.shortLabel}</span>
+        <span className="leading-none">{link.shortLabel}</span>
       </Link>
     );
   }
