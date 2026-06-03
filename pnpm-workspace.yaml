@@ -1,8 +1,8 @@
-onlyBuiltDependencies:
-  - "@clerk/shared"
-  - bufferutil
-  - core-js
-  - msgpackr-extract
-  - sharp
-  - unrs-resolver
-  - utf-8-validate
+allowBuilds:
+  '@clerk/shared': true
+  bufferutil: true
+  core-js: true
+  msgpackr-extract: true
+  sharp: true
+  unrs-resolver: true
+  utf-8-validate: true
