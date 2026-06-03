@@ -8,7 +8,7 @@ export default async function ExplainerVideoPage() {
   const appDict = dictionary.apps["explainer-video"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="explainer-video"
         title={appDict.title}

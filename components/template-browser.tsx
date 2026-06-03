@@ -93,7 +93,7 @@ export function TemplateBrowser({ kit }: TemplateBrowserProps) {
         <button
           type="button"
           onClick={() => handleUseTemplate(selectedTemplate)}
-          className="btn-primary w-full rounded-xl px-4 py-2.5 text-sm"
+          className="btn-primary mx-auto block w-full max-w-95 rounded-xl px-4 py-2.5 text-sm sm:max-w-none"
         >
           Use &ldquo;{selectedTemplate.name}&rdquo; template
         </button>

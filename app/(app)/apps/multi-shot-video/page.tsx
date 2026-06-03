@@ -2,7 +2,7 @@ import { MultiShotVideoForm } from "@/components/multi-shot-video-form";
 
 export default function MultiShotVideoPage() {
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <MultiShotVideoForm />
     </div>
   );

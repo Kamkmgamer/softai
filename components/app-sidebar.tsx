@@ -110,6 +110,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   const visibleLinks = links.filter((link) => !link.adminOnly || isAdmin);
   const createLinks = visibleLinks.filter((link) => link.group === "create");
   const accountLinks = visibleLinks.filter((link) => link.group === "account");
+  const bottomLinks = createLinks.slice(0, 5);
 
   function renderDesktopLink(link: (typeof links)[number]) {
     const Icon = link.icon;
@@ -123,18 +124,16 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         key={link.href}
         href={localizePath(link.href, locale)}
         title={dictionary.app[link.labelKey]}
+        aria-current={active ? "page" : undefined}
         className={cn(
-          "sidebar-link group relative flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold leading-none",
+          "sidebar-link group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium",
           active
-            ? "bg-surface-raised text-text"
+            ? "bg-accent-soft text-accent-text"
             : "text-text-secondary hover:bg-surface-raised hover:text-text",
         )}
       >
-        {active ? (
-          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" />
-        ) : null}
         <Icon className="h-4.25 w-4.25 shrink-0" />
-        {link.shortLabel}
+        <span className="min-w-0 truncate">{dictionary.app[link.labelKey]}</span>
       </Link>
     );
   }
@@ -163,34 +162,59 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
     );
   }
 
+  function renderBottomLink(link: (typeof links)[number]) {
+    const Icon = link.icon;
+    const activeHref = link.href.split("#")[0] ?? link.href;
+    const active =
+      unlocalizedPathname === activeHref ||
+      unlocalizedPathname.startsWith(`${activeHref}/`);
+
+    return (
+      <Link
+        key={link.href}
+        href={localizePath(link.href, locale)}
+        aria-current={active ? "page" : undefined}
+        className={cn(
+          "sidebar-link flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-semibold leading-none",
+          active
+            ? "bg-accent-soft text-accent-text"
+            : "text-text-tertiary hover:bg-surface-raised hover:text-text",
+        )}
+      >
+        <Icon className="h-4.5 w-4.5 shrink-0" />
+        <span className="max-w-full truncate">{link.shortLabel}</span>
+      </Link>
+    );
+  }
+
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-16 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:py-2">
+      <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-58 lg:shrink-0 lg:flex-col lg:border-r lg:border-border lg:bg-surface lg:px-3 lg:py-3">
         {/* Logo */}
         <Link
           href={localizePath("/dashboard", locale)}
-          className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-border-strong bg-surface-raised text-text transition-colors hover:bg-accent-soft"
+          className="mb-4 flex items-center gap-2.5 rounded-xl border border-border-strong bg-surface-raised px-3 py-2.5 text-text transition-colors hover:bg-accent-soft"
         >
-          <div className="grid grid-cols-2 gap-0.5">
+          <div className="grid shrink-0 grid-cols-2 gap-0.5">
             <span className="h-2 w-2 rounded-xs border border-current" />
             <span className="h-2 w-2 rounded-xs border border-current" />
             <span className="h-2 w-2 rounded-xs border border-current" />
             <span className="h-2 w-2 rounded-xs bg-accent" />
           </div>
-          <span className="sr-only">SoftAI</span>
+          <span className="text-sm font-semibold tracking-tight">SoftAI</span>
         </Link>
 
         {/* Nav */}
-        <nav className="flex flex-1 flex-col px-1.5">
-          <div className="space-y-2">{createLinks.map(renderDesktopLink)}</div>
-          <div className="mt-auto space-y-2 border-t border-border pt-3">
+        <nav className="flex flex-1 flex-col">
+          <div className="space-y-1">{createLinks.map(renderDesktopLink)}</div>
+          <div className="mt-auto space-y-1 border-t border-border pt-3">
             {accountLinks.map(renderDesktopLink)}
           </div>
         </nav>
 
         {/* User */}
-        <div className="mt-auto flex flex-col items-center gap-3 border-t border-border px-2 pt-3">
+        <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
           <UserButton
             appearance={{
               elements: {
@@ -289,6 +313,12 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
           </aside>
         </div>
       </div>
+
+      <nav className="fixed inset-x-0 bottom-0 z-1000 border-t border-border bg-surface/95 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-(--shadow-lg) backdrop-blur-md lg:hidden">
+        <div className="mx-auto flex max-w-110 gap-1">
+          {bottomLinks.map(renderBottomLink)}
+        </div>
+      </nav>
     </>
   );
 }

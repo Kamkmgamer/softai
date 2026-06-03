@@ -22,10 +22,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     throw error;
   });
   return (
-    <div className="softai-shell flex h-dvh overflow-hidden bg-bg text-text max-lg:flex-col">
+    <div className="softai-shell flex min-h-dvh bg-bg text-text max-lg:flex-col lg:h-dvh lg:overflow-hidden">
       <AppSidebar isAdmin={session.isAdmin} />
-      <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-bg pt-16 lg:h-dvh lg:pt-0">
-        <PageTransition className="h-full min-h-0">{children}</PageTransition>
+      <main className="min-w-0 flex-1 bg-bg pb-18 pt-16 lg:h-dvh lg:min-h-0 lg:overflow-hidden lg:pb-0 lg:pt-0">
+        <PageTransition className="min-h-full lg:h-full lg:min-h-0">
+          {children}
+        </PageTransition>
       </main>
     </div>
   );

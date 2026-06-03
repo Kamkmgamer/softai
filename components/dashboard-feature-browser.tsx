@@ -117,13 +117,10 @@ export function DashboardFeatureBrowser({
   }
 
   return (
-    <div className="grid h-full min-h-0 overflow-hidden lg:grid-cols-[464px_minmax(0,1fr)]">
-      <aside className="min-h-0 overflow-hidden border-border bg-[radial-gradient(circle_at_52%_0%,oklch(0.33_0.055_310/0.45),transparent_270px),var(--surface)] px-5 py-8 lg:border-r lg:px-6 lg:py-12">
-        <div className="mx-auto flex h-full max-w-104 flex-col">
-          <div className="space-y-4 px-1">
-            <h1 className="text-center text-2xl font-semibold text-text">
-              {dictionary.shared.whatToCreate}
-            </h1>
+    <div className="min-h-full lg:grid lg:h-full lg:min-h-0 lg:overflow-hidden lg:grid-cols-[464px_minmax(0,1fr)]">
+      <aside className="border-b border-border bg-surface px-4 py-5 lg:min-h-0 lg:overflow-hidden lg:border-b-0 lg:border-r lg:px-6 lg:py-12">
+        <div className="mx-auto flex max-w-104 flex-col lg:h-full">
+          <div className="px-1">
             <label className="flex h-10.75 items-center gap-2 rounded-xl border border-border-strong bg-surface-raised/80 px-3 text-text-secondary shadow-(--shadow-sm) transition-colors focus-within:border-border-strong">
               <Search className="h-4 w-4" />
               <input
@@ -135,7 +132,7 @@ export function DashboardFeatureBrowser({
             </label>
           </div>
 
-          <div className="mt-14 flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
+          <div className="mt-5 flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] lg:mt-14 [&::-webkit-scrollbar]:hidden">
             {visibleCategories.map((category) => {
               const active = category === activeCategory;
               return (
@@ -165,48 +162,40 @@ export function DashboardFeatureBrowser({
             })}
           </div>
 
-          <div className="thin-scrollbar mt-5 flex-1 space-y-3 overflow-y-auto pr-2">
+          <div className="thin-scrollbar mt-5 space-y-3 lg:flex-1 lg:overflow-y-auto lg:pr-2">
             {activeCategory === "Starter Kits" ? (
               <>
-                {visibleStarterKits.map((kit) => {
-                  const Icon = kit.icon;
-                  const active = kit.title === activeStarterKit;
-                  return (
-                    <button
-                      key={kit.title}
-                      type="button"
-                      onClick={() => {
-                        setActiveStarterKit(kit.title);
-                        const next = getDefaultFeatureForCategory(
-                          "Starter Kits",
-                          kit.title,
-                          locale,
-                        );
-                        setSelectedFeature(next.slug);
-                      }}
-                      className={cn(
-                        "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
-                        active
-                          ? "border-border-strong bg-surface-raised/85"
-                          : "border-transparent hover:border-border hover:bg-surface-raised/70",
-                      )}
-                    >
-                      <span className="flex h-18 w-18 items-center justify-center rounded-2xl bg-surface-raised text-text-secondary ring-1 ring-border transition-colors group-hover:text-text">
-                        <Icon className="h-5 w-5" />
-                      </span>
-                      <span className="min-w-0 self-center">
-                        <span className="flex items-center gap-2 text-sm font-semibold text-text">
-                          {kit.title}
-                        </span>
-                        <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                          {kit.description}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
+                <div className="flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
+                  {visibleStarterKits.map((kit) => {
+                    const active = kit.title === activeStarterKit;
+                    return (
+                      <button
+                        key={kit.title}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => {
+                          setActiveStarterKit(kit.title);
+                          const next = getDefaultFeatureForCategory(
+                            "Starter Kits",
+                            kit.title,
+                            locale,
+                          );
+                          setSelectedFeature(next.slug);
+                        }}
+                        className={cn(
+                          "shrink-0 rounded-t-lg border-b px-2.5 pb-2 pt-1 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
+                          active
+                            ? "border-text text-text"
+                            : "border-transparent text-text-tertiary hover:border-border-strong",
+                        )}
+                      >
+                        {kit.title}
+                      </button>
+                    );
+                  })}
+                </div>
                 {visibleFeatures.length > 0 ? (
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-2 pt-1">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
                       {dictionary.shared.toolsInKit}
                     </p>
@@ -217,7 +206,7 @@ export function DashboardFeatureBrowser({
                         <button
                           key={feature.slug}
                           type="button"
-                          onClick={() => setSelectedFeature(feature.slug)}
+                          onClick={() => openFeature(feature)}
                           className={cn(
                             "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
                             active
@@ -301,11 +290,11 @@ export function DashboardFeatureBrowser({
             )}
           </div>
 
-          <div className="h-4 shrink-0" />
+          <div className="hidden h-4 shrink-0 lg:block" />
         </div>
       </aside>
 
-      <section className="min-h-0 overflow-y-auto bg-bg px-5 py-8 lg:px-10 lg:py-8">
+      <section className="hidden min-h-0 overflow-y-auto bg-bg px-5 py-8 lg:block lg:px-10 lg:py-8">
         <div className="mx-auto flex min-h-full max-w-245 flex-col justify-center gap-6">
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface/80 px-4 py-3 shadow-(--shadow-sm)">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">

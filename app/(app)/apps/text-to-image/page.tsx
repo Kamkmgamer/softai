@@ -8,7 +8,7 @@ export default async function TextToImagePage() {
   const appDict = dictionary.apps["text-to-image"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="text-to-image"
         title={appDict.title}

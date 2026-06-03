@@ -8,7 +8,7 @@ export default async function BatchSocialPage() {
   const appDict = dictionary.apps["batch-social"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="batch-social"
         title={appDict.title}

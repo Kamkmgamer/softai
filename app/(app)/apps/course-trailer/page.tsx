@@ -8,7 +8,7 @@ export default async function CourseTrailerPage() {
   const appDict = dictionary.apps["course-trailer"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="course-trailer"
         title={appDict.title}

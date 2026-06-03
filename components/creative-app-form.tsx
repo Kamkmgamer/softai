@@ -135,8 +135,8 @@ export function CreativeAppForm({
   }
 
   return (
-    <div className="grid h-full min-h-0 bg-bg lg:grid-cols-[464px_minmax(0,1fr)]">
-      <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-6 lg:py-8">
+    <div className="min-h-full bg-bg lg:grid lg:h-full lg:min-h-0 lg:grid-cols-[464px_minmax(0,1fr)]">
+      <aside className="flex flex-col border-border bg-surface px-4 py-5 lg:min-h-0 lg:border-r lg:px-6 lg:py-8">
         <div className="mb-5 flex items-start gap-3 px-1">
           <AppBackButton className="mt-0.5" />
           <div className="space-y-2">
@@ -149,7 +149,7 @@ export function CreativeAppForm({
           </div>
         </div>
 
-        <div className="thin-scrollbar flex-1 space-y-5 overflow-y-auto pr-1">
+        <div className="thin-scrollbar space-y-5 lg:flex-1 lg:overflow-y-auto lg:pr-1">
           {uploadType ? (
             <div className="space-y-2 px-1">
               <div className="flex items-center gap-1.5 text-[13px] font-medium text-text">
@@ -206,7 +206,7 @@ export function CreativeAppForm({
             <textarea
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
-              className="min-h-[280px] w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-3 text-[15px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-[var(--focus-ring)]"
+              className="min-h-45 w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-3 text-[15px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-[var(--focus-ring)] lg:min-h-70"
               placeholder={placeholder}
             />
           </div>
@@ -233,7 +233,7 @@ export function CreativeAppForm({
           </div>
         </div>
 
-        <div className="-mx-5 mt-4 space-y-3 border-t border-border bg-surface px-5 pt-3 lg:-mx-6 lg:px-6">
+        <div className="sticky bottom-18 z-10 -mx-4 mt-4 space-y-3 border-t border-border bg-surface px-4 pb-3 pt-3 shadow-(--shadow-lg) lg:static lg:-mx-6 lg:px-6 lg:pb-0 lg:shadow-none">
           <div className="grid gap-2 text-xs font-semibold text-text-secondary sm:grid-cols-3">
             {aspectRatios.map((ratio) => (
               <button
@@ -406,14 +406,14 @@ export function CreativeAppForm({
             type="button"
             onClick={onSubmit}
             disabled={isPending || !canSubmit}
-            className="btn-primary mb-2 w-full rounded-xl px-5 py-3 text-sm"
+            className="btn-primary mx-auto mb-2 block w-full max-w-95 rounded-xl px-5 py-3 text-sm lg:max-w-none"
           >
             {isPending ? formDict.creating : app === "edit-studio" ? formDict.createEditPlan : formDict.generate}
           </button>
         </div>
       </aside>
 
-      <section className="relative min-h-0 flex-1 overflow-hidden bg-bg-subtle">
+      <section className="relative hidden min-h-0 flex-1 overflow-hidden bg-bg-subtle lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,oklch(0.72_0.11_67_/_0.20),transparent_28%),radial-gradient(circle_at_78%_8%,oklch(0.58_0.13_252_/_0.16),transparent_26%)]" />
         <div className="relative mx-auto flex min-h-full max-w-[980px] flex-col justify-center px-5 py-12 lg:px-10" />
       </section>

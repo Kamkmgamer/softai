@@ -8,7 +8,7 @@ export default async function VisualRemixPage() {
   const appDict = dictionary.apps["visual-remix"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="visual-remix"
         title={appDict.title}

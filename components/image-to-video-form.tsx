@@ -92,8 +92,8 @@ export function ImageToVideoForm() {
   }
 
   return (
-    <div className="grid h-full min-h-0 bg-bg lg:grid-cols-[464px_minmax(0,1fr)]">
-      <aside className="flex min-h-0 flex-col border-border bg-surface px-5 py-6 lg:border-r lg:px-6 lg:py-8">
+    <div className="min-h-full bg-bg lg:grid lg:h-full lg:min-h-0 lg:grid-cols-[464px_minmax(0,1fr)]">
+      <aside className="flex flex-col border-border bg-surface px-4 py-5 lg:min-h-0 lg:border-r lg:px-6 lg:py-8">
         <div className="mb-5 flex items-start gap-3 px-1">
           <AppBackButton className="mt-0.5" />
           <div className="space-y-2">
@@ -104,7 +104,7 @@ export function ImageToVideoForm() {
           </div>
         </div>
 
-        <div className="thin-scrollbar flex-1 space-y-5 overflow-y-auto pr-1">
+        <div className="thin-scrollbar space-y-5 lg:flex-1 lg:overflow-y-auto lg:pr-1">
           <div className="grid gap-2 px-1 text-xs font-semibold text-text-secondary sm:grid-cols-2">
             <ModeButton
               active={mode === "first_frame"}
@@ -157,7 +157,7 @@ export function ImageToVideoForm() {
           </div>
         </div>
 
-        <div className="-mx-5 mt-4 space-y-3 border-t border-border bg-surface px-5 pt-3 lg:-mx-6 lg:px-6">
+        <div className="sticky bottom-18 z-10 -mx-4 mt-4 space-y-3 border-t border-border bg-surface px-4 pb-3 pt-3 shadow-(--shadow-lg) lg:static lg:-mx-6 lg:px-6 lg:pb-0 lg:shadow-none">
           <div className="space-y-3">
             <div className="space-y-1.5">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
@@ -237,14 +237,14 @@ export function ImageToVideoForm() {
             type="button"
             onClick={onSubmit}
             disabled={isPending || !canSubmit}
-            className="btn-primary mb-2 w-full rounded-xl px-5 py-3 text-sm"
+            className="btn-primary mx-auto mb-2 block w-full max-w-95 rounded-xl px-5 py-3 text-sm lg:max-w-none"
           >
             {isPending ? formDict.generating : formDict.generateVideo}
           </button>
         </div>
       </aside>
 
-      <section className="relative min-h-155 overflow-hidden bg-bg-subtle px-5 py-12 lg:px-10">
+      <section className="relative hidden min-h-155 overflow-hidden bg-bg-subtle px-5 py-12 lg:block lg:px-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,oklch(0.72_0.11_67_/_0.18),transparent_30%),radial-gradient(circle_at_88%_18%,oklch(0.58_0.13_252_/_0.18),transparent_28%)]" />
         <div className="relative mx-auto flex min-h-full max-w-245 flex-col justify-center space-y-8">
           <div>

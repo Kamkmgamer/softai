@@ -168,9 +168,9 @@ export function MultiShotVideoForm() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col lg:flex-row">
+    <div className="flex min-h-full flex-col lg:h-full lg:min-h-0 lg:flex-row">
       {/* Left panel: inputs */}
-      <aside className="flex min-h-0 w-full flex-col border-border bg-surface px-5 py-6 lg:w-116 lg:border-r lg:px-6 lg:py-8">
+      <aside className="flex w-full flex-col border-border bg-surface px-4 py-5 lg:min-h-0 lg:w-116 lg:border-r lg:px-6 lg:py-8">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between gap-3 px-1">
           <div className="flex items-center gap-3">
@@ -208,7 +208,7 @@ export function MultiShotVideoForm() {
         </div>
 
         {/* Mode content */}
-        <div className="flex-1 overflow-y-auto pr-1">
+        <div className="lg:flex-1 lg:overflow-y-auto lg:pr-1">
           {mode === "auto" ? (
             <div className="space-y-3 px-1">
               <label className="text-[13px] font-medium text-text">
@@ -305,7 +305,7 @@ export function MultiShotVideoForm() {
         </div>
 
         {/* Bottom bar: settings + generate */}
-        <div className="-mx-5 mt-4 flex flex-col gap-3 border-t border-border bg-surface px-5 pb-0 pt-3 lg:-mx-6 lg:px-6">
+        <div className="sticky bottom-18 z-10 -mx-4 mt-4 flex flex-col gap-3 border-t border-border bg-surface px-4 pb-3 pt-3 shadow-(--shadow-lg) lg:static lg:-mx-6 lg:px-6 lg:pb-0 lg:shadow-none">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-text-secondary">
             <span
               className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg px-2.5 py-1.5 transition-colors hover:border-border-strong hover:bg-surface-raised"
@@ -371,7 +371,7 @@ export function MultiShotVideoForm() {
             type="button"
             onClick={onSubmit}
             disabled={isPending || !canSubmit()}
-            className="btn-primary mb-2 w-full rounded-xl px-5 py-3 text-sm"
+            className="btn-primary mx-auto mb-2 block w-full max-w-95 rounded-xl px-5 py-3 text-sm lg:max-w-none"
           >
             {isPending ? formDict.generating : formDict.generate}
           </button>
@@ -379,7 +379,7 @@ export function MultiShotVideoForm() {
       </aside>
 
       {/* Right panel: preview/examples */}
-      <section className="relative flex min-h-155 flex-1 items-center justify-center px-5 py-12 lg:px-10">
+      <section className="relative hidden min-h-155 flex-1 items-center justify-center px-5 py-12 lg:flex lg:px-10">
         <div className="w-full max-w-245 space-y-6 text-center">
           <div>
             <h1 className="text-[28px] font-semibold tracking-tighter text-text sm:text-[32px]">

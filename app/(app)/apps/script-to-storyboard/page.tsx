@@ -8,7 +8,7 @@ export default async function ScriptToStoryboardPage() {
   const appDict = dictionary.apps["script-to-storyboard"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="script-to-storyboard"
         title={appDict.title}

@@ -8,7 +8,7 @@ export default async function WhiteboardAnimationPage() {
   const appDict = dictionary.apps["whiteboard-animation"];
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-bg">
+    <div className="min-h-full bg-bg lg:h-full lg:min-h-0 lg:overflow-hidden">
       <CreativeAppForm
         app="whiteboard-animation"
         title={appDict.title}
