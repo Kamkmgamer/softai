@@ -25,6 +25,7 @@ import {
   stripLocaleFromPathname,
 } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const links: Array<{
@@ -123,7 +124,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         href={localizePath(link.href, locale)}
         title={dictionary.app[link.labelKey]}
         className={cn(
-          "group relative flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold leading-none transition-colors",
+          "sidebar-link group relative flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold leading-none",
           active
             ? "bg-surface-raised text-text"
             : "text-text-secondary hover:bg-surface-raised hover:text-text",
@@ -150,7 +151,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         key={link.href}
         href={localizePath(link.href, locale)}
         className={cn(
-          "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors",
+          "sidebar-link flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium",
           active
             ? "bg-accent-soft text-accent-text"
             : "text-text-secondary hover:bg-surface-raised hover:text-text",
@@ -197,6 +198,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
               },
             }}
           />
+          <ThemeToggle />
           <LanguageSwitcher />
         </div>
       </aside>
@@ -279,7 +281,10 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
                   },
                 }}
               />
-              <LanguageSwitcher />
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <LanguageSwitcher />
+              </div>
             </div>
           </aside>
         </div>

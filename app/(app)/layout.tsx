@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
+import { PageTransition } from "@/components/page-transition";
 import { getAppSession } from "@/lib/auth";
 import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n";
 
@@ -24,7 +25,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     <div className="softai-shell flex h-dvh overflow-hidden bg-bg text-text max-lg:flex-col">
       <AppSidebar isAdmin={session.isAdmin} />
       <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-bg pt-16 lg:h-dvh lg:pt-0">
-        <div className="h-full min-h-0">{children}</div>
+        <PageTransition className="h-full min-h-0">{children}</PageTransition>
       </main>
     </div>
   );

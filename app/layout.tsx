@@ -53,7 +53,15 @@ export default async function RootLayout({
       lang={locale}
       dir={direction}
       className={`${inter.variable} ${ibmPlexMono.variable} ${notoNaskhArabic.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('softai-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.setAttribute('data-theme','dark');else if(t==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body>
         <ClerkProvider ui={ui} localization={locale === "ar" ? softaiArabicClerkLocalization : undefined}>
           <Providers>{children}</Providers>

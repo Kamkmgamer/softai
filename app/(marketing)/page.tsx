@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Brush, CheckCircle2, ImageIcon, Layers3 } from "lucide-react";
+import {
+  ArrowRight,
+  Brush,
+  CheckCircle2,
+  ImageIcon,
+  Layers3,
+} from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
@@ -37,7 +43,7 @@ export default async function MarketingPage() {
 
       <main className="flex-1 overflow-hidden">
         <section className="mx-auto grid max-w-300 gap-10 px-6 py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(560px,1fr)] lg:items-center lg:py-24">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl animate-slide-up">
             <h1 className="text-balance text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
               {marketing.heroTitle}
             </h1>
@@ -46,7 +52,10 @@ export default async function MarketingPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href={localizePath(hasAccess ? "/dashboard" : "/sign-up", locale)}
+                href={localizePath(
+                  hasAccess ? "/dashboard" : "/sign-up",
+                  locale,
+                )}
                 className="btn btn-primary px-5 py-3 text-sm"
               >
                 {hasAccess ? marketing.dashboardCta : marketing.startCta}
@@ -73,7 +82,7 @@ export default async function MarketingPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-surface p-3 shadow-(--shadow-lg)">
+          <div className="rounded-2xl border border-border bg-surface p-3 shadow-(--shadow-lg) animate-scale-in">
             <div className="grid gap-3 lg:grid-cols-[1fr_180px]">
               <div className="relative min-h-92 overflow-hidden rounded-xl bg-bg-subtle">
                 <Image
@@ -96,9 +105,18 @@ export default async function MarketingPage() {
               </div>
               <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {[
-                  [mediaAssets.productPhoto, marketing.heroThumbnails.referenceProduct],
-                  [mediaAssets.studioBottle, marketing.heroThumbnails.studioLighting],
-                  [mediaAssets.socialShoot, marketing.heroThumbnails.shortVideoCut],
+                  [
+                    mediaAssets.productPhoto,
+                    marketing.heroThumbnails.referenceProduct,
+                  ],
+                  [
+                    mediaAssets.studioBottle,
+                    marketing.heroThumbnails.studioLighting,
+                  ],
+                  [
+                    mediaAssets.socialShoot,
+                    marketing.heroThumbnails.shortVideoCut,
+                  ],
                 ].map(([src, label]) => (
                   <div
                     key={label}
@@ -132,11 +150,11 @@ export default async function MarketingPage() {
                 {marketing.howDescription}
               </p>
             </div>
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-3 stagger-children">
               {workflowSteps.map((step, index) => (
                 <div
                   key={step.title}
-                  className="rounded-xl border border-border bg-bg px-4 py-5"
+                  className="rounded-xl border border-border bg-bg px-4 py-5 hover-lift"
                 >
                   <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-xs font-bold text-accent-text">
                     {index + 1}
@@ -168,12 +186,12 @@ export default async function MarketingPage() {
             </Link>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 stagger-children">
             {implementedFeatures.map((feature) => (
               <Link
                 key={feature.slug}
                 href={localizePath(feature.appRoute, locale)}
-                className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-border-strong focus-visible:shadow-(--focus-ring)"
+                className="group overflow-hidden rounded-xl border border-border bg-surface transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
               >
                 <div className="relative h-42 bg-bg-subtle">
                   <Image
