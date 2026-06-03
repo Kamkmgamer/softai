@@ -290,11 +290,11 @@ export function DashboardFeatureBrowser({
             )}
           </div>
 
-          <div className="hidden h-4 shrink-0 lg:block" />
+          <div className="h-4 shrink-0 app-hide-on-mobile" />
         </div>
       </aside>
 
-      <section className="hidden min-h-0 overflow-y-auto bg-bg px-5 py-8 lg:block lg:px-10 lg:py-8">
+      <section className="min-h-0 overflow-y-auto bg-bg px-5 py-8 app-hide-on-mobile lg:px-10 lg:py-8">
         <div className="mx-auto flex min-h-full max-w-245 flex-col justify-center gap-6">
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface/80 px-4 py-3 shadow-(--shadow-sm)">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">

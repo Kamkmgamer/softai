@@ -379,7 +379,7 @@ export function MultiShotVideoForm() {
       </aside>
 
       {/* Right panel: preview/examples */}
-      <section className="relative hidden min-h-155 flex-1 items-center justify-center px-5 py-12 lg:flex lg:px-10">
+      <section className="relative flex min-h-155 flex-1 items-center justify-center px-5 py-12 app-hide-on-mobile lg:px-10">
         <div className="w-full max-w-245 space-y-6 text-center">
           <div>
             <h1 className="text-[28px] font-semibold tracking-tighter text-text sm:text-[32px]">

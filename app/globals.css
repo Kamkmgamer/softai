@@ -563,6 +563,19 @@ button, a, input, textarea, select {
   display: block;
 }
 
+/* ─── Responsive helpers (Tailwind v4 hidden/lg:flex cascade issue) ── */
+@media (min-width: 1024px) {
+  .app-hide-on-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023.9px) {
+  .app-hide-on-mobile {
+    display: none !important;
+  }
+}
+
 /* ─── Animations ─────────────────────────────────────────── */
 
 /* Fade in */

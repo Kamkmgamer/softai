@@ -413,7 +413,7 @@ export function CreativeAppForm({
         </div>
       </aside>
 
-      <section className="relative hidden min-h-0 flex-1 overflow-hidden bg-bg-subtle lg:block">
+      <section className="relative min-h-0 flex-1 overflow-hidden bg-bg-subtle app-hide-on-mobile">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,oklch(0.72_0.11_67_/_0.20),transparent_28%),radial-gradient(circle_at_78%_8%,oklch(0.58_0.13_252_/_0.16),transparent_26%)]" />
         <div className="relative mx-auto flex min-h-full max-w-[980px] flex-col justify-center px-5 py-12 lg:px-10" />
       </section>
