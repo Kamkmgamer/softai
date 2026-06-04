@@ -80,43 +80,43 @@ export const dictionaries = {
       updated: "Updated",
     },
     marketing: {
-      heroTitle: "Turn your product brief into a video ad.",
+      heroTitle: "One studio for every creative asset your business needs.",
       heroDescription:
-        "Upload your product images, paste your script, and generate short-form video campaigns ready for TikTok and Instagram. No timeline editor required.",
+        "Generate product photos, ad creatives, social posts, short videos, and educational content from a single dashboard. 26 AI tools, no design skills required.",
       dashboardCta: "Go to Dashboard",
       startCta: "Get started",
       pricingCta: "See pricing",
-      statSpeed: "Faster production",
-      statFormat: "Native format",
-      statControl: "Brand control",
+      statSpeed: "Minutes, not days",
+      statFormat: "Platform-ready output",
+      statControl: "Your brand, your rules",
       howTitle: "How it works",
       howDescription:
-        "Our pipeline is designed for SMB operators who need to ship campaigns, not learn complex video editing software.",
-      stepBriefTitle: "Create a brief",
+        "Built for business owners who need results, not tutorials. Pick a tool, add your context, and get production-ready assets.",
+      stepBriefTitle: "Pick a tool",
       stepBriefDescription:
-        "Define your target audience, offer, and brand voice. Paste a rough script seed and upload your core product imagery.",
-      stepReviewTitle: "Review storyboard",
+        "Choose from 26 focused tools: product reshoots, ad creatives, social posts, short videos, carousels, mockups, and more.",
+      stepReviewTitle: "Add your context",
       stepReviewDescription:
-        "We generate a scene-by-scene storyboard. You tweak the voiceover narration and visual prompts before rendering.",
-      stepRenderTitle: "Render & export",
+        "Upload a reference image, describe what you want, and set the format for your target platform.",
+      stepRenderTitle: "Generate & export",
       stepRenderDescription:
-        "Our pipeline renders the visuals, generates the TTS narration, and produces a final video ready for ad platforms.",
-      featuresTitle: "Everything you need",
-      storyboardTitle: "Automated Storyboarding",
+        "Get your finished asset in seconds. Download, share, or send straight to your ad platform.",
+      featuresTitle: "Everything you need to ship",
+      storyboardTitle: "AI-powered generation",
       storyboardDescription:
-        "Our system breaks down your brief into pacing-optimized scenes. It generates hook-focused narration, visual prompts for the image generator, and suggested text overlays perfectly timed for short-form content.",
-      safetyTitle: "Brand safety",
+        "Every tool produces production-ready output. Describe what you need in plain language and get campaign-grade images, videos, or social content.",
+      safetyTitle: "Your assets stay yours",
       safetyDescription:
-        "Strict policies ensure your product imagery remains secure. We do not train foundational models on your private brand assets or generations.",
-      avatarsTitle: "Consistent Avatars",
+        "We never train on your brand assets or generations. Your uploads and outputs are private and secure.",
+      avatarsTitle: "Brand consistency",
       avatarsDescription:
-        "Upload a reference photo of your brand spokesperson and our pipeline ensures their likeness is maintained across generated scenes.",
+        "Upload your brand kit once and every generation stays on-brand. Logos, colors, and voice carry across all tools automatically.",
       heroImageAlt: "SoftAI dashboard interface",
       storyboardImageAlt: "Storyboard scene editor interface",
       renderingImageAlt: "Rendering progress interface",
       heroOverlay: {
-        headline: "Launch a 9:16 product ad for the spring offer.",
-        tags: "Product reshoot, create ad, social crop",
+        headline: "Product reshoot for a skincare launch.",
+        tags: "Image editor, create ad, social crop",
       },
       heroThumbnails: {
         referenceProduct: "Reference product",
@@ -124,20 +124,37 @@ export const dictionaries = {
         shortVideoCut: "Short video cut",
       },
       workflow: {
-        step1Title: "Choose a focused tool",
+        step1Title: "Pick a focused tool",
         step1Description:
-          "Start from a real production task: image edit, product reshoot, mockup, ad creative, or multi-shot video.",
+          "Start from a real production task: image edit, product reshoot, mockup, ad creative, social post, or multi-shot video.",
         step2Title: "Add the product context",
         step2Description:
-          "Upload a reference when needed, write the commercial direction, then pick the crop that matches the channel.",
+          "Upload a reference when needed, write the creative direction, then pick the crop that matches the channel.",
         step3Title: "Generate campaign assets",
         step3Description:
           "Open the finished project, review outputs, and keep billing, settings, and exports one click away.",
       },
       tools: {
-        heading: "Implemented production tools",
-        browseCta: "Browse tools",
+        heading: "Production-ready tools",
+        browseCta: "Browse all tools",
       },
+    },
+    featuresPage: {
+      heroTitle: "Everything you need to ship campaigns.",
+      heroDescription:
+        "From product photos to finished ads — 26 AI tools organized by what you actually need to do.",
+      cta: "Get started",
+      pricingCta: "See pricing",
+      kitLabel: "Starter Kit",
+      allFeatures: "All features",
+      forLabel: "Built for",
+      marketingAudience: "Small business owners & marketers",
+      socialAudience: "Social media managers & content creators",
+      filmAudience: "Filmmakers & short-form video creators",
+      educationAudience: "Educators & course creators",
+      artAudience: "Artists & creative directors",
+      imageAudience: "Designers & product photographers",
+      videoAudience: "Anyone producing video content",
     },
     library: {
       title: "Library",
@@ -894,43 +911,43 @@ export const dictionaries = {
       updated: "آخر تحديث",
     },
     marketing: {
-      heroTitle: "حوّل وصف منتجك إلى إعلان فيديو جاهز.",
+      heroTitle: "استوديو واحد لكل ما يحتاجه عملك الإبداعي.",
       heroDescription:
-        "ارفع صور المنتج، اكتب النص أو الفكرة، واحصل على حملات فيديو قصيرة مناسبة لتيك توك وإنستغرام، من دون الحاجة لتعلّم محرر فيديو معقد.",
+        "ولّد صور منتجات، إعلانات إبداعية، منشورات سوشيال، فيديوهات قصيرة، ومحتوى تعليمي من لوحة تحكم واحدة. 26 أداة ذكاء اصطناعي، بدون مهارات تصميم.",
       dashboardCta: "اذهب إلى لوحة التحكم",
       startCta: "ابدأ الآن",
       pricingCta: "عرض الأسعار",
-      statSpeed: "إنتاج أسرع",
-      statFormat: "صيغة أصلية للمنصات",
-      statControl: "تحكم كامل بالعلامة",
+      statSpeed: "دقائق لا أيام",
+      statFormat: "مخرجات جاهزة للمنصات",
+      statControl: "علامتك، قواعدك",
       howTitle: "كيف يعمل؟",
       howDescription:
-        "صممنا سير العمل لأصحاب الأعمال والفرق الصغيرة التي تريد إطلاق حملات بسرعة، لا قضاء الوقت في أدوات مونتاج معقدة.",
-      stepBriefTitle: "أنشئ الموجز",
+        "مصمّم لأصحاب الأعمال الذين يحتاجون نتائج، ليس دروساً. اختر أداة، أضف سياقك، واحصل على أصول جاهزة للإنتاج.",
+      stepBriefTitle: "اختر أداة",
       stepBriefDescription:
-        "حدد الجمهور، العرض، ونبرة العلامة. أضف مسودة النص وارفع صور المنتج الأساسية.",
-      stepReviewTitle: "راجع الستوري بورد",
+        "اختر من 26 أداة مُركّزة: إعادة تصوير منتج، إعلانات إبداعية، منشورات سوشيال، فيديوهات قصيرة، كاروسيلات، موك أب والمزيد.",
+      stepReviewTitle: "أضف سياقك",
       stepReviewDescription:
-        "ننشئ مخططاً مشهداً بمشهد. يمكنك تعديل النص الصوتي وتوجيهات الصورة قبل بدء التوليد.",
+        "ارفع صورة مرجعية، صف ما تريد، واختر الصيغة المناسبة للمنصة المستهدفة.",
       stepRenderTitle: "ولّد وصدّر",
       stepRenderDescription:
-        "ينتج النظام المشاهد، يجهز النص الصوتي، ويعطيك فيديو نهائي مناسب لمنصات الإعلان.",
-      featuresTitle: "كل ما تحتاجه لإطلاق الإعلان",
-      storyboardTitle: "ستوري بورد تلقائي",
+        "احصل على أصولك المكتملة في ثوانٍ. حمّل أو شارك أو أرسل مباشرة إلى منصة الإعلان.",
+      featuresTitle: "كل ما تحتاجه لإطلاق الحملات",
+      storyboardTitle: "توليد بالذكاء الاصطناعي",
       storyboardDescription:
-        "يقسم النظام موجزك إلى مشاهد مناسبة للإيقاع، وينشئ افتتاحية قوية، وتوجيهات للصورة، ونصوصاً ظاهرة مضبوطة للمحتوى القصير.",
-      safetyTitle: "أمان العلامة",
+        "كل أداة تنتج مخرجات جاهزة للإنتاج. صف ما تحتاجه بسيطة واحصل على صور أو فيديو أو محتوى سوشيال بجودة الحملات الإعلانية.",
+      safetyTitle: "أصولك تبقى خاصة بك",
       safetyDescription:
-        "سياسات واضحة تحافظ على أصول علامتك. لا نستخدم صورك الخاصة أو المخرجات لتدريب النماذج الأساسية.",
-      avatarsTitle: "شخصيات متسقة",
+        "لا نستخدم أصول علامتك أو مخرجاتك أبداً لتدريب النماذج. رفعاتك ومخرجاتك خاصة وآمنة.",
+      avatarsTitle: "استمرارية العلامة",
       avatarsDescription:
-        "ارفع صورة مرجعية لمتحدث علامتك، وسيساعدك النظام على الحفاظ على ملامحه بشكل متسق عبر المشاهد.",
+        "ارفع هوية علامتك مرة واحدة وستبقى كل التوليدات متوافقة معها. الشعارات والألوان والنبرة تنتقل تلقائياً عبر جميع الأدوات.",
       heroImageAlt: "واجهة لوحة تحكم SoftAI",
       storyboardImageAlt: "واجهة تحرير مشاهد الستوري بورد",
       renderingImageAlt: "واجهة تقدم التوليد",
       heroOverlay: {
-        headline: "أطلق إعلان منتج 9:16 لعرض الربيع.",
-        tags: "إعادة تصوير المنتج، إنشاء إعلان، قصص للسوشال",
+        headline: "إعادة تصوير منتج لخط عناية بالبشرة.",
+        tags: "محرر صور، إنشاء إعلان، قص للسوشيال",
       },
       heroThumbnails: {
         referenceProduct: "صورة المنتج المرجعية",
@@ -940,18 +957,35 @@ export const dictionaries = {
       workflow: {
         step1Title: "اختر أداة مُركّزة",
         step1Description:
-          "ابدأ من مهمة إنتاج حقيقية: تحرير صورة، إعادة تصوير منتج، موك أب، إعلان إبداعي، أو فيديو متعدد المشاهد.",
+          "ابدأ من مهمة إنتاج حقيقية: تحرير صورة، إعادة تصوير منتج، موك أب، إعلان إبداعي، منشور سوشيال، أو فيديو متعدد المشاهد.",
         step2Title: "أضف سياق المنتج",
         step2Description:
-          "ارفع صورة مرجعية عند الحاجة، اكتب التوجيه التجاري، ثم اختر القصّة المناسبة للمنصة.",
+          "ارفع صورة مرجعية عند الحاجة، اكتب التوجيه الإبداعي، ثم اختر الصيغة المناسبة للقناة.",
         step3Title: "ولّد أصول الحملة",
         step3Description:
           "افتح المشروع المكتمل، راجع المخرجات، واحتفظ بالفوترة والإعدادات والتصدير بنقرة واحدة.",
       },
       tools: {
-        heading: "أدوات إنتاج منجزة",
-        browseCta: "تصفح الأدوات",
+        heading: "أدوات جاهزة للإنتاج",
+        browseCta: "تصفح جميع الأدوات",
       },
+    },
+    featuresPage: {
+      heroTitle: "كل ما تحتاجه لإطلاق الحملات.",
+      heroDescription:
+        "من صور المنتجات إلى الإعلانات النهائية — 26 أداة ذكاء اصطناعي مصنّفة حسب ما تحتاج فعله فعلاً.",
+      cta: "ابدأ الآن",
+      pricingCta: "عرض الأسعار",
+      kitLabel: "مجموعة أدوات",
+      allFeatures: "جميع الميزات",
+      forLabel: "مصمّم لـ",
+      marketingAudience: "أصحاب الأعمال الصغيرة والمسوّقون",
+      socialAudience: "مدراء السوشيال ومصنعو المحتوى",
+      filmAudience: "صانعو الأفلام ومحتوى الفيديو القصير",
+      educationAudience: "المعلمون ومصنعو الدورات",
+      artAudience: "الفنانون والمديرون الإبداعيون",
+      imageAudience: "المصممون ومصورو المنتجات",
+      videoAudience: "أي شخص ينتج محتوى فيديو",
     },
     library: {
       title: "المكتبة",

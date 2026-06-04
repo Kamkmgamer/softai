@@ -1,12 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Brush,
-  CheckCircle2,
-  ImageIcon,
-  Layers3,
-} from "lucide-react";
+import { ArrowRight, Brush, ImageIcon, Layers3 } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
