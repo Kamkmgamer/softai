@@ -171,7 +171,7 @@ export default async function MarketingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-300 px-6 py-16 lg:py-24">
+        <section id="tools" className="mx-auto max-w-300 px-6 py-16 lg:py-24">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="text-3xl font-semibold tracking-tight text-text">

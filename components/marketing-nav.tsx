@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { getDictionary } from "@/lib/dictionaries";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -41,8 +42,15 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-8 sm:flex">
+        <nav className="flex items-center gap-6 app-hide-on-mobile">
           <LanguageSwitcher />
+          <ThemeToggle />
+          <Link
+            href="#tools"
+            className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
+          >
+            {dictionary.shared.features}
+          </Link>
           <Link
             href={localizePath("/pricing", locale)}
             className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
@@ -52,7 +60,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
           {hasAccess ? (
             <Link
               href={localizePath("/dashboard", locale)}
-              className="btn-primary"
+              className="btn btn-primary"
             >
               {dictionary.app.dashboard}
             </Link>
@@ -66,7 +74,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
               </Link>
               <Link
                 href={localizePath("/sign-up", locale)}
-                className="btn-primary"
+                className="btn btn-primary"
               >
                 {dictionary.shared.signUp}
               </Link>
@@ -79,7 +87,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
           type="button"
           aria-expanded={mobileMenuOpen}
           aria-controls="marketing-mobile-menu"
-          className="sm:hidden -m-2 p-2 text-text-secondary hover:text-text transition-colors"
+          className="app-hide-on-desktop -m-2 p-2 text-text-secondary hover:text-text transition-colors"
           onClick={() => setMobileMenuOpen((open) => !open)}
         >
           <span className="sr-only">{dictionary.app.openNavigation}</span>
@@ -95,10 +103,20 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
       {mobileMenuOpen && (
         <div
           id="marketing-mobile-menu"
-          className="sm:hidden border-t border-border bg-surface px-6 py-4 shadow-(--shadow-sm)"
+          className="app-hide-on-desktop border-t border-border bg-surface px-6 py-4 shadow-(--shadow-sm)"
         >
           <nav className="flex flex-col gap-4">
-            <LanguageSwitcher className="w-fit" />
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher className="w-fit" />
+              <ThemeToggle />
+            </div>
+            <Link
+              href="#tools"
+              className="text-[15px] font-medium text-text-secondary hover:text-text transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {dictionary.shared.features}
+            </Link>
             <Link
               href={localizePath("/pricing", locale)}
               className="text-[15px] font-medium text-text-secondary hover:text-text transition-colors"
@@ -110,7 +128,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
               {hasAccess ? (
                 <Link
                   href={localizePath("/dashboard", locale)}
-                  className="btn-primary w-full justify-center"
+                  className="btn btn-primary w-full justify-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {dictionary.shared.dashboard}
@@ -119,14 +137,14 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
                 <div className="flex flex-col gap-3">
                   <Link
                     href={localizePath("/sign-in", locale)}
-                    className="btn-secondary w-full justify-center"
+                    className="btn btn-secondary w-full justify-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {dictionary.shared.logIn}
                   </Link>
                   <Link
                     href={localizePath("/sign-up", locale)}
-                    className="btn-primary w-full justify-center"
+                    className="btn btn-primary w-full justify-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {dictionary.shared.signUp}
