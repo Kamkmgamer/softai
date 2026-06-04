@@ -20,6 +20,7 @@ import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
   localizePath,
+  type Locale,
 } from "@/lib/i18n";
 import { CREDIT_COSTS } from "@/lib/constants";
 
@@ -268,7 +269,7 @@ function SubscribeStep({
   onBack,
   onComplete,
 }: {
-  locale: string;
+  locale: Locale;
   onBack: () => void;
   onComplete: () => void;
 }) {
