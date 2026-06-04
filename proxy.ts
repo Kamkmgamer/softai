@@ -52,7 +52,7 @@ function handleLocale(request: NextRequest) {
   return NextResponse.redirect(url);
 }
 
-export default clerkMiddleware((_auth, request) => handleLocale(request));
+export const proxy = clerkMiddleware((_auth, request) => handleLocale(request));
 
 export const config = {
   matcher: [
