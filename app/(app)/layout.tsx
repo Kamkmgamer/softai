@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PageTransition } from "@/components/page-transition";
 import { getAppSession } from "@/lib/auth";
-import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, localizePath, stripLocaleFromPathname } from "@/lib/i18n";
+import { hasActiveSubscription } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,22 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     }
     throw error;
   });
+
+  const pathname = headerList.get("x-pathname") || "";
+  const unlocalizedPathname = stripLocaleFromPathname(pathname);
+  
+  const isAllowedWithoutSub = 
+    unlocalizedPathname === "/onboarding" ||
+    unlocalizedPathname.startsWith("/billing") ||
+    unlocalizedPathname.startsWith("/payments") ||
+    unlocalizedPathname.startsWith("/settings");
+
+  if (!isAllowedWithoutSub) {
+    const hasSub = await hasActiveSubscription(session.userId);
+    if (!hasSub) {
+      redirect(localizePath("/onboarding", locale));
+    }
+  }
   return (
     <div className="softai-shell flex min-h-dvh bg-bg text-text max-lg:flex-col lg:h-dvh lg:overflow-hidden">
       <AppSidebar isAdmin={session.isAdmin} />

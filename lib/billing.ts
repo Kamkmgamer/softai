@@ -1,9 +1,9 @@
-import { DEFAULT_MONTHLY_CREDITS, DEFAULT_PLAN_NAME } from "@/lib/constants";
+import { DEFAULT_PLAN_NAME } from "@/lib/constants";
 import type { SubscriptionRecord } from "@/lib/types";
 
 export const BILLING_PLANS = [
-  { slug: "free_user", name: "Free", monthlyCredits: DEFAULT_MONTHLY_CREDITS },
-  { slug: "starter", name: "Starter", monthlyCredits: DEFAULT_MONTHLY_CREDITS },
+  { slug: "none", name: "No Plan", monthlyCredits: 0 },
+  { slug: "starter", name: "Starter", monthlyCredits: 1000 },
   { slug: "pro", name: "Pro", monthlyCredits: 2500 },
   { slug: "growth", name: "Growth", monthlyCredits: 5000 },
   { slug: "business", name: "Business", monthlyCredits: 8500 },

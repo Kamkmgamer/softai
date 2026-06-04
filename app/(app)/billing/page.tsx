@@ -20,7 +20,7 @@ function localizeBillingNote(
   if (locale !== "ar") return note;
   const notes: Record<string, string> = {
     "Onboarding credits": dictionary.billing.onboardingCredits,
-    "Free plan monthly grant": dictionary.billing.monthlyGrant,
+    "Starter plan monthly grant": dictionary.billing.monthlyGrant,
     "Generated starter storyboard": dictionary.billing.starterStoryboard,
     "Storyboard generation": dictionary.billing.storyboardGeneration,
     "Image generation hold": dictionary.billing.imageHold,
@@ -41,7 +41,6 @@ function localizeBillingNote(
 function localizePlanName(plan: string, locale: Locale) {
   if (locale !== "ar") return plan;
   const plans: Record<string, string> = {
-    Free: "مجانية",
     Starter: "البداية",
     Pro: "احترافية",
     Growth: "النمو",

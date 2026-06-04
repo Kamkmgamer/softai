@@ -32,6 +32,7 @@ function handleLocale(request: NextRequest) {
 
   if (pathnameLocale) {
     requestHeaders.set("x-softai-locale", pathnameLocale);
+    requestHeaders.set("x-pathname", pathname);
     const response = NextResponse.next({ request: { headers: requestHeaders } });
     response.cookies.set(LOCALE_COOKIE, pathnameLocale, {
       path: "/",

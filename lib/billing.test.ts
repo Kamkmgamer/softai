@@ -7,15 +7,15 @@ import {
 } from "./billing";
 
 describe("billing plans", () => {
-  it("normalizes known plan slugs and falls back to free user", () => {
+  it("normalizes known plan slugs and falls back to no plan", () => {
     expect(normalizeBillingPlanSlug(" PRO ")).toBe("pro");
-    expect(normalizeBillingPlanSlug("unknown-plan")).toBe("free_user");
+    expect(normalizeBillingPlanSlug("unknown-plan")).toBe("none");
   });
 
   it("returns display names and credit amounts", () => {
     expect(getBillingPlanDisplayName("growth")).toBe("Growth");
     expect(getMonthlyCreditsForPlan("scale")).toBe(12000);
-    expect(getMonthlyCreditsForPlan("unknown-plan")).toBe(1000);
+    expect(getMonthlyCreditsForPlan("unknown-plan")).toBe(0);
   });
 });
 

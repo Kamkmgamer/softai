@@ -8,7 +8,6 @@ export const softaiArabicClerkLocalization = {
   billing: {
     ...arSA.billing,
     addPaymentMethod__label: "إضافة طريقة دفع",
-    alwaysFree: "مجانية دائماً",
     annually: "سنوياً",
     availableFeatures: "المزايا المتاحة",
     billedAnnually: "تدفع سنوياً",
@@ -18,8 +17,6 @@ export const softaiArabicClerkLocalization = {
     cancelSubscriptionTitle: "إلغاء اشتراك {{plan}}؟",
     checkout: { ...arSA.billing?.checkout, perMonth: "شهرياً", title: "الدفع", title__subscriptionSuccessful: "تم الاشتراك بنجاح" },
     credit: "رصيد",
-    defaultFreePlanActive: "أنت حالياً على الخطة المجانية",
-    free: "مجانية",
     getStarted: "ابدأ الآن",
     manage: "إدارة",
     manageSubscription: "إدارة الاشتراك",

@@ -5,6 +5,6 @@ export const CREDIT_COSTS = {
   videoRender: 300,
 } as const;
 
-export const DEFAULT_MONTHLY_CREDITS = 1000;
-export const DEFAULT_PLAN_NAME = "free_user";
+export const DEFAULT_MONTHLY_CREDITS = 0;
+export const DEFAULT_PLAN_NAME = "none";
 export const SOFTAI_METADATA_TAG = "softai-generated-ad";

@@ -131,12 +131,12 @@ function createSeedStore(): DatabaseState {
       {
         id: "sub_demo_1",
         userId,
-        plan: DEFAULT_PLAN_NAME,
+        plan: "starter",
         status: "active",
         clerkPayerId: null,
         clerkSubscriptionId: null,
         currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
-        monthlyCredits: DEFAULT_MONTHLY_CREDITS,
+        monthlyCredits: 1000,
       },
     ],
     clerkWebhookEvents: [],
@@ -146,8 +146,8 @@ function createSeedStore(): DatabaseState {
         userId,
         projectId: null,
         reason: "grant",
-        amount: DEFAULT_MONTHLY_CREDITS,
-        note: "Free plan monthly grant",
+        amount: 1000,
+        note: "Starter plan monthly grant",
         createdAt,
       },
       {
@@ -579,20 +579,11 @@ export async function upsertUser(input: Pick<UserRecord, "clerkUserId" | "email"
       id: randomUUID(),
       userId: created.id,
       plan: DEFAULT_PLAN_NAME,
-      status: "trialing",
+      status: "inactive",
       clerkPayerId: null,
       clerkSubscriptionId: null,
       currentPeriodEnd: null,
       monthlyCredits: DEFAULT_MONTHLY_CREDITS,
-    });
-    state.creditLedger.push({
-      id: randomUUID(),
-      userId: created.id,
-      projectId: null,
-      reason: "grant",
-      amount: DEFAULT_MONTHLY_CREDITS,
-      note: "Onboarding credits",
-      createdAt: now(),
     });
     return created;
   }
@@ -642,20 +633,11 @@ export async function upsertUser(input: Pick<UserRecord, "clerkUserId" | "email"
       id: randomUUID(),
       userId: user.id,
       plan: DEFAULT_PLAN_NAME,
-      status: "trialing",
+      status: "inactive",
       clerkPayerId: null,
       clerkSubscriptionId: null,
       currentPeriodEnd: null,
       monthlyCredits: DEFAULT_MONTHLY_CREDITS,
-    });
-    await db.insert(schema.creditLedger).values({
-      id: randomUUID(),
-      userId: user.id,
-      projectId: null,
-      reason: "grant",
-      amount: DEFAULT_MONTHLY_CREDITS,
-      note: "Onboarding credits",
-      createdAt: new Date(),
     });
   }
 
@@ -1831,6 +1813,15 @@ export async function getUserSubscription(userId: string) {
     orderBy: [desc(schema.subscriptions.currentPeriodEnd)],
   });
   return row ? mapSubscription(row) : null;
+}
+
+export async function hasActiveSubscription(userId: string) {
+  const subscription = await getUserSubscription(userId);
+  if (!subscription) return false;
+  return (
+    subscription.plan !== DEFAULT_PLAN_NAME &&
+    (subscription.status === "active" || subscription.status === "trialing")
+  );
 }
 
 export async function claimClerkWebhookEvent(eventId: string, type: string) {
