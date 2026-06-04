@@ -9,7 +9,7 @@ export default function NewProjectPage() {
         <ProjectCreationForm />
       </section>
 
-      <section className="relative flex min-h-155 items-center justify-center px-5 py-12 lg:px-10">
+      <section className="relative flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-5 py-12 lg:px-10">
         <div className="w-full max-w-282.5 rounded-[18px] bg-surface p-6 shadow-(--shadow-lg) ring-1 ring-border">
           <div className="mb-5 space-y-2">
             <h1 className="text-2xl font-semibold tracking-[-0.04em] text-text">

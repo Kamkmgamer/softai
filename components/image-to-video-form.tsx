@@ -244,7 +244,7 @@ export function ImageToVideoForm() {
         </div>
       </aside>
 
-      <section className="relative min-h-155 overflow-hidden bg-bg-subtle px-5 py-12 app-hide-on-mobile lg:px-10">
+      <section className="relative min-h-0 flex-1 overflow-y-auto bg-bg-subtle px-5 py-12 app-hide-on-mobile lg:px-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,oklch(0.72_0.11_67_/_0.18),transparent_30%),radial-gradient(circle_at_88%_18%,oklch(0.58_0.13_252_/_0.18),transparent_28%)]" />
         <div className="relative mx-auto flex min-h-full max-w-245 flex-col justify-center space-y-8">
           <div>
