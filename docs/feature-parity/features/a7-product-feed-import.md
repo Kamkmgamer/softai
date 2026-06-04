@@ -14,11 +14,11 @@ Ecommerce sellers, retailers, agencies, and catalog-heavy SMBs.
 
 #### Why It Matters
 
-Softai can become much more powerful for product businesses if users can generate campaign assets in batches.
+Soft-Magic AI can become much more powerful for product businesses if users can generate campaign assets in batches.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users import product names, descriptions, prices, images, categories, and URLs. Softai creates product profiles and batch-generates photos, ads, and videos.
+Users import product names, descriptions, prices, images, categories, and URLs. Soft-Magic AI creates product profiles and batch-generates photos, ads, and videos.
 
 #### Implementation Requirements
 

@@ -14,9 +14,9 @@ Small business owners, solo founders, creators, and early-stage operators.
 
 #### Why It Matters
 
-This could support Softai users before campaign creation, helping them clarify offer, audience, positioning, and pricing.
+This could support Soft-Magic AI users before campaign creation, helping them clarify offer, audience, positioning, and pricing.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users create a business profile and chat with a coach. The coach can recommend campaigns, improve offers, suggest ad angles, and identify missing assets.
 

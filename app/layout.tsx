@@ -31,8 +31,8 @@ const notoNaskhArabic = Noto_Naskh_Arabic({
 
 export const metadata: Metadata = {
   title: {
-    default: "SoftAI – AI Ad Video Studio",
-    template: "%s – SoftAI",
+    default: "Soft-Magic AI – AI Ad Video Studio",
+    template: "%s – Soft-Magic AI",
   },
   description:
     "Turn product briefs, brand assets, and scripts into short-form ad video campaigns. Built for SMB operators.",

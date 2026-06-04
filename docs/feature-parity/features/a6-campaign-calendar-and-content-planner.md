@@ -16,9 +16,9 @@ SMB owners, social media managers, agencies, and content teams.
 
 Users need ongoing campaigns, not one-off outputs. A planner increases retention and gives users a reason to come back.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users choose business goal, channels, posting frequency, and campaign dates. Softai generates a calendar with recommended assets and lets users create each asset from the plan.
+Users choose business goal, channels, posting frequency, and campaign dates. Soft-Magic AI generates a calendar with recommended assets and lets users create each asset from the plan.
 
 #### Implementation Requirements
 

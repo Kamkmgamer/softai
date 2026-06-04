@@ -21,7 +21,7 @@ pnpm is the Package Manager of choice on this  repo.
 
 ## Project Snapshot
 
-Softai is an AI media generation web application used to generate images and videos. The primary target audience for this application are small business owners that are looking for a cheap way to generate advertisements for their product. 
+Soft-Magic AI is an AI media generation web application used to generate images and videos. The primary target audience for this application are small business owners that are looking for a cheap way to generate advertisements for their product. 
 
 ## Core Priorities
 

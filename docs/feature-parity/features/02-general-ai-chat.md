@@ -10,15 +10,15 @@ A conversational AI assistant for writing, summarization, brainstorming, Q&A, an
 
 #### Target Users
 
-Users who want a simple ChatGPT-like assistant inside Softai instead of switching tools.
+Users who want a simple ChatGPT-like assistant inside Soft-Magic AI instead of switching tools.
 
 #### Why It Matters
 
 General chat can increase session time and reduce context switching. It can also support campaign planning, script brainstorming, and prompt improvement.
 
-However, generic chat is crowded and does not directly differentiate Softai unless tied to campaign workflows.
+However, generic chat is crowded and does not directly differentiate Soft-Magic AI unless tied to campaign workflows.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Add `/tools/chat` or an assistant panel inside projects. Users can ask for campaign ideas, rewrite offers, summarize product notes, improve scripts, generate angles, or ask operational questions.
 

@@ -16,9 +16,9 @@ Social media managers, coaches, educators, agencies, founders, and SMBs that pos
 
 Carousels are a common marketing format and less expensive to generate than video. They can help users create campaign assets around the same brief used for videos.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users enter a topic, audience, goal, tone, number of slides, and optional brand assets. Softai generates a slide outline, writes slide copy, renders the carousel, and lets users download each slide or a ZIP/PDF.
+Users enter a topic, audience, goal, tone, number of slides, and optional brand assets. Soft-Magic AI generates a slide outline, writes slide copy, renders the carousel, and lets users download each slide or a ZIP/PDF.
 
 Example carousel types:
 

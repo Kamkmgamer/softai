@@ -85,7 +85,7 @@ describe("submitVideoRender", () => {
     ));
     vi.stubGlobal("fetch", fetchMock);
 
-    await submitVideoRender("Make a polished vertical ad", ["https://example.com/scene-1.png", "https://example.com/scene-2.png"]);
+    await submitVideoRender("Make a polished vertical ad", ["https://ai.soft-magic.com/scene-1.png", "https://ai.soft-magic.com/scene-2.png"]);
 
     const [, init] = fetchMock.mock.calls[0];
     const body = JSON.parse(init?.body as string);
@@ -96,8 +96,8 @@ describe("submitVideoRender", () => {
       duration: 4,
       size: "720x1280",
       input_references: [
-        { type: "image_url", image_url: { url: "https://example.com/scene-1.png" } },
-        { type: "image_url", image_url: { url: "https://example.com/scene-2.png" } },
+        { type: "image_url", image_url: { url: "https://ai.soft-magic.com/scene-1.png" } },
+        { type: "image_url", image_url: { url: "https://ai.soft-magic.com/scene-2.png" } },
       ],
     });
     expect(body).not.toHaveProperty("callback_url");
@@ -108,7 +108,7 @@ describe("submitVideoRender", () => {
 
   it("sends callback_url for public HTTPS app URLs", async () => {
     vi.stubEnv("OPENROUTER_API_KEY", "test-key");
-    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://softai.example");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://ai.soft-magic.com");
 
     const fetchMock = vi.fn<typeof fetch>(async () => new Response(
       JSON.stringify({ id: "video-job", status: "pending", polling_url: "https://openrouter.ai/poll/video-job" }),
@@ -116,12 +116,12 @@ describe("submitVideoRender", () => {
     ));
     vi.stubGlobal("fetch", fetchMock);
 
-    await submitVideoRender("Make a polished vertical ad", ["https://example.com/scene.png"]);
+    await submitVideoRender("Make a polished vertical ad", ["https://ai.soft-magic.com/scene.png"]);
 
     const [, init] = fetchMock.mock.calls[0];
     const body = JSON.parse(init?.body as string);
 
-    expect(body.callback_url).toBe("https://softai.example/api/webhooks/openrouter");
+    expect(body.callback_url).toBe("https://ai.soft-magic.com/api/webhooks/openrouter");
   });
 
   it("adds strict first-frame instructions for anchored image-to-video renders", async () => {
@@ -135,7 +135,7 @@ describe("submitVideoRender", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await submitVideoRender("Add a slow camera push", [
-      { url: "https://example.com/start.png", role: "first_frame" },
+      { url: "https://ai.soft-magic.com/start.png", role: "first_frame" },
     ]);
 
     const [, init] = fetchMock.mock.calls[0];
@@ -144,7 +144,7 @@ describe("submitVideoRender", () => {
     expect(body.prompt).toContain("exact opening frame");
     expect(body.prompt).toContain("Add a slow camera push");
     expect(body.input_references).toEqual([
-      { type: "image_url", image_url: { url: "https://example.com/start.png" } },
+      { type: "image_url", image_url: { url: "https://ai.soft-magic.com/start.png" } },
     ]);
   });
 
@@ -159,8 +159,8 @@ describe("submitVideoRender", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await submitVideoRender("Bridge the two product photos", [
-      { url: "https://example.com/start.png", role: "first_frame" },
-      { url: "https://example.com/end.png", role: "last_frame" },
+      { url: "https://ai.soft-magic.com/start.png", role: "first_frame" },
+      { url: "https://ai.soft-magic.com/end.png", role: "last_frame" },
     ]);
 
     const [, init] = fetchMock.mock.calls[0];
@@ -170,8 +170,8 @@ describe("submitVideoRender", () => {
     expect(body.prompt).toContain("exact ending frame");
     expect(body.prompt).toContain("hard anchors");
     expect(body.input_references).toEqual([
-      { type: "image_url", image_url: { url: "https://example.com/start.png" } },
-      { type: "image_url", image_url: { url: "https://example.com/end.png" } },
+      { type: "image_url", image_url: { url: "https://ai.soft-magic.com/start.png" } },
+      { type: "image_url", image_url: { url: "https://ai.soft-magic.com/end.png" } },
     ]);
   });
 
@@ -182,14 +182,14 @@ describe("submitVideoRender", () => {
       JSON.stringify({
         id: "video-job",
         status: "completed",
-        unsigned_urls: [{ url: "https://cdn.example.com/final.mp4" }],
+        unsigned_urls: [{ url: "https://cdn.ai.soft-magic.com/final.mp4" }],
       }),
       { status: 200 },
     )));
 
     const result = await submitVideoRender("Make a polished vertical ad", []);
 
-    expect(result.url).toBe("https://cdn.example.com/final.mp4");
+    expect(result.url).toBe("https://cdn.ai.soft-magic.com/final.mp4");
   });
 });
 
@@ -204,14 +204,14 @@ describe("pollVideoStatus", () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(
       JSON.stringify({
         status: "completed",
-        unsigned_urls: [{ url: "https://cdn.example.com/final.mp4" }],
+        unsigned_urls: [{ url: "https://cdn.ai.soft-magic.com/final.mp4" }],
       }),
       { status: 200 },
     )));
 
     await expect(pollVideoStatus("https://openrouter.ai/poll/video-job")).resolves.toMatchObject({
       status: "completed",
-      url: "https://cdn.example.com/final.mp4",
+      url: "https://cdn.ai.soft-magic.com/final.mp4",
     });
   });
 });

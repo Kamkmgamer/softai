@@ -6,7 +6,7 @@
 
 #### Description
 
-Users enter or import performance data from ad platforms. Softai analyzes winning and losing creatives and recommends new variants.
+Users enter or import performance data from ad platforms. Soft-Magic AI analyzes winning and losing creatives and recommends new variants.
 
 #### Target Users
 
@@ -14,11 +14,11 @@ Performance marketers, agencies, ecommerce brands, and app marketers.
 
 #### Why It Matters
 
-This turns Softai from a generation tool into a creative optimization system.
+This turns Soft-Magic AI from a generation tool into a creative optimization system.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users upload CSV reports or connect ad accounts. Softai maps results to creative assets, identifies patterns, and generates the next test batch.
+Users upload CSV reports or connect ad accounts. Soft-Magic AI maps results to creative assets, identifies patterns, and generates the next test batch.
 
 #### Implementation Requirements
 
@@ -30,6 +30,6 @@ Users upload CSV reports or connect ad accounts. Softai maps results to creative
 
 #### MVP Scope
 
-CSV upload for Meta/TikTok performance reports and manual mapping to Softai outputs.
+CSV upload for Meta/TikTok performance reports and manual mapping to Soft-Magic AI outputs.
 
 ---

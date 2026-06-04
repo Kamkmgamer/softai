@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai can monetize expensive AI jobs predictably while protecting users from failed paid generations.
+Soft-Magic AI can monetize expensive AI jobs predictably while protecting users from failed paid generations.
 
 ## Users
 

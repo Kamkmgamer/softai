@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Users can add background music and sound effects that fit their ad without leaving Softai.
+Users can add background music and sound effects that fit their ad without leaving Soft-Magic AI.
 
 ## Users
 
@@ -23,7 +23,7 @@ Creators, marketers, agencies, small businesses.
 
 ## User Flow
 
-User selects “upbeat ecommerce music,” previews options, adds one to the video, and Softai balances it under the voiceover.
+User selects “upbeat ecommerce music,” previews options, adds one to the video, and Soft-Magic AI balances it under the voiceover.
 
 ## Data Model
 

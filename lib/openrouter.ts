@@ -135,15 +135,15 @@ function normalizeStoryboard(value: unknown, input: StoryboardInput) {
 
 export function buildSceneImagePrompt(input: SceneImagePromptInput) {
   const languageConstraint = input.language === "ar"
-    ? "Arabic RTL copy will be added later by SoftAI. Do not render Arabic letters, pseudo-Arabic, English words, subtitles, captions, signs, labels, logos, UI text, watermarks, or any readable text inside the image."
-    : "Copy will be added later by SoftAI. Do not render English words, subtitles, captions, signs, labels, logos, UI text, watermarks, or any readable text inside the image.";
+    ? "Arabic RTL copy will be added later by Soft-Magic AI. Do not render Arabic letters, pseudo-Arabic, English words, subtitles, captions, signs, labels, logos, UI text, watermarks, or any readable text inside the image."
+    : "Copy will be added later by Soft-Magic AI. Do not render English words, subtitles, captions, signs, labels, logos, UI text, watermarks, or any readable text inside the image.";
 
   return [
     "Create a polished vertical 9:16 advertising scene plate for a short-form video.",
     `Campaign headline context: ${input.headline}.`,
     `Scene visual direction: ${input.visualDirection}.`,
     "Make it photorealistic or premium commercial-style, motion-ready, and suitable as a reference frame for video generation.",
-    "Leave intentional clean negative space where SoftAI can composite text overlays after generation.",
+    "Leave intentional clean negative space where Soft-Magic AI can composite text overlays after generation.",
     languageConstraint,
   ].join(" ");
 }
@@ -175,7 +175,7 @@ export function buildFinalVideoPrompt(input: {
     `CTA: ${input.cta}.`,
     "Follow the scene order and preserve the product/brand visual continuity from the reference images.",
     "Use smooth commercial camera motion, clean transitions, realistic lighting, and ad-ready pacing.",
-    "Do not generate subtitles, captions, readable words, signage, labels, UI text, watermarks, or fake text inside video frames; SoftAI will add all overlays after rendering.",
+    "Do not generate subtitles, captions, readable words, signage, labels, UI text, watermarks, or fake text inside video frames; Soft-Magic AI will add all overlays after rendering.",
     languageInstruction,
     sceneInstructions,
   ].join("\n");
@@ -315,7 +315,7 @@ async function* fetchStreamCompletion(
       Authorization: `Bearer ${env.openRouterApiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": env.appUrl,
-      "X-Title": "SoftAI",
+      "X-Title": "Soft-Magic AI",
     },
     body: JSON.stringify({
       model,
@@ -484,7 +484,7 @@ export async function generateMultiShotStoryboard(input: MultiShotAutoInput) {
       Authorization: `Bearer ${env.openRouterApiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": env.appUrl,
-      "X-Title": "SoftAI",
+      "X-Title": "Soft-Magic AI",
     },
     body: JSON.stringify({
       model: getConfiguredTextModel(),
@@ -547,7 +547,7 @@ export async function generateStoryboard(input: StoryboardInput) {
       Authorization: `Bearer ${env.openRouterApiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": env.appUrl,
-      "X-Title": "SoftAI",
+      "X-Title": "Soft-Magic AI",
     },
     body: JSON.stringify({
         model: getConfiguredTextModel(),
@@ -599,7 +599,7 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
     messages: [
       {
         role: "user",
-        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image only. This is a clean scene plate for later video and overlay compositing. Absolutely no embedded text, typography, captions, subtitles, readable signs, labels, logos, UI text, watermarks, or fake letters. ${language === "ar" ? "Do not render Arabic words, pseudo-Arabic, or English words in the image. Leave clean negative space for SoftAI to add RTL Arabic overlays later." : "Leave clean negative space for SoftAI to add overlays later."} ${prompt}`,
+        content: `Generate one polished vertical 9:16 advertising scene image. Do not return analysis; return the image only. This is a clean scene plate for later video and overlay compositing. Absolutely no embedded text, typography, captions, subtitles, readable signs, labels, logos, UI text, watermarks, or fake letters. ${language === "ar" ? "Do not render Arabic words, pseudo-Arabic, or English words in the image. Leave clean negative space for Soft-Magic AI to add RTL Arabic overlays later." : "Leave clean negative space for Soft-Magic AI to add overlays later."} ${prompt}`,
       },
     ],
   };
@@ -611,7 +611,7 @@ export async function generateSceneImage(prompt: string, language: "en" | "ar" =
         Authorization: `Bearer ${env.openRouterApiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": env.appUrl,
-        "X-Title": "SoftAI",
+        "X-Title": "Soft-Magic AI",
       },
       body: JSON.stringify(body),
     });
@@ -703,7 +703,7 @@ export async function generateReferencedImage({
       Authorization: `Bearer ${env.openRouterApiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": env.appUrl,
-      "X-Title": "SoftAI",
+      "X-Title": "Soft-Magic AI",
     },
     body: JSON.stringify(requestPayload),
   });
@@ -830,7 +830,7 @@ export async function submitVideoRender(
       Authorization: `Bearer ${env.openRouterApiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": env.appUrl,
-      "X-Title": "SoftAI",
+      "X-Title": "Soft-Magic AI",
     },
     body: JSON.stringify({
       model: route.modelKey,

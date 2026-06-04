@@ -202,7 +202,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
             <span className="h-2 w-2 rounded-xs border border-current" />
             <span className="h-2 w-2 rounded-xs bg-accent" />
           </div>
-          <span className="text-sm font-semibold tracking-tight">SoftAI</span>
+          <span className="text-sm font-semibold tracking-tight">Soft-Magic AI</span>
         </Link>
 
         {/* Nav */}
@@ -238,7 +238,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
               S
             </div>
             <span className="text-sm font-semibold tracking-tight text-text">
-              SoftAI
+              Soft-Magic AI
             </span>
           </Link>
           <label className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border border-border bg-surface text-text-secondary transition-colors hover:border-border-strong hover:bg-surface-raised hover:text-text focus-visible:shadow-(--focus-ring)">
@@ -276,7 +276,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
                   S
                 </div>
                 <span className="text-sm font-semibold tracking-tight text-text">
-                  SoftAI
+                  Soft-Magic AI
                 </span>
               </Link>
               <label

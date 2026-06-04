@@ -14,11 +14,11 @@ New founders, small businesses, side projects, YouTube channels, social accounts
 
 #### Why It Matters
 
-Logo generation is attractive for new SMBs, but it is less directly connected to Softai's ad-video workflow than product photography or ads.
+Logo generation is attractive for new SMBs, but it is less directly connected to Soft-Magic AI's ad-video workflow than product photography or ads.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users enter business name, optional slogan, industry, style, color palette, and symbol ideas. Softai generates multiple logo directions. Users can download PNG/SVG-like outputs where possible and reuse the logo as a brand asset.
+Users enter business name, optional slogan, industry, style, color palette, and symbol ideas. Soft-Magic AI generates multiple logo directions. Users can download PNG/SVG-like outputs where possible and reuse the logo as a brand asset.
 
 #### Implementation Requirements
 

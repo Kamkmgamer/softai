@@ -1,4 +1,4 @@
-# SoftAI Design Context
+# Soft-Magic AI Design Context
 
 ## Register
 

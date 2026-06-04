@@ -14,11 +14,11 @@ B2B SMBs, agencies, consultants, SaaS founders, and sales teams.
 
 #### Why It Matters
 
-Lead generation is valuable but far outside Softai's current creative-production workflow. It also introduces data sourcing, compliance, and deliverability concerns.
+Lead generation is valuable but far outside Soft-Magic AI's current creative-production workflow. It also introduces data sourcing, compliance, and deliverability concerns.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-If implemented, users define target industry, region, company type, and buyer persona. Softai finds or imports leads, scores them, and generates outreach copy and ad audience suggestions.
+If implemented, users define target industry, region, company type, and buyer persona. Soft-Magic AI finds or imports leads, scores them, and generates outreach copy and ad audience suggestions.
 
 #### Implementation Requirements
 

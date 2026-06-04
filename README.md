@@ -1,6 +1,6 @@
-# SoftAI
+# Soft-Magic AI
 
-SoftAI is a Next 16 App Router SaaS skeleton for SMB ad-video generation. It includes:
+Soft-Magic AI is a Next 16 App Router SaaS skeleton for SMB ad-video generation. It includes:
 
 - Marketing site and authenticated app shell
 - Project brief flow for ad creation

@@ -25,7 +25,7 @@ Small businesses, paid media teams, agencies, creators.
 
 ## User Flow
 
-User creates campaign brief. Softai proposes a 5-scene TikTok ad. User edits scenes, generates media, and renders the final video.
+User creates campaign brief. Soft-Magic AI proposes a 5-scene TikTok ad. User edits scenes, generates media, and renders the final video.
 
 ## Data Model
 

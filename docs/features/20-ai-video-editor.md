@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Users can edit and improve generated or uploaded videos inside Softai without external tools.
+Users can edit and improve generated or uploaded videos inside Soft-Magic AI without external tools.
 
 ## Users
 

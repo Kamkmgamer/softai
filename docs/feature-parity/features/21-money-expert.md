@@ -14,9 +14,9 @@ Small business owners, freelancers, and individuals.
 
 #### Why It Matters
 
-Finance advice is useful to SMBs, but it is not strongly connected to Softai's ad creation workflow.
+Finance advice is useful to SMBs, but it is not strongly connected to Soft-Magic AI's ad creation workflow.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 If implemented, this should be framed around campaign economics: ad budget planning, CAC estimation, ROAS calculators, pricing checks, and profit-margin calculators.
 

@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai prevents illegal, abusive, unsafe, or brand-damaging content while keeping legitimate business generation fast.
+Soft-Magic AI prevents illegal, abusive, unsafe, or brand-damaging content while keeping legitimate business generation fast.
 
 ## Users
 
@@ -24,7 +24,7 @@ All users, admins, platform operators.
 
 ## User Flow
 
-User submits a generation. If blocked, Softai explains the policy category and suggests a safer alternative. If output is problematic, user can report it.
+User submits a generation. If blocked, Soft-Magic AI explains the policy category and suggests a safer alternative. If output is problematic, user can report it.
 
 ## Data Model
 
@@ -60,4 +60,4 @@ User submits a generation. If blocked, Softai explains the policy category and s
 
 - Overblocking hurts legitimate ad use cases.
 - Underblocking creates legal and platform risk.
-- Provider policies may differ from Softai policies.
+- Provider policies may differ from Soft-Magic AI policies.

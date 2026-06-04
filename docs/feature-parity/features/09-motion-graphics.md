@@ -16,9 +16,9 @@ Marketers, content creators, educators, SaaS founders, and agencies.
 
 Motion graphics are useful when users do not have product footage or do not want realistic AI video. They can also be more controllable than generative video.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users provide a script or choose an existing storyboard. Softai converts it into animated scenes, applies a motion template, adds narration/music, and renders a video.
+Users provide a script or choose an existing storyboard. Soft-Magic AI converts it into animated scenes, applies a motion template, adds narration/music, and renders a video.
 
 #### Implementation Requirements
 

@@ -23,7 +23,7 @@ Startups, local businesses, creators, early ecommerce sellers.
 
 ## User Flow
 
-User enters business name and style. Softai generates logo concepts, the user selects one, and it becomes part of the brand kit.
+User enters business name and style. Soft-Magic AI generates logo concepts, the user selects one, and it becomes part of the brand kit.
 
 ## Data Model
 

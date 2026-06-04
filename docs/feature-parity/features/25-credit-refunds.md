@@ -16,9 +16,9 @@ All paying users.
 
 AI outputs can fail. Refunds reduce perceived risk and make the credit system feel fair.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users see a refund button beside eligible outputs. If they have not downloaded the output and have monthly refunds remaining, Softai reverses the credit transaction and marks the output/job as refunded.
+Users see a refund button beside eligible outputs. If they have not downloaded the output and have monthly refunds remaining, Soft-Magic AI reverses the credit transaction and marks the output/job as refunded.
 
 #### Implementation Requirements
 

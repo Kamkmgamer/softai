@@ -1,13 +1,13 @@
 # Feature Parity Decision Catalog
 
-This catalog expands the 3aqel feature-parity research into decision-ready feature descriptions. Use it as a working document to decide which features Softai should implement, defer, or reject.
+This catalog expands the 3aqel feature-parity research into decision-ready feature descriptions. Use it as a working document to decide which features Soft-Magic AI should implement, defer, or reject.
 
 Each feature includes:
 
 - What the feature is.
 - Who it is for.
 - Why it matters.
-- How it would work in Softai.
+- How it would work in Soft-Magic AI.
 - Main implementation requirements.
 - Risks and open questions.
 - Suggested priority and complexity.
@@ -21,12 +21,12 @@ Use these statuses while reviewing the catalog:
 | Undecided | Needs product/technical review. |
 | Implement | Approved for planning and issue breakdown. |
 | Defer | Valuable, but not now. |
-| Reject | Not aligned with Softai strategy. |
+| Reject | Not aligned with Soft-Magic AI strategy. |
 | Needs Research | Requires more product or technical investigation before a decision. |
 
 ## Recommended First Pass
 
-Softai should not copy 3aqel as a generic AI toolbox. The strongest path is to stay focused on SMB campaign production and add adjacent tools that make product marketing easier.
+Soft-Magic AI should not copy 3aqel as a generic AI toolbox. The strongest path is to stay focused on SMB campaign production and add adjacent tools that make product marketing easier.
 
 Recommended first-pass implementation candidates:
 
@@ -39,7 +39,7 @@ Recommended first-pass implementation candidates:
 7. Video captions/trim editor.
 8. Landing page maker.
 
-Features that are likely lower strategic fit unless Softai intentionally broadens beyond ad creation:
+Features that are likely lower strategic fit unless Soft-Magic AI intentionally broadens beyond ad creation:
 
 1. Genius tutor.
 2. English tutor.
@@ -67,11 +67,11 @@ Arabic-speaking founders, marketers, small business owners, agencies, content cr
 
 #### Why It Matters
 
-Softai currently has an English-first UI. If we compete with 3aqel in the same region, Arabic UX is a foundational parity feature rather than a nice-to-have.
+Soft-Magic AI currently has an English-first UI. If we compete with 3aqel in the same region, Arabic UX is a foundational parity feature rather than a nice-to-have.
 
 Arabic-first UX also improves prompt quality because users can explain their products, offers, and audiences in their natural language.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users choose Arabic or English. If Arabic is selected, the entire app switches to RTL layout, Arabic labels, Arabic examples, Arabic error messages, Arabic onboarding, Arabic billing copy, and Arabic prompt presets.
 
@@ -111,15 +111,15 @@ A conversational AI assistant for writing, summarization, brainstorming, Q&A, an
 
 #### Target Users
 
-Users who want a simple ChatGPT-like assistant inside Softai instead of switching tools.
+Users who want a simple ChatGPT-like assistant inside Soft-Magic AI instead of switching tools.
 
 #### Why It Matters
 
 General chat can increase session time and reduce context switching. It can also support campaign planning, script brainstorming, and prompt improvement.
 
-However, generic chat is crowded and does not directly differentiate Softai unless tied to campaign workflows.
+However, generic chat is crowded and does not directly differentiate Soft-Magic AI unless tied to campaign workflows.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Add `/tools/chat` or an assistant panel inside projects. Users can ask for campaign ideas, rewrite offers, summarize product notes, improve scripts, generate angles, or ask operational questions.
 
@@ -162,11 +162,11 @@ Marketers, founders, ecommerce sellers, social media managers, and creators who 
 
 #### Why It Matters
 
-Softai already has scene image generation internally. Exposing it as a standalone tool creates more immediate value and uses existing infrastructure.
+Soft-Magic AI already has scene image generation internally. Exposing it as a standalone tool creates more immediate value and uses existing infrastructure.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users choose an image type, aspect ratio, style, and prompt. Softai generates one or more image variants and stores them in the library. Images can be reused in ad projects, product photography, carousels, or landing pages.
+Users choose an image type, aspect ratio, style, and prompt. Soft-Magic AI generates one or more image variants and stores them in the library. Images can be reused in ad projects, product photography, carousels, or landing pages.
 
 #### Implementation Requirements
 
@@ -204,11 +204,11 @@ Ecommerce sellers, marketers, content creators, and agencies who need quick edit
 
 #### Why It Matters
 
-Generated outputs often need small corrections. Editing keeps users inside Softai instead of sending them to Photoshop, Canva, or Photoroom.
+Generated outputs often need small corrections. Editing keeps users inside Soft-Magic AI instead of sending them to Photoshop, Canva, or Photoroom.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users upload or select an existing image, type an edit instruction, and generate a new version. Softai displays before/after previews and stores an edit history.
+Users upload or select an existing image, type an edit instruction, and generate a new version. Soft-Magic AI displays before/after previews and stores an edit history.
 
 Example instructions:
 
@@ -257,9 +257,9 @@ Small ecommerce sellers, local retailers, DTC brands, restaurants, beauty brands
 
 #### Why It Matters
 
-This is one of the strongest fits for Softai. Softai's target users need ads, and ads need strong product visuals. This feature can feed directly into video ads, static ads, carousels, and landing pages.
+This is one of the strongest fits for Soft-Magic AI. Soft-Magic AI's target users need ads, and ads need strong product visuals. This feature can feed directly into video ads, static ads, carousels, and landing pages.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users upload one or more product images, choose a scene preset, choose lighting and angle, optionally add brand colors or custom direction, then generate a batch of product shots.
 
@@ -315,11 +315,11 @@ New founders, small businesses, side projects, YouTube channels, social accounts
 
 #### Why It Matters
 
-Logo generation is attractive for new SMBs, but it is less directly connected to Softai's ad-video workflow than product photography or ads.
+Logo generation is attractive for new SMBs, but it is less directly connected to Soft-Magic AI's ad-video workflow than product photography or ads.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users enter business name, optional slogan, industry, style, color palette, and symbol ideas. Softai generates multiple logo directions. Users can download PNG/SVG-like outputs where possible and reuse the logo as a brand asset.
+Users enter business name, optional slogan, industry, style, color palette, and symbol ideas. Soft-Magic AI generates multiple logo directions. Users can download PNG/SVG-like outputs where possible and reuse the logo as a brand asset.
 
 #### Implementation Requirements
 
@@ -360,11 +360,11 @@ SMB marketers, founders, ecommerce sellers, agencies, and social media managers.
 
 #### Why It Matters
 
-This is highly aligned with Softai. Users who need video ads usually also need static creatives for Meta, Google Display, Instagram, TikTok thumbnails, and retargeting.
+This is highly aligned with Soft-Magic AI. Users who need video ads usually also need static creatives for Meta, Google Display, Instagram, TikTok thumbnails, and retargeting.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users provide product name, offer, CTA, audience, platform, and optional product image. Softai generates ad copy and a layout. The system renders a finished image in selected sizes.
+Users provide product name, offer, CTA, audience, platform, and optional product image. Soft-Magic AI generates ad copy and a layout. The system renders a finished image in selected sizes.
 
 Supported sizes could include:
 
@@ -413,9 +413,9 @@ Social media managers, coaches, educators, agencies, founders, and SMBs that pos
 
 Carousels are a common marketing format and less expensive to generate than video. They can help users create campaign assets around the same brief used for videos.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users enter a topic, audience, goal, tone, number of slides, and optional brand assets. Softai generates a slide outline, writes slide copy, renders the carousel, and lets users download each slide or a ZIP/PDF.
+Users enter a topic, audience, goal, tone, number of slides, and optional brand assets. Soft-Magic AI generates a slide outline, writes slide copy, renders the carousel, and lets users download each slide or a ZIP/PDF.
 
 Example carousel types:
 
@@ -465,9 +465,9 @@ Marketers, content creators, educators, SaaS founders, and agencies.
 
 Motion graphics are useful when users do not have product footage or do not want realistic AI video. They can also be more controllable than generative video.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users provide a script or choose an existing storyboard. Softai converts it into animated scenes, applies a motion template, adds narration/music, and renders a video.
+Users provide a script or choose an existing storyboard. Soft-Magic AI converts it into animated scenes, applies a motion template, adds narration/music, and renders a video.
 
 #### Implementation Requirements
 
@@ -506,9 +506,9 @@ Founders, coaches, educators, creators, agencies, and SMB marketers.
 
 #### Why It Matters
 
-Talking-head content is effective for trust-building and social ads. It could extend Softai from product-only ads into UGC-style ads.
+Talking-head content is effective for trust-building and social ads. It could extend Soft-Magic AI from product-only ads into UGC-style ads.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users enter or generate a script, choose a presenter/avatar, choose a voice, and render a vertical talking-head video. The video can include captions, background, logo, and CTA.
 
@@ -549,9 +549,9 @@ Creators, founders, marketers, agencies, and SMBs that want voiceovers without r
 
 #### Why It Matters
 
-Softai's video ads become much more complete with narration. Voice generation also supports talking heads, motion graphics, video editor, and landing page videos.
+Soft-Magic AI's video ads become much more complete with narration. Voice generation also supports talking heads, motion graphics, video editor, and landing page videos.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users either choose a stock voice or upload a voice sample with consent attestation. They enter text, generate audio, preview it, and attach it to a project or download it.
 
@@ -595,9 +595,9 @@ Video creators, marketers, podcasters, and SMBs that need royalty-safe backgroun
 
 Music improves video quality and can become part of the video generation workflow. As a standalone tool, it is less core than product photos or ad creatives.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users select mood, style, duration, and optional prompt. Softai generates a music track, lets users preview it, and attach it to a video project.
+Users select mood, style, duration, and optional prompt. Soft-Magic AI generates a music track, lets users preview it, and attach it to a video project.
 
 #### Implementation Requirements
 
@@ -635,13 +635,13 @@ Marketers, creators, agencies, founders, and educators.
 
 #### Why It Matters
 
-Softai already generates storyboard scripts internally. Exposing script writing as a standalone tool is a low-cost way to increase perceived tool count and utility.
+Soft-Magic AI already generates storyboard scripts internally. Exposing script writing as a standalone tool is a low-cost way to increase perceived tool count and utility.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users enter topic/product, target audience, duration, platform, tone, and CTA. Softai generates a structured script with scenes, narration, visual directions, hooks, overlays, and CTA.
+Users enter topic/product, target audience, duration, platform, tone, and CTA. Soft-Magic AI generates a structured script with scenes, narration, visual directions, hooks, overlays, and CTA.
 
-The script can be exported or converted into a Softai ad-video project.
+The script can be exported or converted into a Soft-Magic AI ad-video project.
 
 #### Implementation Requirements
 
@@ -678,11 +678,11 @@ SMB marketers, agencies, creators, ecommerce sellers, and founders creating rich
 
 #### Why It Matters
 
-This is a direct extension of Softai's current storyboard/video workflow and would improve parity in the core category.
+This is a direct extension of Soft-Magic AI's current storyboard/video workflow and would improve parity in the core category.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users create or generate a scene list. Each scene has prompt, duration, reference image, overlay/caption, and format. Softai generates each scene video or scene image, stitches the scenes, adds audio/captions, and outputs a final video.
+Users create or generate a scene list. Each scene has prompt, duration, reference image, overlay/caption, and format. Soft-Magic AI generates each scene video or scene image, stitches the scenes, adds audio/captions, and outputs a final video.
 
 #### Implementation Requirements
 
@@ -722,9 +722,9 @@ Creators, SMB marketers, agencies, founders, and social media managers.
 
 #### Why It Matters
 
-Editing is where generated content becomes usable. A narrow editor focused on captions, trimming, and branding would make Softai outputs more publish-ready.
+Editing is where generated content becomes usable. A narrow editor focused on captions, trimming, and branding would make Soft-Magic AI outputs more publish-ready.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users upload or select a video, generate subtitles, choose a caption style, trim start/end, add logo/text overlays, optionally add music, then export.
 
@@ -766,11 +766,11 @@ Ecommerce brands, direct-response marketers, agencies, course sellers, app found
 
 #### Why It Matters
 
-This is extremely aligned with Softai's purpose. It packages existing ad-video flow in language that performance marketers understand.
+This is extremely aligned with Soft-Magic AI's purpose. It packages existing ad-video flow in language that performance marketers understand.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users select campaign goal, product, audience, offer, proof points, UGC style, persona, platform, and CTA. Softai generates multiple ad angles, scripts, storyboards, and videos.
+Users select campaign goal, product, audience, offer, proof points, UGC style, persona, platform, and CTA. Soft-Magic AI generates multiple ad angles, scripts, storyboards, and videos.
 
 UGC styles could include:
 
@@ -798,7 +798,7 @@ UGC styles could include:
 
 #### MVP Scope
 
-Generate 3 ad angles and 3 scripts from one brief, then let user choose one to convert into a standard Softai video project.
+Generate 3 ad angles and 3 scripts from one brief, then let user choose one to convert into a standard Soft-Magic AI video project.
 
 ---
 
@@ -818,11 +818,11 @@ Founders, SMBs, course creators, local service businesses, ecommerce sellers, an
 
 #### Why It Matters
 
-Ads need landing pages. This feature would let Softai cover more of the campaign funnel, from creative generation to conversion page.
+Ads need landing pages. This feature would let Soft-Magic AI cover more of the campaign funnel, from creative generation to conversion page.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users provide product/service details, audience, offer, proof points, brand style, and CTA. Softai generates a landing page preview with editable sections. Users can publish it or export it.
+Users provide product/service details, audience, offer, proof points, brand style, and CTA. Soft-Magic AI generates a landing page preview with editable sections. Users can publish it or export it.
 
 #### Implementation Requirements
 
@@ -842,7 +842,7 @@ Users provide product/service details, audience, offer, proof points, brand styl
 
 #### MVP Scope
 
-Generate and host a single-page landing page under a Softai URL with editable copy and generated hero/product sections.
+Generate and host a single-page landing page under a Soft-Magic AI URL with editable copy and generated hero/product sections.
 
 ---
 
@@ -862,9 +862,9 @@ SMBs, founders, agencies, creators, and campaign managers.
 
 #### Why It Matters
 
-Landing page generation is less valuable if users cannot publish easily. One-click publishing can make Softai a campaign-launch tool, not just a creative generator.
+Landing page generation is less valuable if users cannot publish easily. One-click publishing can make Soft-Magic AI a campaign-launch tool, not just a creative generator.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users generate a landing page, choose a slug, preview it, and publish. Later they can unpublish, update, duplicate, or connect a custom domain.
 
@@ -885,7 +885,7 @@ Users generate a landing page, choose a slug, preview it, and publish. Later the
 
 #### MVP Scope
 
-Host pages on Softai subpaths or subdomains. Defer custom domains.
+Host pages on Soft-Magic AI subpaths or subdomains. Defer custom domains.
 
 ---
 
@@ -905,9 +905,9 @@ Small business owners, solo founders, creators, and early-stage operators.
 
 #### Why It Matters
 
-This could support Softai users before campaign creation, helping them clarify offer, audience, positioning, and pricing.
+This could support Soft-Magic AI users before campaign creation, helping them clarify offer, audience, positioning, and pricing.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users create a business profile and chat with a coach. The coach can recommend campaigns, improve offers, suggest ad angles, and identify missing assets.
 
@@ -947,11 +947,11 @@ B2B SMBs, agencies, consultants, SaaS founders, and sales teams.
 
 #### Why It Matters
 
-Lead generation is valuable but far outside Softai's current creative-production workflow. It also introduces data sourcing, compliance, and deliverability concerns.
+Lead generation is valuable but far outside Soft-Magic AI's current creative-production workflow. It also introduces data sourcing, compliance, and deliverability concerns.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-If implemented, users define target industry, region, company type, and buyer persona. Softai finds or imports leads, scores them, and generates outreach copy and ad audience suggestions.
+If implemented, users define target industry, region, company type, and buyer persona. Soft-Magic AI finds or imports leads, scores them, and generates outreach copy and ad audience suggestions.
 
 #### Implementation Requirements
 
@@ -992,9 +992,9 @@ Small business owners, freelancers, and individuals.
 
 #### Why It Matters
 
-Finance advice is useful to SMBs, but it is not strongly connected to Softai's ad creation workflow.
+Finance advice is useful to SMBs, but it is not strongly connected to Soft-Magic AI's ad creation workflow.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 If implemented, this should be framed around campaign economics: ad budget planning, CAC estimation, ROAS calculators, pricing checks, and profit-margin calculators.
 
@@ -1034,11 +1034,11 @@ Students, professionals, and learners.
 
 #### Why It Matters
 
-This is a broad consumer/education feature and does not align directly with Softai's SMB ad-generation mission.
+This is a broad consumer/education feature and does not align directly with Soft-Magic AI's SMB ad-generation mission.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-If Softai ever adds this, it should be reframed as a marketing tutor or ad-learning assistant rather than a general tutor.
+If Soft-Magic AI ever adds this, it should be reframed as a marketing tutor or ad-learning assistant rather than a general tutor.
 
 #### Implementation Requirements
 
@@ -1055,7 +1055,7 @@ If Softai ever adds this, it should be reframed as a marketing tutor or ad-learn
 
 #### MVP Scope
 
-Reject as a general tutor. Consider educational content only as courses/help for using Softai.
+Reject as a general tutor. Consider educational content only as courses/help for using Soft-Magic AI.
 
 ---
 
@@ -1075,9 +1075,9 @@ Arabic speakers learning English.
 
 #### Why It Matters
 
-It can attract broad users, but it is unrelated to Softai's campaign-production focus.
+It can attract broad users, but it is unrelated to Soft-Magic AI's campaign-production focus.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 If implemented at all, it could help users translate campaign copy or improve bilingual ads, but that is a much narrower feature than an English tutor.
 
@@ -1118,7 +1118,7 @@ Prospective customers, current users looking for inspiration, and creators who w
 
 Gallery content helps marketing, onboarding, and trust. It shows what the product can create and can improve SEO.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users can opt in to publish selected outputs. Public visitors browse by category, industry, format, style, and tool. Each gallery item can include prompt snippets, tool used, and CTA to create similar output.
 
@@ -1161,9 +1161,9 @@ All paying users.
 
 AI outputs can fail. Refunds reduce perceived risk and make the credit system feel fair.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users see a refund button beside eligible outputs. If they have not downloaded the output and have monthly refunds remaining, Softai reverses the credit transaction and marks the output/job as refunded.
+Users see a refund button beside eligible outputs. If they have not downloaded the output and have monthly refunds remaining, Soft-Magic AI reverses the credit transaction and marks the output/job as refunded.
 
 #### Implementation Requirements
 
@@ -1204,7 +1204,7 @@ New users, SMB owners, marketers, and non-technical customers who need guidance.
 
 For non-technical SMBs, education can increase activation and retention. It can also justify higher plans.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users access a learning center with tutorials, campaign examples, prompt recipes, and onboarding checklists. Higher plans can include priority support or live training.
 
@@ -1236,7 +1236,7 @@ Create a learning center with 5-10 written guides and short embedded videos. Def
 
 #### Description
 
-SEO landing pages comparing Softai against relevant alternatives such as Canva, Midjourney, ChatGPT, ElevenLabs, Adobe Firefly, and 3aqel.
+SEO landing pages comparing Soft-Magic AI against relevant alternatives such as Canva, Midjourney, ChatGPT, ElevenLabs, Adobe Firefly, and 3aqel.
 
 #### Target Users
 
@@ -1246,9 +1246,9 @@ Prospects searching for alternatives or comparing tools before purchase.
 
 This is a lightweight acquisition feature. 3aqel uses comparison pages to position itself as an all-in-one Arabic platform.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Public pages explain what Softai does best, where competitors are stronger, pricing differences, and ideal user fit. Each page should include examples and CTA to create a campaign.
+Public pages explain what Soft-Magic AI does best, where competitors are stronger, pricing differences, and ideal user fit. Each page should include examples and CTA to create a campaign.
 
 #### Implementation Requirements
 
@@ -1264,13 +1264,13 @@ Public pages explain what Softai does best, where competitors are stronger, pric
 
 #### MVP Scope
 
-Create 5 comparison pages focused on Softai's ad-video/product-marketing strengths.
+Create 5 comparison pages focused on Soft-Magic AI's ad-video/product-marketing strengths.
 
 ---
 
-## Additional Softai Feature Opportunities
+## Additional Soft-Magic AI Feature Opportunities
 
-These are 10 additional features Softai can add to exceed 3aqel while staying closer to Softai's campaign-production strategy.
+These are 10 additional features Soft-Magic AI can add to exceed 3aqel while staying closer to Soft-Magic AI's campaign-production strategy.
 
 ### A1. Brand Kit And Brand Memory
 
@@ -1288,9 +1288,9 @@ SMBs, agencies, franchises, ecommerce brands, and repeat campaign creators.
 
 #### Why It Matters
 
-3aqel offers many tools, but persistent brand consistency can be a stronger differentiator. Softai can make every generated ad, carousel, landing page, and video feel like it belongs to the same brand.
+3aqel offers many tools, but persistent brand consistency can be a stronger differentiator. Soft-Magic AI can make every generated ad, carousel, landing page, and video feel like it belongs to the same brand.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users create a brand profile once. Every tool can use that profile as context. Generated outputs inherit brand colors, logo placement, voice, and disclaimers.
 
@@ -1325,11 +1325,11 @@ Performance marketers, agencies, ecommerce brands, app marketers, and founders.
 
 #### Why It Matters
 
-Ads are rarely successful with one creative. Variant generation makes Softai more useful for real campaigns than single-output AI tools.
+Ads are rarely successful with one creative. Variant generation makes Soft-Magic AI more useful for real campaigns than single-output AI tools.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users select how many variants they want and which dimensions to vary: hook, offer framing, audience segment, visual style, CTA, or platform. Softai produces a test matrix.
+Users select how many variants they want and which dimensions to vary: hook, offer framing, audience segment, visual style, CTA, or platform. Soft-Magic AI produces a test matrix.
 
 #### Implementation Requirements
 
@@ -1353,7 +1353,7 @@ Generate 3 hooks, 3 scripts, and 3 static/video creative concepts from one produ
 
 #### Description
 
-A research tool where users paste competitor ad links, upload screenshots, or describe competitors. Softai extracts angles, hooks, offers, visual patterns, and opportunities.
+A research tool where users paste competitor ad links, upload screenshots, or describe competitors. Soft-Magic AI extracts angles, hooks, offers, visual patterns, and opportunities.
 
 #### Target Users
 
@@ -1361,11 +1361,11 @@ Founders, agencies, performance marketers, and ecommerce sellers.
 
 #### Why It Matters
 
-This helps users decide what to create before generating content. It moves Softai upstream into campaign strategy.
+This helps users decide what to create before generating content. It moves Soft-Magic AI upstream into campaign strategy.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users provide competitor examples. Softai analyzes what works, identifies gaps, and suggests differentiated ad concepts.
+Users provide competitor examples. Soft-Magic AI analyzes what works, identifies gaps, and suggests differentiated ad concepts.
 
 #### Implementation Requirements
 
@@ -1399,9 +1399,9 @@ SMB marketers and agencies who need handoff-ready assets.
 
 Users do not just need files; they need the right sizes, filenames, copy, captions, thumbnails, and upload notes.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users choose a platform pack. Softai exports correctly sized assets plus captions, primary text, headlines, descriptions, hashtags, and recommended settings.
+Users choose a platform pack. Soft-Magic AI exports correctly sized assets plus captions, primary text, headlines, descriptions, hashtags, and recommended settings.
 
 #### Implementation Requirements
 
@@ -1433,11 +1433,11 @@ SMBs, agencies, regulated-adjacent businesses, ecommerce sellers, health/beauty 
 
 #### Why It Matters
 
-Ad rejection is costly. Compliance checking is a reliability differentiator and fits Softai's safety/admin priorities.
+Ad rejection is costly. Compliance checking is a reliability differentiator and fits Soft-Magic AI's safety/admin priorities.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Before rendering/exporting, Softai flags risky claims and suggests safer alternatives.
+Before rendering/exporting, Soft-Magic AI flags risky claims and suggests safer alternatives.
 
 #### Implementation Requirements
 
@@ -1471,9 +1471,9 @@ SMB owners, social media managers, agencies, and content teams.
 
 Users need ongoing campaigns, not one-off outputs. A planner increases retention and gives users a reason to come back.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users choose business goal, channels, posting frequency, and campaign dates. Softai generates a calendar with recommended assets and lets users create each asset from the plan.
+Users choose business goal, channels, posting frequency, and campaign dates. Soft-Magic AI generates a calendar with recommended assets and lets users create each asset from the plan.
 
 #### Implementation Requirements
 
@@ -1505,11 +1505,11 @@ Ecommerce sellers, retailers, agencies, and catalog-heavy SMBs.
 
 #### Why It Matters
 
-Softai can become much more powerful for product businesses if users can generate campaign assets in batches.
+Soft-Magic AI can become much more powerful for product businesses if users can generate campaign assets in batches.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users import product names, descriptions, prices, images, categories, and URLs. Softai creates product profiles and batch-generates photos, ads, and videos.
+Users import product names, descriptions, prices, images, categories, and URLs. Soft-Magic AI creates product profiles and batch-generates photos, ads, and videos.
 
 #### Implementation Requirements
 
@@ -1533,7 +1533,7 @@ CSV import with product name, description, price, image URL, and category.
 
 #### Description
 
-Users enter or import performance data from ad platforms. Softai analyzes winning and losing creatives and recommends new variants.
+Users enter or import performance data from ad platforms. Soft-Magic AI analyzes winning and losing creatives and recommends new variants.
 
 #### Target Users
 
@@ -1541,11 +1541,11 @@ Performance marketers, agencies, ecommerce brands, and app marketers.
 
 #### Why It Matters
 
-This turns Softai from a generation tool into a creative optimization system.
+This turns Soft-Magic AI from a generation tool into a creative optimization system.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users upload CSV reports or connect ad accounts. Softai maps results to creative assets, identifies patterns, and generates the next test batch.
+Users upload CSV reports or connect ad accounts. Soft-Magic AI maps results to creative assets, identifies patterns, and generates the next test batch.
 
 #### Implementation Requirements
 
@@ -1557,7 +1557,7 @@ Users upload CSV reports or connect ad accounts. Softai maps results to creative
 
 #### MVP Scope
 
-CSV upload for Meta/TikTok performance reports and manual mapping to Softai outputs.
+CSV upload for Meta/TikTok performance reports and manual mapping to Soft-Magic AI outputs.
 
 ---
 
@@ -1577,9 +1577,9 @@ Agencies, freelancers, marketing teams, and multi-brand SMBs.
 
 #### Why It Matters
 
-Softai already has review-oriented workflows. Client approval can make the product more valuable for agencies.
+Soft-Magic AI already has review-oriented workflows. Client approval can make the product more valuable for agencies.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users create a workspace, invite members/clients, share a project review link, collect comments, and approve outputs.
 
@@ -1615,7 +1615,7 @@ All users, especially beginners.
 
 Many users do not know what to ask AI for. Recipes improve output quality and reduce blank-page anxiety.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users browse recipes by goal, industry, platform, and format. Selecting a recipe pre-fills a tool with structured prompts and examples.
 

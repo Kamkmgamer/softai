@@ -24,7 +24,7 @@ Business owners, marketers, agencies, social media managers.
 
 ## User Flow
 
-User uploads a product image or generates a result. Softai saves it automatically. The user can reuse it in an ad, video, carousel, or landing page.
+User uploads a product image or generates a result. Soft-Magic AI saves it automatically. The user can reuse it in an ad, video, carousel, or landing page.
 
 ## Data Model
 

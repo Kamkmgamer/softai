@@ -16,9 +16,9 @@ Small ecommerce sellers, local retailers, DTC brands, restaurants, beauty brands
 
 #### Why It Matters
 
-This is one of the strongest fits for Softai. Softai's target users need ads, and ads need strong product visuals. This feature can feed directly into video ads, static ads, carousels, and landing pages.
+This is one of the strongest fits for Soft-Magic AI. Soft-Magic AI's target users need ads, and ads need strong product visuals. This feature can feed directly into video ads, static ads, carousels, and landing pages.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users upload one or more product images, choose a scene preset, choose lighting and angle, optionally add brand colors or custom direction, then generate a batch of product shots.
 

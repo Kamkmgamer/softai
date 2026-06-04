@@ -58,6 +58,6 @@ User creates a brand once. Future tools default to that brand and generate outpu
 
 ## Risks
 
-- Generated images may not reproduce logos accurately unless composited by Softai templates.
+- Generated images may not reproduce logos accurately unless composited by Soft-Magic AI templates.
 - Too much brand context can increase token cost.
 - Brand memory must distinguish facts from suggestions.

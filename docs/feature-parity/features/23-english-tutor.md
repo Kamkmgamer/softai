@@ -14,9 +14,9 @@ Arabic speakers learning English.
 
 #### Why It Matters
 
-It can attract broad users, but it is unrelated to Softai's campaign-production focus.
+It can attract broad users, but it is unrelated to Soft-Magic AI's campaign-production focus.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 If implemented at all, it could help users translate campaign copy or improve bilingual ads, but that is a much narrower feature than an English tutor.
 

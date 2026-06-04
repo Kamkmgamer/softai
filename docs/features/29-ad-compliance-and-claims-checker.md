@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai helps users avoid risky, unsupported, or platform-rejected claims in ads and landing pages.
+Soft-Magic AI helps users avoid risky, unsupported, or platform-rejected claims in ads and landing pages.
 
 ## Users
 
@@ -23,7 +23,7 @@ Businesses in health, beauty, finance, education, supplements, agencies, platfor
 
 ## User Flow
 
-Before export, Softai checks copy and warns: “This claim may be risky. Consider this safer version.”
+Before export, Soft-Magic AI checks copy and warns: “This claim may be risky. Consider this safer version.”
 
 ## Data Model
 

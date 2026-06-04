@@ -16,7 +16,7 @@ Prospective customers, current users looking for inspiration, and creators who w
 
 Gallery content helps marketing, onboarding, and trust. It shows what the product can create and can improve SEO.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users can opt in to publish selected outputs. Public visitors browse by category, industry, format, style, and tool. Each gallery item can include prompt snippets, tool used, and CTA to create similar output.
 

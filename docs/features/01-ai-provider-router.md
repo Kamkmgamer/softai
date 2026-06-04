@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai can call the best available AI model for each job type while controlling cost, latency, quality, retries, and provider failures.
+Soft-Magic AI can call the best available AI model for each job type while controlling cost, latency, quality, retries, and provider failures.
 
 ## Users
 
@@ -25,7 +25,7 @@ Internal platform, all end users indirectly, admins monitoring costs and failure
 
 ## User Flow
 
-Users do not choose providers by default. They choose intent, such as product photo, video ad, or voiceover. Softai selects the provider that best matches the job.
+Users do not choose providers by default. They choose intent, such as product photo, video ad, or voiceover. Soft-Magic AI selects the provider that best matches the job.
 
 ## Data Model
 

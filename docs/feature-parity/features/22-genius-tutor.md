@@ -14,11 +14,11 @@ Students, professionals, and learners.
 
 #### Why It Matters
 
-This is a broad consumer/education feature and does not align directly with Softai's SMB ad-generation mission.
+This is a broad consumer/education feature and does not align directly with Soft-Magic AI's SMB ad-generation mission.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-If Softai ever adds this, it should be reframed as a marketing tutor or ad-learning assistant rather than a general tutor.
+If Soft-Magic AI ever adds this, it should be reframed as a marketing tutor or ad-learning assistant rather than a general tutor.
 
 #### Implementation Requirements
 
@@ -35,6 +35,6 @@ If Softai ever adds this, it should be reframed as a marketing tutor or ad-learn
 
 #### MVP Scope
 
-Reject as a general tutor. Consider educational content only as courses/help for using Softai.
+Reject as a general tutor. Consider educational content only as courses/help for using Soft-Magic AI.
 
 ---

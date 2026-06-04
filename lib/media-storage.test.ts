@@ -70,7 +70,7 @@ describe("storeVideoDurably", () => {
     const uploader = vi.fn();
 
     await expect(storeVideoDurably({
-      sourceUrl: "https://example.com/video-result",
+      sourceUrl: "https://ai.soft-magic.com/video-result",
       title: "Final video",
       fetcher,
       uploader,
@@ -87,7 +87,7 @@ describe("storeVideoDurably", () => {
     const uploader = vi.fn(async () => ({ error: { message: "upload failed" } }));
 
     await expect(storeVideoDurably({
-      sourceUrl: "https://example.com/final.mp4",
+      sourceUrl: "https://ai.soft-magic.com/final.mp4",
       title: "Final video",
       fetcher,
       uploader,

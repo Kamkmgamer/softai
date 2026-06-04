@@ -8,7 +8,7 @@ const blockedPatterns = [
 
 export class ModerationError extends Error {
   constructor(public readonly category: string) {
-    super(`This request was blocked by SoftAI safety checks (${category}). Please revise the prompt and try again.`);
+    super(`This request was blocked by Soft-Magic AI safety checks (${category}). Please revise the prompt and try again.`);
     this.name = "ModerationError";
   }
 }

@@ -16,11 +16,11 @@ Arabic-speaking founders, marketers, small business owners, agencies, content cr
 
 #### Why It Matters
 
-Softai currently has an English-first UI. If we compete with 3aqel in the same region, Arabic UX is a foundational parity feature rather than a nice-to-have.
+Soft-Magic AI currently has an English-first UI. If we compete with 3aqel in the same region, Arabic UX is a foundational parity feature rather than a nice-to-have.
 
 Arabic-first UX also improves prompt quality because users can explain their products, offers, and audiences in their natural language.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users choose Arabic or English. If Arabic is selected, the entire app switches to RTL layout, Arabic labels, Arabic examples, Arabic error messages, Arabic onboarding, Arabic billing copy, and Arabic prompt presets.
 

@@ -14,9 +14,9 @@ SMBs, founders, agencies, creators, and campaign managers.
 
 #### Why It Matters
 
-Landing page generation is less valuable if users cannot publish easily. One-click publishing can make Softai a campaign-launch tool, not just a creative generator.
+Landing page generation is less valuable if users cannot publish easily. One-click publishing can make Soft-Magic AI a campaign-launch tool, not just a creative generator.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users generate a landing page, choose a slug, preview it, and publish. Later they can unpublish, update, duplicate, or connect a custom domain.
 
@@ -37,6 +37,6 @@ Users generate a landing page, choose a slug, preview it, and publish. Later the
 
 #### MVP Scope
 
-Host pages on Softai subpaths or subdomains. Defer custom domains.
+Host pages on Soft-Magic AI subpaths or subdomains. Defer custom domains.
 
 ---

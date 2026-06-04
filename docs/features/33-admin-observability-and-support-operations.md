@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai operators can support users, monitor provider health, manage abuse, and understand cost/reliability issues.
+Soft-Magic AI operators can support users, monitor provider health, manage abuse, and understand cost/reliability issues.
 
 ## Users
 

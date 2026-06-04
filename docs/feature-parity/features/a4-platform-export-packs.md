@@ -16,9 +16,9 @@ SMB marketers and agencies who need handoff-ready assets.
 
 Users do not just need files; they need the right sizes, filenames, copy, captions, thumbnails, and upload notes.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users choose a platform pack. Softai exports correctly sized assets plus captions, primary text, headlines, descriptions, hashtags, and recommended settings.
+Users choose a platform pack. Soft-Magic AI exports correctly sized assets plus captions, primary text, headlines, descriptions, hashtags, and recommended settings.
 
 #### Implementation Requirements
 

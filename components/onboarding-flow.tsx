@@ -95,7 +95,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 
       <div className="space-y-3">
         <h1 className="text-3xl font-semibold tracking-tight text-text">
-          Welcome to SoftAI
+          Welcome to Soft-Magic AI
         </h1>
         <p className="mx-auto max-w-lg text-pretty text-base leading-7 text-text-secondary">
           Turn product briefs, brand assets, and scripts into

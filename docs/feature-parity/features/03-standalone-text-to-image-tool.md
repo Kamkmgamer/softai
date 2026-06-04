@@ -14,11 +14,11 @@ Marketers, founders, ecommerce sellers, social media managers, and creators who 
 
 #### Why It Matters
 
-Softai already has scene image generation internally. Exposing it as a standalone tool creates more immediate value and uses existing infrastructure.
+Soft-Magic AI already has scene image generation internally. Exposing it as a standalone tool creates more immediate value and uses existing infrastructure.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users choose an image type, aspect ratio, style, and prompt. Softai generates one or more image variants and stores them in the library. Images can be reused in ad projects, product photography, carousels, or landing pages.
+Users choose an image type, aspect ratio, style, and prompt. Soft-Magic AI generates one or more image variants and stores them in the library. Images can be reused in ad projects, product photography, carousels, or landing pages.
 
 #### Implementation Requirements
 

@@ -12,7 +12,7 @@ Small business owners, marketers, agencies.
 
 - Chat panel aware of the current project brief, brand, product, storyboard, assets, and outputs.
 - Helps write hooks, scripts, CTAs, captions, offers, and prompts.
-- Can suggest next actions inside Softai tools.
+- Can suggest next actions inside Soft-Magic AI tools.
 
 ## Full Version
 

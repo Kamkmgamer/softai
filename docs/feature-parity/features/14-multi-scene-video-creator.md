@@ -14,11 +14,11 @@ SMB marketers, agencies, creators, ecommerce sellers, and founders creating rich
 
 #### Why It Matters
 
-This is a direct extension of Softai's current storyboard/video workflow and would improve parity in the core category.
+This is a direct extension of Soft-Magic AI's current storyboard/video workflow and would improve parity in the core category.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users create or generate a scene list. Each scene has prompt, duration, reference image, overlay/caption, and format. Softai generates each scene video or scene image, stitches the scenes, adds audio/captions, and outputs a final video.
+Users create or generate a scene list. Each scene has prompt, duration, reference image, overlay/caption, and format. Soft-Magic AI generates each scene video or scene image, stitches the scenes, adds audio/captions, and outputs a final video.
 
 #### Implementation Requirements
 

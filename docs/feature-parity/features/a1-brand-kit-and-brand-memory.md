@@ -14,9 +14,9 @@ SMBs, agencies, franchises, ecommerce brands, and repeat campaign creators.
 
 #### Why It Matters
 
-3aqel offers many tools, but persistent brand consistency can be a stronger differentiator. Softai can make every generated ad, carousel, landing page, and video feel like it belongs to the same brand.
+3aqel offers many tools, but persistent brand consistency can be a stronger differentiator. Soft-Magic AI can make every generated ad, carousel, landing page, and video feel like it belongs to the same brand.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users create a brand profile once. Every tool can use that profile as context. Generated outputs inherit brand colors, logo placement, voice, and disclaimers.
 

@@ -16,7 +16,7 @@ New users, SMB owners, marketers, and non-technical customers who need guidance.
 
 For non-technical SMBs, education can increase activation and retention. It can also justify higher plans.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users access a learning center with tutorials, campaign examples, prompt recipes, and onboarding checklists. Higher plans can include priority support or live training.
 

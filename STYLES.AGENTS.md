@@ -4,7 +4,7 @@
 
 - This version of Tailwind CSS has breaking changes — Old v3 styles are not working, consult [Tailwind docs](https://tailwindcss.com/docs).
 - Use impeccable skill to know how to do elegant designs when asked to make new designs or pages.
-- Avoid AI-slop decorative eyebrow labels and pill badges. Do not add tiny uppercase letter-spaced section labels like "Workflow" or "Tools", hero eyebrow pills like "SoftAI Studio v2.0", or rounded pill chips used only as decoration. Prefer direct headings, clear body copy, and squared product controls for functional metadata.
+- Avoid AI-slop decorative eyebrow labels and pill badges. Do not add tiny uppercase letter-spaced section labels like "Workflow" or "Tools", hero eyebrow pills like "Soft-Magic AI Studio v2.0", or rounded pill chips used only as decoration. Prefer direct headings, clear body copy, and squared product controls for functional metadata.
 
 ## Code Formatting and Style
 

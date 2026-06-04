@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai learns which creatives perform and helps users generate better next variants.
+Soft-Magic AI learns which creatives perform and helps users generate better next variants.
 
 ## Users
 
@@ -23,7 +23,7 @@ Performance marketers, agencies, ecommerce sellers, business owners running ads.
 
 ## User Flow
 
-User records that Variant B had better CTR but lower conversions. Softai suggests a new variant preserving hook B while changing the offer and landing page CTA.
+User records that Variant B had better CTR but lower conversions. Soft-Magic AI suggests a new variant preserving hook B while changing the offer and landing page CTA.
 
 ## Data Model
 
@@ -49,7 +49,7 @@ User records that Variant B had better CTR but lower conversions. Softai suggest
 ## Acceptance Criteria
 
 - User can record metrics for a campaign asset.
-- Softai can compare variants.
+- Soft-Magic AI can compare variants.
 - Suggestions reference actual performance data.
 - Historical data remains tied to brand/product/campaign.
 

@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai reliably handles long-running image, video, audio, and edit tasks without losing state when sessions refresh, providers delay, or requests fail.
+Soft-Magic AI reliably handles long-running image, video, audio, and edit tasks without losing state when sessions refresh, providers delay, or requests fail.
 
 ## Users
 

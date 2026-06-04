@@ -3,7 +3,7 @@
     "plans": {
       "starter": {
         "name": "Starter",
-        "description": "Entry plan for small teams starting with SoftAI credits.",
+        "description": "Entry plan for small teams starting with Soft-Magic AI credits.",
         "amount": 2000,
         "annual_monthly_amount": 0,
         "currency": "usd",

@@ -14,9 +14,9 @@ Creators, SMB marketers, agencies, founders, and social media managers.
 
 #### Why It Matters
 
-Editing is where generated content becomes usable. A narrow editor focused on captions, trimming, and branding would make Softai outputs more publish-ready.
+Editing is where generated content becomes usable. A narrow editor focused on captions, trimming, and branding would make Soft-Magic AI outputs more publish-ready.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users upload or select a video, generate subtitles, choose a caption style, trim start/end, add logo/text overlays, optionally add music, then export.
 

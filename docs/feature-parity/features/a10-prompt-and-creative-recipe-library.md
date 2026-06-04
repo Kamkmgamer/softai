@@ -16,7 +16,7 @@ All users, especially beginners.
 
 Many users do not know what to ask AI for. Recipes improve output quality and reduce blank-page anxiety.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users browse recipes by goal, industry, platform, and format. Selecting a recipe pre-fills a tool with structured prompts and examples.
 

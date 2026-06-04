@@ -23,7 +23,7 @@ Non-expert business owners, marketers, agencies.
 
 ## User Flow
 
-User chooses a goal like “launch offer video” or “premium product photo.” Softai asks for only the missing fields and generates the asset.
+User chooses a goal like “launch offer video” or “premium product photo.” Soft-Magic AI asks for only the missing fields and generates the asset.
 
 ## Data Model
 

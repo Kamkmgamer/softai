@@ -12,7 +12,7 @@ Small businesses, ecommerce sellers, paid media teams, agencies.
 
 - Select product, offer, platform, style, and brand.
 - Generate one finished static ad image.
-- Use Softai-rendered text overlays for reliable copy.
+- Use Soft-Magic AI-rendered text overlays for reliable copy.
 
 ## Full Version
 

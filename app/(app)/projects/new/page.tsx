@@ -16,7 +16,7 @@ export default function NewProjectPage() {
               Multi-Shot Video
             </h1>
             <p className="text-sm text-text-secondary">
-              Write a simple brief. SoftAI turns it into campaign shots, review
+              Write a simple brief. Soft-Magic AI turns it into campaign shots, review
               steps, and renders.
             </p>
             <div className="flex gap-2 pt-2 text-xs font-semibold">

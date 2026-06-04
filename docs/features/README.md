@@ -1,12 +1,12 @@
-# Softai Feature Roadmap
+# Soft-Magic AI Feature Roadmap
 
-This catalog turns Softai into a practical AI media studio focused on small businesses: product photos, ad creatives, video ads, social content, landing pages, and campaign iteration.
+This catalog turns Soft-Magic AI into a practical AI media studio focused on small businesses: product photos, ad creatives, video ads, social content, landing pages, and campaign iteration.
 
 The goal is broad practical AI media coverage while specializing the workflows for founders, local businesses, ecommerce sellers, agencies, and social media teams.
 
 ## Product Positioning
 
-Softai should become the place where a business owner can upload a product, describe an offer, choose a platform, and generate every asset needed for a campaign.
+Soft-Magic AI should become the place where a business owner can upload a product, describe an offer, choose a platform, and generate every asset needed for a campaign.
 
 Core promise:
 
@@ -112,7 +112,7 @@ Exit criteria: User creates one brand and one product, then every tool remembers
 
 ### Phase 2: Image Tools
 
-Goal: Users can create and edit professional product images without leaving Softai.
+Goal: Users can create and edit professional product images without leaving Soft-Magic AI.
 
 | # | Feature | Status | What To Do |
 |---|---|---|---|
@@ -160,7 +160,7 @@ Goal: Generated assets become deployable campaigns with export, variants, and co
 | # | Feature | Status | What To Do |
 |---|---|---|---|
 | 26 | [Platform Export Packs](./26-platform-export-packs.md) | MISSING | Export presets for TikTok, Instagram, YouTube Shorts, Meta, Google. Safe-zone overlays. Batch export. |
-| 27 | [Landing Page And Website Generator](./27-landing-page-and-website-generator.md) | MISSING | Generate landing page from campaign brief. Match ad visuals. Lead capture. Publish to Softai URL. |
+| 27 | [Landing Page And Website Generator](./27-landing-page-and-website-generator.md) | MISSING | Generate landing page from campaign brief. Match ad visuals. Lead capture. Publish to Soft-Magic AI URL. |
 | 28 | [Campaign Variants And A/B Testing](./28-campaign-variants-and-ab-testing.md) | MISSING | Generate labeled variants (hook, CTA, visual, offer). Campaign matrix view. Export as variant pack. |
 | 29 | [Ad Compliance And Claims Checker](./29-ad-compliance-and-claims-checker.md) | MISSING | Scan copy for risky claims. Flag unsupported absolutes, medical/financial claims. Suggest safer rewrites. |
 | 30 | [Competitor Ad Analyzer](./30-competitor-ad-analyzer.md) | MISSING | Upload competitor ads. Analyze hooks, offer, visuals, CTA. Generate original ideas from patterns. |

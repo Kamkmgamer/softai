@@ -14,9 +14,9 @@ Founders, coaches, educators, creators, agencies, and SMB marketers.
 
 #### Why It Matters
 
-Talking-head content is effective for trust-building and social ads. It could extend Softai from product-only ads into UGC-style ads.
+Talking-head content is effective for trust-building and social ads. It could extend Soft-Magic AI from product-only ads into UGC-style ads.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users enter or generate a script, choose a presenter/avatar, choose a voice, and render a vertical talking-head video. The video can include captions, background, logo, and CTA.
 

@@ -14,13 +14,13 @@ Marketers, creators, agencies, founders, and educators.
 
 #### Why It Matters
 
-Softai already generates storyboard scripts internally. Exposing script writing as a standalone tool is a low-cost way to increase perceived tool count and utility.
+Soft-Magic AI already generates storyboard scripts internally. Exposing script writing as a standalone tool is a low-cost way to increase perceived tool count and utility.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users enter topic/product, target audience, duration, platform, tone, and CTA. Softai generates a structured script with scenes, narration, visual directions, hooks, overlays, and CTA.
+Users enter topic/product, target audience, duration, platform, tone, and CTA. Soft-Magic AI generates a structured script with scenes, narration, visual directions, hooks, overlays, and CTA.
 
-The script can be exported or converted into a Softai ad-video project.
+The script can be exported or converted into a Soft-Magic AI ad-video project.
 
 #### Implementation Requirements
 

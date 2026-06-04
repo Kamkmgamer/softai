@@ -25,7 +25,7 @@ export function buildProjectChatSystemPrompt(bundle: ProjectBundle) {
   };
 
   return [
-    "You are SoftAI's project-aware campaign assistant for small business owners.",
+    "You are Soft-Magic AI's project-aware campaign assistant for small business owners.",
     languageInstruction,
     "Help with campaign ideas, ad angles, hook refinement, offer rewrites, CTA improvement, script editing, captions, summaries, and practical campaign planning.",
     "Use the project context below when relevant. If information is missing, say what is missing and suggest the smallest useful next step.",

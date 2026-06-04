@@ -37,7 +37,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
             S
           </div>
           <span className="text-[15px] font-semibold tracking-tight text-text">
-            SoftAI
+            Soft-Magic AI
           </span>
         </Link>
 
@@ -46,7 +46,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
           <LanguageSwitcher />
           <ThemeToggle />
           <Link
-            href="#tools"
+            href={localizePath("/features", locale)}
             className="text-sm font-medium text-text-secondary hover:text-text transition-colors"
           >
             {dictionary.shared.features}
@@ -111,7 +111,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
               <ThemeToggle />
             </div>
             <Link
-              href="#tools"
+              href={localizePath("/features", locale)}
               className="text-[15px] font-medium text-text-secondary hover:text-text transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >

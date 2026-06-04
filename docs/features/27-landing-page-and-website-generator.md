@@ -12,7 +12,7 @@ Small businesses, service providers, ecommerce sellers, agencies.
 
 - Generate landing page copy and layout from product, offer, brand, and campaign media.
 - Preview responsive page.
-- Export HTML or publish to a Softai-hosted URL.
+- Export HTML or publish to a Soft-Magic AI-hosted URL.
 
 ## Full Version
 

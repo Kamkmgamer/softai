@@ -111,7 +111,7 @@ export const dictionaries = {
       avatarsTitle: "Brand consistency",
       avatarsDescription:
         "Upload your brand kit once and every generation stays on-brand. Logos, colors, and voice carry across all tools automatically.",
-      heroImageAlt: "SoftAI dashboard interface",
+      heroImageAlt: "Soft-Magic AI dashboard interface",
       storyboardImageAlt: "Storyboard scene editor interface",
       renderingImageAlt: "Rendering progress interface",
       heroOverlay: {
@@ -942,7 +942,7 @@ export const dictionaries = {
       avatarsTitle: "استمرارية العلامة",
       avatarsDescription:
         "ارفع هوية علامتك مرة واحدة وستبقى كل التوليدات متوافقة معها. الشعارات والألوان والنبرة تنتقل تلقائياً عبر جميع الأدوات.",
-      heroImageAlt: "واجهة لوحة تحكم SoftAI",
+      heroImageAlt: "واجهة لوحة تحكم Soft-Magic AI",
       storyboardImageAlt: "واجهة تحرير مشاهد الستوري بورد",
       renderingImageAlt: "واجهة تقدم التوليد",
       heroOverlay: {

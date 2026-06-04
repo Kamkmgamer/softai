@@ -34,7 +34,7 @@ function getUserIdentityFromClaims(claims: unknown) {
 
   return {
     email: getClaimString(claims, "email") ?? "unknown@softai.app",
-    name: claimName || "SoftAI User",
+    name: claimName || "Soft-Magic AI User",
   };
 }
 
@@ -45,7 +45,7 @@ function getUserIdentityFromClerkUser(user: Awaited<ReturnType<typeof import("@c
 
   return {
     email: user.primaryEmailAddress?.emailAddress ?? user.emailAddresses[0]?.emailAddress ?? "unknown@softai.app",
-    name: name || "SoftAI User",
+    name: name || "Soft-Magic AI User",
   };
 }
 

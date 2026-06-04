@@ -14,9 +14,9 @@ Creators, founders, marketers, agencies, and SMBs that want voiceovers without r
 
 #### Why It Matters
 
-Softai's video ads become much more complete with narration. Voice generation also supports talking heads, motion graphics, video editor, and landing page videos.
+Soft-Magic AI's video ads become much more complete with narration. Voice generation also supports talking heads, motion graphics, video editor, and landing page videos.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users either choose a stock voice or upload a voice sample with consent attestation. They enter text, generate audio, preview it, and attach it to a project or download it.
 

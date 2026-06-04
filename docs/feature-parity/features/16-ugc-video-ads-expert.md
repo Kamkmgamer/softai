@@ -14,11 +14,11 @@ Ecommerce brands, direct-response marketers, agencies, course sellers, app found
 
 #### Why It Matters
 
-This is extremely aligned with Softai's purpose. It packages existing ad-video flow in language that performance marketers understand.
+This is extremely aligned with Soft-Magic AI's purpose. It packages existing ad-video flow in language that performance marketers understand.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users select campaign goal, product, audience, offer, proof points, UGC style, persona, platform, and CTA. Softai generates multiple ad angles, scripts, storyboards, and videos.
+Users select campaign goal, product, audience, offer, proof points, UGC style, persona, platform, and CTA. Soft-Magic AI generates multiple ad angles, scripts, storyboards, and videos.
 
 UGC styles could include:
 
@@ -46,6 +46,6 @@ UGC styles could include:
 
 #### MVP Scope
 
-Generate 3 ad angles and 3 scripts from one brief, then let user choose one to convert into a standard Softai video project.
+Generate 3 ad angles and 3 scripts from one brief, then let user choose one to convert into a standard Soft-Magic AI video project.
 
 ---

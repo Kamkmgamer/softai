@@ -16,9 +16,9 @@ Video creators, marketers, podcasters, and SMBs that need royalty-safe backgroun
 
 Music improves video quality and can become part of the video generation workflow. As a standalone tool, it is less core than product photos or ad creatives.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users select mood, style, duration, and optional prompt. Softai generates a music track, lets users preview it, and attach it to a video project.
+Users select mood, style, duration, and optional prompt. Soft-Magic AI generates a music track, lets users preview it, and attach it to a video project.
 
 #### Implementation Requirements
 

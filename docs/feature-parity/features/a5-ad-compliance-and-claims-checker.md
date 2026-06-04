@@ -14,11 +14,11 @@ SMBs, agencies, regulated-adjacent businesses, ecommerce sellers, health/beauty 
 
 #### Why It Matters
 
-Ad rejection is costly. Compliance checking is a reliability differentiator and fits Softai's safety/admin priorities.
+Ad rejection is costly. Compliance checking is a reliability differentiator and fits Soft-Magic AI's safety/admin priorities.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Before rendering/exporting, Softai flags risky claims and suggests safer alternatives.
+Before rendering/exporting, Soft-Magic AI flags risky claims and suggests safer alternatives.
 
 #### Implementation Requirements
 

@@ -23,7 +23,7 @@ Performance marketers, agencies, ecommerce sellers, growth teams.
 
 ## User Flow
 
-User has one video ad and asks for “5 hook variants for TikTok.” Softai generates labeled variants and exports them as a campaign pack.
+User has one video ad and asks for “5 hook variants for TikTok.” Soft-Magic AI generates labeled variants and exports them as a campaign pack.
 
 ## Data Model
 

@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Softai understands what the business sells, so users can generate ads and media around products without re-entering details every time.
+Soft-Magic AI understands what the business sells, so users can generate ads and media around products without re-entering details every time.
 
 ## Users
 

@@ -14,9 +14,9 @@ Agencies, freelancers, marketing teams, and multi-brand SMBs.
 
 #### Why It Matters
 
-Softai already has review-oriented workflows. Client approval can make the product more valuable for agencies.
+Soft-Magic AI already has review-oriented workflows. Client approval can make the product more valuable for agencies.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
 Users create a workspace, invite members/clients, share a project review link, collect comments, and approve outputs.
 

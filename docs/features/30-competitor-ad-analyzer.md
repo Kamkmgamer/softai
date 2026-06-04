@@ -11,7 +11,7 @@ Business owners, agencies, marketers, ecommerce sellers.
 ## MVP
 
 - User uploads screenshots/videos or pastes public ad examples.
-- Softai analyzes hooks, offer, visuals, CTA, audience, and style.
+- Soft-Magic AI analyzes hooks, offer, visuals, CTA, audience, and style.
 - Generate original campaign ideas inspired by patterns, not copies.
 
 ## Full Version
@@ -23,7 +23,7 @@ Business owners, agencies, marketers, ecommerce sellers.
 
 ## User Flow
 
-User uploads three competitor ads. Softai summarizes what they are doing and suggests five original angles for the user's product.
+User uploads three competitor ads. Soft-Magic AI summarizes what they are doing and suggests five original angles for the user's product.
 
 ## Data Model
 

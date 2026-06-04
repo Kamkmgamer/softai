@@ -14,11 +14,11 @@ Ecommerce sellers, marketers, content creators, and agencies who need quick edit
 
 #### Why It Matters
 
-Generated outputs often need small corrections. Editing keeps users inside Softai instead of sending them to Photoshop, Canva, or Photoroom.
+Generated outputs often need small corrections. Editing keeps users inside Soft-Magic AI instead of sending them to Photoshop, Canva, or Photoroom.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users upload or select an existing image, type an edit instruction, and generate a new version. Softai displays before/after previews and stores an edit history.
+Users upload or select an existing image, type an edit instruction, and generate a new version. Soft-Magic AI displays before/after previews and stores an edit history.
 
 Example instructions:
 

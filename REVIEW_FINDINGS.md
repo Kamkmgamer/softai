@@ -1,7 +1,7 @@
 # Review Findings
 
 ## Scope
-Review of the `SoftAI` SaaS scaffold implementation committed in `ce87fc6`.
+Review of the `Soft-Magic AI` SaaS scaffold implementation committed in `ce87fc6`.
 
 ## Findings
 

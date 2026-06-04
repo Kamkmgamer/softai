@@ -16,11 +16,11 @@ SMB marketers, founders, ecommerce sellers, agencies, and social media managers.
 
 #### Why It Matters
 
-This is highly aligned with Softai. Users who need video ads usually also need static creatives for Meta, Google Display, Instagram, TikTok thumbnails, and retargeting.
+This is highly aligned with Soft-Magic AI. Users who need video ads usually also need static creatives for Meta, Google Display, Instagram, TikTok thumbnails, and retargeting.
 
-#### Softai Workflow
+#### Soft-Magic AI Workflow
 
-Users provide product name, offer, CTA, audience, platform, and optional product image. Softai generates ad copy and a layout. The system renders a finished image in selected sizes.
+Users provide product name, offer, CTA, audience, platform, and optional product image. Soft-Magic AI generates ad copy and a layout. The system renders a finished image in selected sizes.
 
 Supported sizes could include:
 
