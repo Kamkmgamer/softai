@@ -68,18 +68,6 @@ export default async function MarketingPage() {
                 {marketing.pricingCta}
               </Link>
             </div>
-            <div className="mt-8 grid max-w-xl gap-2 text-sm text-text-secondary sm:grid-cols-3">
-              {[
-                marketing.trustBadges.productAwarePrompts,
-                marketing.trustBadges.implementedToolsOnly,
-                marketing.trustBadges.creditsVisibleInApp,
-              ].map((item) => (
-                <span key={item} className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-success" />
-                  {item}
-                </span>
-              ))}
-            </div>
           </div>
 
           <div className="rounded-2xl border border-border bg-surface p-3 shadow-(--shadow-lg) animate-scale-in">

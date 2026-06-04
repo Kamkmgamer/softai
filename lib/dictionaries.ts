@@ -75,12 +75,14 @@ export const dictionaries = {
       creditsAvailable: "credits available",
       recentProjects: "Recent projects",
       noProjects: "No projects yet",
-      noProjectsDescription: "Create your first ad campaign project to get started.",
+      noProjectsDescription:
+        "Create your first ad campaign project to get started.",
       updated: "Updated",
     },
     marketing: {
       heroTitle: "Turn your product brief into a video ad.",
-      heroDescription: "Upload your product images, paste your script, and generate short-form video campaigns ready for TikTok and Instagram. No timeline editor required.",
+      heroDescription:
+        "Upload your product images, paste your script, and generate short-form video campaigns ready for TikTok and Instagram. No timeline editor required.",
       dashboardCta: "Go to Dashboard",
       startCta: "Start a project",
       pricingCta: "See pricing",
@@ -88,28 +90,30 @@ export const dictionaries = {
       statFormat: "Native format",
       statControl: "Brand control",
       howTitle: "How it works",
-      howDescription: "Our pipeline is designed for SMB operators who need to ship campaigns, not learn complex video editing software.",
+      howDescription:
+        "Our pipeline is designed for SMB operators who need to ship campaigns, not learn complex video editing software.",
       stepBriefTitle: "Create a brief",
-      stepBriefDescription: "Define your target audience, offer, and brand voice. Paste a rough script seed and upload your core product imagery.",
+      stepBriefDescription:
+        "Define your target audience, offer, and brand voice. Paste a rough script seed and upload your core product imagery.",
       stepReviewTitle: "Review storyboard",
-      stepReviewDescription: "We generate a scene-by-scene storyboard. You tweak the voiceover narration and visual prompts before rendering.",
+      stepReviewDescription:
+        "We generate a scene-by-scene storyboard. You tweak the voiceover narration and visual prompts before rendering.",
       stepRenderTitle: "Render & export",
-      stepRenderDescription: "Our pipeline renders the visuals, generates the TTS narration, and produces a final video ready for ad platforms.",
+      stepRenderDescription:
+        "Our pipeline renders the visuals, generates the TTS narration, and produces a final video ready for ad platforms.",
       featuresTitle: "Everything you need",
       storyboardTitle: "Automated Storyboarding",
-      storyboardDescription: "Our system breaks down your brief into pacing-optimized scenes. It generates hook-focused narration, visual prompts for the image generator, and suggested text overlays perfectly timed for short-form content.",
+      storyboardDescription:
+        "Our system breaks down your brief into pacing-optimized scenes. It generates hook-focused narration, visual prompts for the image generator, and suggested text overlays perfectly timed for short-form content.",
       safetyTitle: "Brand safety",
-      safetyDescription: "Strict policies ensure your product imagery remains secure. We do not train foundational models on your private brand assets or generations.",
+      safetyDescription:
+        "Strict policies ensure your product imagery remains secure. We do not train foundational models on your private brand assets or generations.",
       avatarsTitle: "Consistent Avatars",
-      avatarsDescription: "Upload a reference photo of your brand spokesperson and our pipeline ensures their likeness is maintained across generated scenes.",
+      avatarsDescription:
+        "Upload a reference photo of your brand spokesperson and our pipeline ensures their likeness is maintained across generated scenes.",
       heroImageAlt: "SoftAI dashboard interface",
       storyboardImageAlt: "Storyboard scene editor interface",
       renderingImageAlt: "Rendering progress interface",
-      trustBadges: {
-        productAwarePrompts: "Product-aware prompts",
-        implementedToolsOnly: "Implemented tools only",
-        creditsVisibleInApp: "Credits visible in-app",
-      },
       heroOverlay: {
         headline: "Launch a 9:16 product ad for the spring offer.",
         tags: "Product reshoot, create ad, social crop",
@@ -139,7 +143,8 @@ export const dictionaries = {
       title: "Library",
       description: "Your finalized campaigns and rendered exports.",
       emptyTitle: "Your library is empty",
-      emptyDescription: "When your video campaigns finish rendering, they will appear here for download.",
+      emptyDescription:
+        "When your video campaigns finish rendering, they will appear here for download.",
       completed: "Completed",
       view: "View",
       downloadAll: "Download all",
@@ -150,7 +155,8 @@ export const dictionaries = {
       title: "Generation History",
       description: "All images and videos you have generated.",
       emptyTitle: "No generations yet",
-      emptyDescription: "Your generated media will appear here once you create your first image or video.",
+      emptyDescription:
+        "Your generated media will appear here once you create your first image or video.",
       loadMore: "Load more",
       all: "All",
       images: "Images",
@@ -169,7 +175,8 @@ export const dictionaries = {
       topUpCredits: "Plans and credits",
       recentActivity: "Recent activity",
       noActivity: "No activity yet",
-      noActivityDescription: "Your credit usage and purchases will appear here.",
+      noActivityDescription:
+        "Your credit usage and purchases will appear here.",
       creditUpgrade: "plan credit upgrade",
       onboardingCredits: "Onboarding credits",
       monthlyGrant: "Free plan monthly grant",
@@ -185,23 +192,29 @@ export const dictionaries = {
     },
     payments: {
       title: "Payments",
-      description: "Manage payment methods, invoices, and account billing details.",
+      description:
+        "Manage payment methods, invoices, and account billing details.",
       accountPanel: "Payments and invoices",
       billingShortcut: "Need to change plan credits?",
       openBilling: "Open billing",
-      handledByClerk: "Payment methods, invoices, and billing details open in the billing section below.",
+      handledByClerk:
+        "Payment methods, invoices, and billing details open in the billing section below.",
     },
     settings: {
       title: "Settings",
-      description: "Manage your profile and review account safety expectations.",
+      description:
+        "Manage your profile and review account safety expectations.",
       accountProfile: "Account profile",
       trustSafety: "Trust & Safety Policies",
       contentGenerationTitle: "Content generation:",
-      contentGeneration: "We prohibit the generation of CSAM, non-consensual intimate imagery, violence, and hate speech.",
+      contentGeneration:
+        "We prohibit the generation of CSAM, non-consensual intimate imagery, violence, and hate speech.",
       avatarsTitle: "Avatars & Likeness:",
-      avatars: "When uploading single-photo avatars, you must attest to having the rights to that person's likeness. Generation of public figures or politicians is disabled.",
+      avatars:
+        "When uploading single-photo avatars, you must attest to having the rights to that person's likeness. Generation of public figures or politicians is disabled.",
       dataUsageTitle: "Data usage:",
-      dataUsage: "We do not train foundational models on your private brand assets or generations.",
+      dataUsage:
+        "We do not train foundational models on your private brand assets or generations.",
     },
     projectForm: {
       title: "Project title",
@@ -219,7 +232,8 @@ export const dictionaries = {
       platformFormat: "Platform format",
       scriptSeed: "Script seed",
       scriptHint: "Paste your rough sales script or core message.",
-      scriptPlaceholder: "Introduce the problem, present the product, and give the offer...",
+      scriptPlaceholder:
+        "Introduce the problem, present the product, and give the offer...",
       creating: "Creating project...",
       create: "Create project",
       unableToCreate: "Unable to create project.",
@@ -291,7 +305,13 @@ export const dictionaries = {
           "Generate ad-ready image plates from a prompt, with clean space for copy and platform crops.",
         placeholder:
           "A premium skincare bottle on wet black stone, soft morning window light, condensation, warm beige background, clean empty space at top for offer copy.",
-        presets: ["Product hero", "Social ad", "Editorial still", "Luxury studio", "Bold ecommerce"],
+        presets: [
+          "Product hero",
+          "Social ad",
+          "Editorial still",
+          "Luxury studio",
+          "Bold ecommerce",
+        ],
       },
       "image-editor": {
         title: "AI Image Editor",
@@ -299,7 +319,13 @@ export const dictionaries = {
           "Upload one reference image, then restyle, relight, reshoot, or change the backdrop with a plain-English instruction.",
         placeholder:
           "Keep the product exactly recognizable, replace the background with a warm kitchen counter scene, add golden-hour light, and make it feel like a premium direct-to-consumer ad.",
-        presets: ["Reshoot product", "Change backdrop", "Relight scene", "Change image style", "Remove distractions"],
+        presets: [
+          "Reshoot product",
+          "Change backdrop",
+          "Relight scene",
+          "Change image style",
+          "Remove distractions",
+        ],
       },
       "edit-studio": {
         title: "Edit Studio",
@@ -307,7 +333,13 @@ export const dictionaries = {
           "Create a practical edit plan for source footage: relight, restyle, remove distractions, or shift the commercial direction.",
         placeholder:
           "Transform this into a high-converting product ad: brighten the product, remove background clutter, add smooth camera motion, make the room feel premium, and end on a clean hero shot.",
-        presets: ["Transform video", "Remove object", "Change backdrop", "Relight scene", "Change time of day"],
+        presets: [
+          "Transform video",
+          "Remove object",
+          "Change backdrop",
+          "Relight scene",
+          "Change time of day",
+        ],
       },
       "expand-image": {
         title: "Expand Image",
@@ -315,7 +347,13 @@ export const dictionaries = {
           "Upload an image and describe how to extend it beyond its original borders -- add scenery, extend backgrounds, or widen compositions.",
         placeholder:
           "Extend this product photo to the right with a matching marble countertop, soft natural light, and subtle bokeh in the background.",
-        presets: ["Extend background", "Widen composition", "Add scenery", "Panoramic extend", "Fill canvas"],
+        presets: [
+          "Extend background",
+          "Widen composition",
+          "Add scenery",
+          "Panoramic extend",
+          "Fill canvas",
+        ],
       },
       "stylize-image": {
         title: "Stylize Image",
@@ -323,7 +361,14 @@ export const dictionaries = {
           "Upload any image and transform it into a new artistic style -- watercolor, oil painting, anime, cyberpunk, vintage film, and more.",
         placeholder:
           "Transform this product photo into a warm oil painting style with rich textures, visible brush strokes, and a golden-hour color palette.",
-        presets: ["Watercolor", "Oil painting", "Anime", "Cyberpunk neon", "Vintage film", "Pencil sketch"],
+        presets: [
+          "Watercolor",
+          "Oil painting",
+          "Anime",
+          "Cyberpunk neon",
+          "Vintage film",
+          "Pencil sketch",
+        ],
       },
       "product-reshoot": {
         title: "Product Reshoot",
@@ -331,7 +376,14 @@ export const dictionaries = {
           "Upload your product photo and describe a new setting, lighting, or angle -- get a studio-quality reshoot without the studio.",
         placeholder:
           "Place this product on a rustic wooden table with warm morning sunlight streaming through a window, soft shadows, and a blurred kitchen background.",
-        presets: ["Studio white", "Lifestyle scene", "Outdoor natural", "Dramatic lighting", "Flat lay", "Close-up macro"],
+        presets: [
+          "Studio white",
+          "Lifestyle scene",
+          "Outdoor natural",
+          "Dramatic lighting",
+          "Flat lay",
+          "Close-up macro",
+        ],
       },
       "vary-image": {
         title: "Vary Image",
@@ -339,14 +391,27 @@ export const dictionaries = {
           "Upload an image and describe what to change -- swap colors, alter elements, adjust mood, or explore creative directions while keeping the core composition.",
         placeholder:
           "Keep the same product and composition but change the background to a deep navy blue, make the lighting cooler and more dramatic, and add subtle lens flare.",
-        presets: ["Color swap", "Mood shift", "Season change", "Time of day", "Material swap", "Background change"],
+        presets: [
+          "Color swap",
+          "Mood shift",
+          "Season change",
+          "Time of day",
+          "Material swap",
+          "Background change",
+        ],
       },
       mockup: {
         title: "Product Mockup",
         description:
           "Upload a design or logo and describe where it should be placed on a real-world product.",
-        placeholder: "e.g., A white ceramic coffee mug on a wooden desk with a plant.",
-        presets: ["Apparel", "Print media", "Digital screens", "Outdoor signage"],
+        placeholder:
+          "e.g., A white ceramic coffee mug on a wooden desk with a plant.",
+        presets: [
+          "Apparel",
+          "Print media",
+          "Digital screens",
+          "Outdoor signage",
+        ],
       },
       "create-ad": {
         title: "Create Ad",
@@ -354,7 +419,12 @@ export const dictionaries = {
           "Describe the ad you want to create. Optionally upload an existing ad or product photo to generate variations.",
         placeholder:
           "e.g., A bright, highly converting Instagram story ad for a summer skincare line, featuring text 'Summer Sale'.",
-        presets: ["Headline swap", "Color palette change", "Product swap", "Seasonal theme"],
+        presets: [
+          "Headline swap",
+          "Color palette change",
+          "Product swap",
+          "Seasonal theme",
+        ],
       },
       "batch-social": {
         title: "Batch Social Generator",
@@ -362,7 +432,12 @@ export const dictionaries = {
           "Describe your brand or product and generate a week of platform-specific social posts with matching visuals.",
         placeholder:
           "e.g., A organic skincare brand targeting millennials. Products: vitamin C serum, retinol night cream. Tone: friendly, educational, empowering.",
-        presets: ["Instagram focus", "TikTok trends", "LinkedIn professional", "Multi-platform"],
+        presets: [
+          "Instagram focus",
+          "TikTok trends",
+          "LinkedIn professional",
+          "Multi-platform",
+        ],
       },
       "carousel-builder": {
         title: "Carousel Builder",
@@ -370,7 +445,12 @@ export const dictionaries = {
           "Create multi-slide carousel posts for Instagram and LinkedIn. Describe your topic and get a cohesive set of slides.",
         placeholder:
           "e.g., 5 tips for small business owners to improve their social media presence. Include practical, actionable advice.",
-        presets: ["How-to guide", "Data storytelling", "Tips & tricks", "Case study"],
+        presets: [
+          "How-to guide",
+          "Data storytelling",
+          "Tips & tricks",
+          "Case study",
+        ],
       },
       "hook-generator": {
         title: "Short-Form Hook Generator",
@@ -378,7 +458,12 @@ export const dictionaries = {
           "Generate scroll-stopping hook images for Instagram Reels, TikToks, and YouTube Shorts.",
         placeholder:
           "e.g., A fitness transformation story. Hook should create curiosity about the before/after results.",
-        presets: ["Curiosity gap", "Bold claim", "Question hook", "Contrarian take"],
+        presets: [
+          "Curiosity gap",
+          "Bold claim",
+          "Question hook",
+          "Contrarian take",
+        ],
       },
       "platform-resizer": {
         title: "Platform Resizer",
@@ -386,7 +471,13 @@ export const dictionaries = {
           "Upload an image and adapt it for any social platform. Smart crop and reframe preserve the most important visual elements.",
         placeholder:
           "e.g., Adapt this image for Instagram Reels format while keeping the product centered.",
-        presets: ["Instagram Reel", "TikTok", "YouTube Short", "LinkedIn", "Story format"],
+        presets: [
+          "Instagram Reel",
+          "TikTok",
+          "YouTube Short",
+          "LinkedIn",
+          "Story format",
+        ],
       },
       "lesson-to-video": {
         title: "Lesson to Video",
@@ -394,7 +485,12 @@ export const dictionaries = {
           "Describe your lesson topic and key points. The AI will generate a structured teaching video with scenes, visuals, and narration.",
         placeholder:
           "e.g., Introduction to photosynthesis: how plants convert sunlight into energy. Cover the light reactions, Calvin cycle, and real-world applications.",
-        presets: ["Science lesson", "Math concept", "History overview", "Language tutorial"],
+        presets: [
+          "Science lesson",
+          "Math concept",
+          "History overview",
+          "Language tutorial",
+        ],
       },
       "explainer-video": {
         title: "Explainer Video Builder",
@@ -402,7 +498,12 @@ export const dictionaries = {
           "Create step-by-step explainer videos from a concept description. Perfect for tutorials, onboarding, and educational content.",
         placeholder:
           "e.g., How to set up a Shopify store in 5 steps. Cover account creation, product listing, payment setup, theme customization, and launch.",
-        presets: ["How-to tutorial", "Product demo", "Onboarding flow", "Concept explainer"],
+        presets: [
+          "How-to tutorial",
+          "Product demo",
+          "Onboarding flow",
+          "Concept explainer",
+        ],
       },
       "whiteboard-animation": {
         title: "Whiteboard Animation",
@@ -410,7 +511,12 @@ export const dictionaries = {
           "Generate whiteboard-style teaching videos from a script. Watch concepts come to life with hand-drawn illustrations.",
         placeholder:
           "e.g., Explaining the water cycle: evaporation, condensation, precipitation, and collection. Simple, visual, and easy to remember.",
-        presets: ["Classic whiteboard", "Colorful sketch", "Minimal line art", "Story-driven"],
+        presets: [
+          "Classic whiteboard",
+          "Colorful sketch",
+          "Minimal line art",
+          "Story-driven",
+        ],
       },
       "course-trailer": {
         title: "Course Trailer",
@@ -418,7 +524,12 @@ export const dictionaries = {
           "Create a compelling trailer to promote your online course. Highlight key topics and outcomes to drive enrollments.",
         placeholder:
           "e.g., Complete Digital Marketing Mastery course. Covers SEO, social media ads, email marketing, analytics, and conversion optimization.",
-        presets: ["Professional promo", "Casual & friendly", "Urgency-driven", "Testimonial style"],
+        presets: [
+          "Professional promo",
+          "Casual & friendly",
+          "Urgency-driven",
+          "Testimonial style",
+        ],
       },
       "style-transfer": {
         title: "Style Transfer",
@@ -426,7 +537,14 @@ export const dictionaries = {
           "Upload any image and transform it into a new artistic style. Choose from oil painting, watercolor, anime, cyberpunk, and more.",
         placeholder:
           "Transform this photo into a vibrant watercolor painting with soft edges, flowing colors, and a dreamy atmosphere.",
-        presets: ["Oil painting", "Watercolor", "Anime style", "Cyberpunk neon", "Vintage film", "Pencil sketch"],
+        presets: [
+          "Oil painting",
+          "Watercolor",
+          "Anime style",
+          "Cyberpunk neon",
+          "Vintage film",
+          "Pencil sketch",
+        ],
       },
       "surreal-scene": {
         title: "Surreal Scene Builder",
@@ -434,7 +552,12 @@ export const dictionaries = {
           "Generate dreamlike, impossible scenes from text prompts. Push the boundaries of reality with floating objects, ethereal lighting, and fantasy landscapes.",
         placeholder:
           "e.g., A floating city made of crystals above a serene ocean at sunset, with bioluminescent jellyfish drifting between the buildings.",
-        presets: ["Dreamscape", "Impossible geometry", "Fantasy world", "Sci-fi surrealism"],
+        presets: [
+          "Dreamscape",
+          "Impossible geometry",
+          "Fantasy world",
+          "Sci-fi surrealism",
+        ],
       },
       "visual-remix": {
         title: "Visual Remix",
@@ -442,7 +565,12 @@ export const dictionaries = {
           "Upload an image and generate multiple styled variations. Reimagine your visuals with bold creative transformations.",
         placeholder:
           "Remix this product photo into a neon-lit cyberpunk version with glowing edges and a futuristic cityscape background.",
-        presets: ["Neon remix", "Vintage reimagined", "Abstract art", "Pop art style"],
+        presets: [
+          "Neon remix",
+          "Vintage reimagined",
+          "Abstract art",
+          "Pop art style",
+        ],
       },
       "loop-generator": {
         title: "Loop Generator",
@@ -450,7 +578,12 @@ export const dictionaries = {
           "Create perfect looping visual art for backgrounds, social media, and digital displays.",
         placeholder:
           "e.g., Flowing abstract particles in deep blue and gold, forming organic wave patterns that seamlessly loop.",
-        presets: ["Fluid waves", "Particle flow", "Geometric loop", "Nature pulse"],
+        presets: [
+          "Fluid waves",
+          "Particle flow",
+          "Geometric loop",
+          "Nature pulse",
+        ],
       },
       "script-to-storyboard": {
         title: "Script to Storyboard",
@@ -458,7 +591,12 @@ export const dictionaries = {
           "Paste your script and get a full storyboard with scene breakdowns, visual directions, and narration.",
         placeholder:
           "e.g., A 30-second ad for a coffee brand. Scene 1: Morning sunrise over a farm. Scene 2: Hands picking coffee beans. Scene 3: Brewing a perfect cup. Scene 4: Happy customer enjoying the first sip.",
-        presets: ["30s ad script", "60s promo", "Product story", "Brand narrative"],
+        presets: [
+          "30s ad script",
+          "60s promo",
+          "Product story",
+          "Brand narrative",
+        ],
       },
       "ab-variants": {
         title: "A/B Variant Generator",
@@ -466,7 +604,12 @@ export const dictionaries = {
           "Generate multiple ad variations from one concept. Test different visual approaches to find what converts best.",
         placeholder:
           "e.g., A summer sale ad for a fitness app. Generate variants with different color palettes, focal points, and layouts.",
-        presets: ["Color test", "Layout variants", "CTA variations", "Audience splits"],
+        presets: [
+          "Color test",
+          "Layout variants",
+          "CTA variations",
+          "Audience splits",
+        ],
       },
       "seasonal-transform": {
         title: "Seasonal Campaign Transformer",
@@ -474,13 +617,19 @@ export const dictionaries = {
           "Upload an existing ad and transform it into a seasonal version. Automatically applies holiday theming while keeping your core message.",
         placeholder:
           "e.g., Transform this ad for the holiday season with warm winter colors, snowflakes, and a gift-giving atmosphere.",
-        presets: ["Summer vibes", "Holiday season", "Back to school", "Spring refresh"],
+        presets: [
+          "Summer vibes",
+          "Holiday season",
+          "Back to school",
+          "Spring refresh",
+        ],
       },
       "image-to-video": {
         title: "Image to Video",
         description:
           "Start from a pasted or uploaded image, or lock both start and end frames so the AI only creates the motion between them.",
-        heroHeading: "Turn a still image into motion without losing the source frame.",
+        heroHeading:
+          "Turn a still image into motion without losing the source frame.",
         heroSubtext:
           "Use a product shot as the opening frame, or upload a beginning and ending frame for controlled interpolation.",
         firstFrameMode: "First frame",
@@ -507,7 +656,8 @@ export const dictionaries = {
     features: {
       "edit-studio": {
         title: "Edit Studio",
-        description: "Transform a video with natural-language edits for lighting, style, objects, or pacing.",
+        description:
+          "Transform a video with natural-language edits for lighting, style, objects, or pacing.",
       },
       "multi-shot-video": {
         title: "Multi-Shot Video",
@@ -515,7 +665,8 @@ export const dictionaries = {
       },
       "scene-builder": {
         title: "Scene Builder",
-        description: "Craft your multi-shot scene step by step, see the look, then bring it to life.",
+        description:
+          "Craft your multi-shot scene step by step, see the look, then bring it to life.",
       },
       "upscale-video": {
         title: "Upscale Video",
@@ -539,7 +690,8 @@ export const dictionaries = {
       },
       "image-editor": {
         title: "AI Image Editor",
-        description: "Restyle, reshoot, relight, or change backdrops from one reference image.",
+        description:
+          "Restyle, reshoot, relight, or change backdrops from one reference image.",
       },
       "image-to-video": {
         title: "Image to Video",
@@ -551,31 +703,38 @@ export const dictionaries = {
       },
       "stylize-image": {
         title: "Stylize Image",
-        description: "Apply artistic styles to your image -- watercolor, oil painting, anime, vintage, and more.",
+        description:
+          "Apply artistic styles to your image -- watercolor, oil painting, anime, vintage, and more.",
       },
       "product-reshoot": {
         title: "Product Reshoot",
-        description: "Instantly change the setting, lighting, or angle of your product photo.",
+        description:
+          "Instantly change the setting, lighting, or angle of your product photo.",
       },
       "vary-image": {
         title: "Vary Image",
-        description: "Generate creative variations of your image -- change elements while keeping the core composition.",
+        description:
+          "Generate creative variations of your image -- change elements while keeping the core composition.",
       },
       mockup: {
         title: "Mockup Generator",
-        description: "Place your design on real-world products -- apparel, mugs, screens, signage.",
+        description:
+          "Place your design on real-world products -- apparel, mugs, screens, signage.",
       },
       "create-ad": {
         title: "Create Ad",
-        description: "Generate ad creatives from scratch or variations of an existing ad.",
+        description:
+          "Generate ad creatives from scratch or variations of an existing ad.",
       },
       "batch-social": {
         title: "Batch Social Generator",
-        description: "Generate a week of platform-specific social posts from one idea.",
+        description:
+          "Generate a week of platform-specific social posts from one idea.",
       },
       "carousel-builder": {
         title: "Carousel Builder",
-        description: "Create multi-slide carousel posts for Instagram and LinkedIn.",
+        description:
+          "Create multi-slide carousel posts for Instagram and LinkedIn.",
       },
       "hook-generator": {
         title: "Short-Form Hook Generator",
@@ -583,15 +742,18 @@ export const dictionaries = {
       },
       "platform-resizer": {
         title: "Platform Resizer",
-        description: "Adapt any image to fit every social platform's dimensions.",
+        description:
+          "Adapt any image to fit every social platform's dimensions.",
       },
       "lesson-to-video": {
         title: "Lesson to Video",
-        description: "Turn lesson plans into structured teaching videos with scenes and visuals.",
+        description:
+          "Turn lesson plans into structured teaching videos with scenes and visuals.",
       },
       "explainer-video": {
         title: "Explainer Video Builder",
-        description: "Create step-by-step explainer videos from a concept description.",
+        description:
+          "Create step-by-step explainer videos from a concept description.",
       },
       "whiteboard-animation": {
         title: "Whiteboard Animation",
@@ -599,11 +761,13 @@ export const dictionaries = {
       },
       "course-trailer": {
         title: "Course Trailer",
-        description: "Create a compelling trailer to promote your online course.",
+        description:
+          "Create a compelling trailer to promote your online course.",
       },
       "style-transfer": {
         title: "Style Transfer",
-        description: "Transform any image into a new artistic style -- oil painting, anime, cyberpunk, and more.",
+        description:
+          "Transform any image into a new artistic style -- oil painting, anime, cyberpunk, and more.",
       },
       "surreal-scene": {
         title: "Surreal Scene Builder",
@@ -615,19 +779,23 @@ export const dictionaries = {
       },
       "loop-generator": {
         title: "Loop Generator",
-        description: "Create perfect looping visual art for backgrounds and social.",
+        description:
+          "Create perfect looping visual art for backgrounds and social.",
       },
       "script-to-storyboard": {
         title: "Script to Storyboard",
-        description: "Paste a script and get a full storyboard with scene breakdowns.",
+        description:
+          "Paste a script and get a full storyboard with scene breakdowns.",
       },
       "ab-variants": {
         title: "A/B Variant Generator",
-        description: "Generate multiple ad variations from one concept to test.",
+        description:
+          "Generate multiple ad variations from one concept to test.",
       },
       "seasonal-transform": {
         title: "Seasonal Campaign Transformer",
-        description: "Transform an existing ad into a seasonal version automatically.",
+        description:
+          "Transform an existing ad into a seasonal version automatically.",
       },
       "text-to-speech": {
         title: "Text to Speech",
@@ -639,7 +807,8 @@ export const dictionaries = {
       },
       "custom-agent": {
         title: "Custom Agent",
-        description: "Create a custom assistant for repeatable creative workflows.",
+        description:
+          "Create a custom assistant for repeatable creative workflows.",
       },
       "model-library": {
         title: "Model Library",
@@ -726,7 +895,8 @@ export const dictionaries = {
     },
     marketing: {
       heroTitle: "حوّل وصف منتجك إلى إعلان فيديو جاهز.",
-      heroDescription: "ارفع صور المنتج، اكتب النص أو الفكرة، واحصل على حملات فيديو قصيرة مناسبة لتيك توك وإنستغرام، من دون الحاجة لتعلّم محرر فيديو معقد.",
+      heroDescription:
+        "ارفع صور المنتج، اكتب النص أو الفكرة، واحصل على حملات فيديو قصيرة مناسبة لتيك توك وإنستغرام، من دون الحاجة لتعلّم محرر فيديو معقد.",
       dashboardCta: "اذهب إلى لوحة التحكم",
       startCta: "ابدأ مشروعاً",
       pricingCta: "عرض الأسعار",
@@ -734,28 +904,30 @@ export const dictionaries = {
       statFormat: "صيغة أصلية للمنصات",
       statControl: "تحكم كامل بالعلامة",
       howTitle: "كيف يعمل؟",
-      howDescription: "صممنا سير العمل لأصحاب الأعمال والفرق الصغيرة التي تريد إطلاق حملات بسرعة، لا قضاء الوقت في أدوات مونتاج معقدة.",
+      howDescription:
+        "صممنا سير العمل لأصحاب الأعمال والفرق الصغيرة التي تريد إطلاق حملات بسرعة، لا قضاء الوقت في أدوات مونتاج معقدة.",
       stepBriefTitle: "أنشئ الموجز",
-      stepBriefDescription: "حدد الجمهور، العرض، ونبرة العلامة. أضف مسودة النص وارفع صور المنتج الأساسية.",
+      stepBriefDescription:
+        "حدد الجمهور، العرض، ونبرة العلامة. أضف مسودة النص وارفع صور المنتج الأساسية.",
       stepReviewTitle: "راجع الستوري بورد",
-      stepReviewDescription: "ننشئ مخططاً مشهداً بمشهد. يمكنك تعديل النص الصوتي وتوجيهات الصورة قبل بدء التوليد.",
+      stepReviewDescription:
+        "ننشئ مخططاً مشهداً بمشهد. يمكنك تعديل النص الصوتي وتوجيهات الصورة قبل بدء التوليد.",
       stepRenderTitle: "ولّد وصدّر",
-      stepRenderDescription: "ينتج النظام المشاهد، يجهز النص الصوتي، ويعطيك فيديو نهائي مناسب لمنصات الإعلان.",
+      stepRenderDescription:
+        "ينتج النظام المشاهد، يجهز النص الصوتي، ويعطيك فيديو نهائي مناسب لمنصات الإعلان.",
       featuresTitle: "كل ما تحتاجه لإطلاق الإعلان",
       storyboardTitle: "ستوري بورد تلقائي",
-      storyboardDescription: "يقسم النظام موجزك إلى مشاهد مناسبة للإيقاع، وينشئ افتتاحية قوية، وتوجيهات للصورة، ونصوصاً ظاهرة مضبوطة للمحتوى القصير.",
+      storyboardDescription:
+        "يقسم النظام موجزك إلى مشاهد مناسبة للإيقاع، وينشئ افتتاحية قوية، وتوجيهات للصورة، ونصوصاً ظاهرة مضبوطة للمحتوى القصير.",
       safetyTitle: "أمان العلامة",
-      safetyDescription: "سياسات واضحة تحافظ على أصول علامتك. لا نستخدم صورك الخاصة أو المخرجات لتدريب النماذج الأساسية.",
+      safetyDescription:
+        "سياسات واضحة تحافظ على أصول علامتك. لا نستخدم صورك الخاصة أو المخرجات لتدريب النماذج الأساسية.",
       avatarsTitle: "شخصيات متسقة",
-      avatarsDescription: "ارفع صورة مرجعية لمتحدث علامتك، وسيساعدك النظام على الحفاظ على ملامحه بشكل متسق عبر المشاهد.",
+      avatarsDescription:
+        "ارفع صورة مرجعية لمتحدث علامتك، وسيساعدك النظام على الحفاظ على ملامحه بشكل متسق عبر المشاهد.",
       heroImageAlt: "واجهة لوحة تحكم SoftAI",
       storyboardImageAlt: "واجهة تحرير مشاهد الستوري بورد",
       renderingImageAlt: "واجهة تقدم التوليد",
-      trustBadges: {
-        productAwarePrompts: "توليد موجز للمنتج",
-        implementedToolsOnly: "أدوات مُنجزة فقط",
-        creditsVisibleInApp: "الرصيد ظاهر في التطبيق",
-      },
       heroOverlay: {
         headline: "أطلق إعلان منتج 9:16 لعرض الربيع.",
         tags: "إعادة تصوير المنتج، إنشاء إعلان، قصص للسوشال",
@@ -785,7 +957,8 @@ export const dictionaries = {
       title: "المكتبة",
       description: "حملاتك المكتملة والملفات الجاهزة للتصدير.",
       emptyTitle: "المكتبة فارغة حالياً",
-      emptyDescription: "عند اكتمال عرض حملات الفيديو، ستظهر هنا لتتمكن من تنزيلها.",
+      emptyDescription:
+        "عند اكتمال عرض حملات الفيديو، ستظهر هنا لتتمكن من تنزيلها.",
       completed: "اكتمل",
       view: "عرض",
       downloadAll: "تنزيل الكل",
@@ -796,7 +969,8 @@ export const dictionaries = {
       title: "سجل التوليد",
       description: "جميع الصور ومقاطع الفيديو التي قمت بتوليدها.",
       emptyTitle: "لا توجد عمليات توليد بعد",
-      emptyDescription: "ستظهر وسائطك المولّدة هنا بمجرد إنشاء أول صورة أو فيديو.",
+      emptyDescription:
+        "ستظهر وسائطك المولّدة هنا بمجرد إنشاء أول صورة أو فيديو.",
       loadMore: "تحميل المزيد",
       all: "الكل",
       images: "الصور",
@@ -835,7 +1009,8 @@ export const dictionaries = {
       accountPanel: "المدفوعات والفواتير",
       billingShortcut: "تحتاج إلى تغيير رصيد الخطة؟",
       openBilling: "افتح الفوترة",
-      handledByClerk: "تفتح طرق الدفع والفواتير وبيانات الفوترة في قسم الفوترة أدناه.",
+      handledByClerk:
+        "تفتح طرق الدفع والفواتير وبيانات الفوترة في قسم الفوترة أدناه.",
     },
     settings: {
       title: "الإعدادات",
@@ -843,11 +1018,14 @@ export const dictionaries = {
       accountProfile: "ملف الحساب",
       trustSafety: "سياسات الثقة والسلامة",
       contentGenerationTitle: "توليد المحتوى:",
-      contentGeneration: "نمنع توليد محتوى استغلال الأطفال، أو الصور الحميمة غير المتفق عليها، أو العنف، أو خطاب الكراهية.",
+      contentGeneration:
+        "نمنع توليد محتوى استغلال الأطفال، أو الصور الحميمة غير المتفق عليها، أو العنف، أو خطاب الكراهية.",
       avatarsTitle: "الشخصيات والحقوق:",
-      avatars: "عند رفع صورة شخصية واحدة، يجب أن تؤكد امتلاكك حق استخدام ملامح ذلك الشخص. توليد الشخصيات العامة أو السياسيين غير مفعّل.",
+      avatars:
+        "عند رفع صورة شخصية واحدة، يجب أن تؤكد امتلاكك حق استخدام ملامح ذلك الشخص. توليد الشخصيات العامة أو السياسيين غير مفعّل.",
       dataUsageTitle: "استخدام البيانات:",
-      dataUsage: "لا نستخدم أصول علامتك الخاصة أو المخرجات لتدريب النماذج الأساسية.",
+      dataUsage:
+        "لا نستخدم أصول علامتك الخاصة أو المخرجات لتدريب النماذج الأساسية.",
     },
     projectForm: {
       title: "عنوان المشروع",
@@ -933,45 +1111,104 @@ export const dictionaries = {
       },
       "text-to-image": {
         title: "نص إلى صورة",
-        description: "ولّد صوراً إعلانية جاهزة من وصف نصي، مع مساحة نظيفة للنصوص وقصص المنصات.",
-        placeholder: "زجاجة عناية بالبشرة فاخرة على حجر أسود رطب، إضاءة نافذة صباحية ناعمة، تكاثف، خلفية بيج دافئة، مساحة فارغة في الأعلى لنص العرض.",
-        presets: ["بطل المنتج", "إعلان سوشيال", "صورة تحريرية", "ستوديو فاخر", "تجارة إلكترونية جريئة"],
+        description:
+          "ولّد صوراً إعلانية جاهزة من وصف نصي، مع مساحة نظيفة للنصوص وقصص المنصات.",
+        placeholder:
+          "زجاجة عناية بالبشرة فاخرة على حجر أسود رطب، إضاءة نافذة صباحية ناعمة، تكاثف، خلفية بيج دافئة، مساحة فارغة في الأعلى لنص العرض.",
+        presets: [
+          "بطل المنتج",
+          "إعلان سوشيال",
+          "صورة تحريرية",
+          "ستوديو فاخر",
+          "تجارة إلكترونية جريئة",
+        ],
       },
       "image-editor": {
         title: "محرر صور بالذكاء الاصطناعي",
-        description: "ارفع صورة مرجعية واحدة، ثم أعد التصميم أو الإضاءة أو التصوير أو غيّر الخلفية بتعليمات بسيطة.",
-        placeholder: "حافظ على تعرّف المنتج بالضبط، استبدل الخلفية بم scene مطبخ دافئ، أضف إضاءة الساعة الذهبية، واجعلها تبدو كإعلان ممتاز للمستهلك المباشر.",
-        presets: ["إعادة تصوير المنتج", "تغيير الخلفية", "إعادة الإضاءة", "تغيير نمط الصورة", "إزالة المشتتات"],
+        description:
+          "ارفع صورة مرجعية واحدة، ثم أعد التصميم أو الإضاءة أو التصوير أو غيّر الخلفية بتعليمات بسيطة.",
+        placeholder:
+          "حافظ على تعرّف المنتج بالضبط، استبدل الخلفية بم scene مطبخ دافئ، أضف إضاءة الساعة الذهبية، واجعلها تبدو كإعلان ممتاز للمستهلك المباشر.",
+        presets: [
+          "إعادة تصوير المنتج",
+          "تغيير الخلفية",
+          "إعادة الإضاءة",
+          "تغيير نمط الصورة",
+          "إزالة المشتتات",
+        ],
       },
       "edit-studio": {
         title: "استوديو التحرير",
-        description: "أنشئ خطة تحرير عملية للfootage: أعد الإضاءة، أعد التصميم، أزل المشتتات، أو غيّر الاتجاه التجاري.",
-        placeholder: "حوّل هذا إلى إعلان منتج عالي التحويل: سطّر المنتج، أزل فوضى الخلفية، أضف حركة كاميرا سلسة، اجعل الغرفة تبدو فاخرة، وانتهي على لقطة بطل نظيفة.",
-        presets: ["تحويل الفيديو", "إزالة عنصر", "تغيير الخلفية", "إعادة الإضاءة", "تغيير الوقت"],
+        description:
+          "أنشئ خطة تحرير عملية للfootage: أعد الإضاءة، أعد التصميم، أزل المشتتات، أو غيّر الاتجاه التجاري.",
+        placeholder:
+          "حوّل هذا إلى إعلان منتج عالي التحويل: سطّر المنتج، أزل فوضى الخلفية، أضف حركة كاميرا سلسة، اجعل الغرفة تبدو فاخرة، وانتهي على لقطة بطل نظيفة.",
+        presets: [
+          "تحويل الفيديو",
+          "إزالة عنصر",
+          "تغيير الخلفية",
+          "إعادة الإضاءة",
+          "تغيير الوقت",
+        ],
       },
       "expand-image": {
         title: "توسيع الصورة",
-        description: "ارفع صورة وصف كيفية توسيعها تجاوز حدودها الأصلية -- أضف مشاهد، وسّع الخلفيات، أو اعرض التكوينات.",
-        placeholder: "وسّع صورة المنتج هذه إلى اليمين مع عداد رخامي متطابق، إضاءة طبيعية ناعمة، وعمق ميدان ضبابي في الخلفية.",
-        presets: ["توسيع الخلفية", "توسيع التكوين", "إضافة مشاهد", "توسيع بانورامي", "ملء اللوحة"],
+        description:
+          "ارفع صورة وصف كيفية توسيعها تجاوز حدودها الأصلية -- أضف مشاهد، وسّع الخلفيات، أو اعرض التكوينات.",
+        placeholder:
+          "وسّع صورة المنتج هذه إلى اليمين مع عداد رخامي متطابق، إضاءة طبيعية ناعمة، وعمق ميدان ضبابي في الخلفية.",
+        presets: [
+          "توسيع الخلفية",
+          "توسيع التكوين",
+          "إضافة مشاهد",
+          "توسيع بانورامي",
+          "ملء اللوحة",
+        ],
       },
       "stylize-image": {
         title: "تجميل الصورة",
-        description: "ارفع أي صورة وحوّلها إلى نمط فني جديد -- ألوان مائية، زيت، أنمي، سايبربانك، فيلم كلاسيكي، والمزيد.",
-        placeholder: "حوّل صورة المنتج هذه إلى نمط لوحة زيتية دافئة مع نسيج غني، ضربات فرشاة مرئية، و لوحة ألوان الساعة الذهبية.",
-        presets: ["ألوان مائية", "لوحة زيتية", "نمط أنمي", "نيون سايبربانك", "فيلم كلاسيكي", "رسم قلم رصاص"],
+        description:
+          "ارفع أي صورة وحوّلها إلى نمط فني جديد -- ألوان مائية، زيت، أنمي، سايبربانك، فيلم كلاسيكي، والمزيد.",
+        placeholder:
+          "حوّل صورة المنتج هذه إلى نمط لوحة زيتية دافئة مع نسيج غني، ضربات فرشاة مرئية، و لوحة ألوان الساعة الذهبية.",
+        presets: [
+          "ألوان مائية",
+          "لوحة زيتية",
+          "نمط أنمي",
+          "نيون سايبربانك",
+          "فيلم كلاسيكي",
+          "رسم قلم رصاص",
+        ],
       },
       "product-reshoot": {
         title: "إعادة تصوير المنتج",
-        description: "ارفع صورة منتجك وصف إعداداً جديداً أو إضاءة أو زاوية -- احصل على إعادة تصوير بجودة الاستوديو بدون الاستوديو.",
-        placeholder: "ضع هذا المنتج على طاولة خشبية ريفية مع أشعة شمس صباحية دافئة تتدفق من النافذة، ظلال ناعمة، وخلفية مطبخ ضبابية.",
-        presets: ["استوديو أبيض", "مشهد نمط حياة", "طبيعة في الخارج", "إضاءة درامية", "عرض مسطح", "لقطة ماكرو قريبة"],
+        description:
+          "ارفع صورة منتجك وصف إعداداً جديداً أو إضاءة أو زاوية -- احصل على إعادة تصوير بجودة الاستوديو بدون الاستوديو.",
+        placeholder:
+          "ضع هذا المنتج على طاولة خشبية ريفية مع أشعة شمس صباحية دافئة تتدفق من النافذة، ظلال ناعمة، وخلفية مطبخ ضبابية.",
+        presets: [
+          "استوديو أبيض",
+          "مشهد نمط حياة",
+          "طبيعة في الخارج",
+          "إضاءة درامية",
+          "عرض مسطح",
+          "لقطة ماكرو قريبة",
+        ],
       },
       "vary-image": {
         title: "تنويع الصورة",
-        description: "ارفع صورة وصف ما تريد تغييره -- غيّر الألوان، عدّل العناصر، اضبط المزاج، أو استكشف اتجاهات إبداعية مع الحفاظ على التكوين الأساسي.",
-        placeholder: "حافظ على نفس المنتج والتكوين لكن استبدل الخلفية بأزرق ناوي عميق، جعل الإضاءة أبرد وأكثر درامية، وأضف وهج عدسة خفيف.",
-        presets: ["تبديل الألوان", "تغيير المزاج", "تغيير الموسم", "تغيير الوقت", "تبديل المادة", "تغيير الخلفية"],
+        description:
+          "ارفع صورة وصف ما تريد تغييره -- غيّر الألوان، عدّل العناصر، اضبط المزاج، أو استكشف اتجاهات إبداعية مع الحفاظ على التكوين الأساسي.",
+        placeholder:
+          "حافظ على نفس المنتج والتكوين لكن استبدل الخلفية بأزرق ناوي عميق، جعل الإضاءة أبرد وأكثر درامية، وأضف وهج عدسة خفيف.",
+        presets: [
+          "تبديل الألوان",
+          "تغيير المزاج",
+          "تغيير الموسم",
+          "تغيير الوقت",
+          "تبديل المادة",
+          "تغيير الخلفية",
+        ],
       },
       mockup: {
         title: "مولّد الموك أب",
@@ -981,118 +1218,208 @@ export const dictionaries = {
       },
       "create-ad": {
         title: "إنشاء إعلان",
-        description: "صف الإعلان الذي تريد إنشاءه. يمكنك رفع إعلان أو صورة منتج موجودة لتوليد نسخ متنوعة.",
-        placeholder: "مثال: إعلان Instagram story مشرق وعاليم التحويل لخط عناية بالبشرة صيفي، مع نص 'عرض الصيف'.",
-        presets: ["تبديل العنوان", "تغيير لوحة الألوان", "تبديل المنتج", "سمة موسمية"],
+        description:
+          "صف الإعلان الذي تريد إنشاءه. يمكنك رفع إعلان أو صورة منتج موجودة لتوليد نسخ متنوعة.",
+        placeholder:
+          "مثال: إعلان Instagram story مشرق وعاليم التحويل لخط عناية بالبشرة صيفي، مع نص 'عرض الصيف'.",
+        presets: [
+          "تبديل العنوان",
+          "تغيير لوحة الألوان",
+          "تبديل المنتج",
+          "سمة موسمية",
+        ],
       },
       "batch-social": {
         title: "مولّد السوشيال بالجملة",
-        description: "صف علامتك التجارية أو منتجك وولّد أسبوعاً من منشورات السوشيال المخصصة للمنصات مع مرئيات متطابقة.",
-        placeholder: "مثال: علامة تجارية عضوية للعناية بالبشرة تستهدف جيل الألفية. المنتجات: سيروم فيتامين سي، كريم ليل الريتينول. النبرة: ودودة، تعليمية، ممكّنة.",
-        presets: ["تركيز إنستغرام", "اتجاهات تيك توك", "لينكدإن المهني", "متعدد المنصات"],
+        description:
+          "صف علامتك التجارية أو منتجك وولّد أسبوعاً من منشورات السوشيال المخصصة للمنصات مع مرئيات متطابقة.",
+        placeholder:
+          "مثال: علامة تجارية عضوية للعناية بالبشرة تستهدف جيل الألفية. المنتجات: سيروم فيتامين سي، كريم ليل الريتينول. النبرة: ودودة، تعليمية، ممكّنة.",
+        presets: [
+          "تركيز إنستغرام",
+          "اتجاهات تيك توك",
+          "لينكدإن المهني",
+          "متعدد المنصات",
+        ],
       },
       "carousel-builder": {
         title: "منشئ الكاروسيل",
-        description: "أنشئ منشورات كاروسيل متعددة الشرائح لإنستغرام ولينكدإن. صف موضوعك واحصل على مجموعة متماسكة من الشرائح.",
-        placeholder: "مثال: 5 نصائح لأصحاب الأعمال الصغيرة لتحسين حضورهم على وسائل التواصل الاجتماعي. قدم نصائح عملية وقابلة للتنفيذ.",
+        description:
+          "أنشئ منشورات كاروسيل متعددة الشرائح لإنستغرام ولينكدإن. صف موضوعك واحصل على مجموعة متماسكة من الشرائح.",
+        placeholder:
+          "مثال: 5 نصائح لأصحاب الأعمال الصغيرة لتحسين حضورهم على وسائل التواصل الاجتماعي. قدم نصائح عملية وقابلة للتنفيذ.",
         presets: ["دليل كيف", "سرد البيانات", "نصائح وأ Tricks", "دراسة حالة"],
       },
       "hook-generator": {
         title: "مولّد الخطافات القصيرة",
-        description: "ولّد صور خطافات توقف التمرير لـ Reels وTikToks وYouTube Shorts.",
-        placeholder: "مثال: قصة تحول لياقة بدنية. الخطاف يجب أن يثير الفضول حول نتائج قبل/بعد.",
+        description:
+          "ولّد صور خطافات توقف التمرير لـ Reels وTikToks وYouTube Shorts.",
+        placeholder:
+          "مثال: قصة تحول لياقة بدنية. الخطاف يجب أن يثير الفضول حول نتائج قبل/بعد.",
         presets: ["فجوة الفضول", "ادعاء جريء", "خطاف سؤال", "وجهة نظر معارضة"],
       },
       "platform-resizer": {
         title: "مُعدّل المنصات",
-        description: "ارفع صورة وكيّفها لأي منصة سوشيال. القص الذكي وإعادة الإطار يحافظان على أهم العناصر البصرية.",
-        placeholder: "مثال: كيّف هذه الصورة لصيغة Instagram Reels مع الحفاظ على المنتج في المركز.",
-        presets: ["Instagram Reel", "TikTok", "YouTube Short", "LinkedIn", "صيغة Story"],
+        description:
+          "ارفع صورة وكيّفها لأي منصة سوشيال. القص الذكي وإعادة الإطار يحافظان على أهم العناصر البصرية.",
+        placeholder:
+          "مثال: كيّف هذه الصورة لصيغة Instagram Reels مع الحفاظ على المنتج في المركز.",
+        presets: [
+          "Instagram Reel",
+          "TikTok",
+          "YouTube Short",
+          "LinkedIn",
+          "صيغة Story",
+        ],
       },
       "lesson-to-video": {
         title: "درس إلى فيديو",
-        description: "صف موضوع درسك والنقاط الرئيسية. سيولّد الذكاء الاصطناعي فيديو تعليمي منظماً مع مشاهد ومرئيات وتعليق صوتي.",
-        placeholder: "مثال: مقدمة في عملية البناء الضوئية: كيف تحوّل النباتات ضوء الشمس إلى طاقة. غطّي التفاعلات الضوئية، دورة كلفن، والتطبيقات الواقعية.",
+        description:
+          "صف موضوع درسك والنقاط الرئيسية. سيولّد الذكاء الاصطناعي فيديو تعليمي منظماً مع مشاهد ومرئيات وتعليق صوتي.",
+        placeholder:
+          "مثال: مقدمة في عملية البناء الضوئية: كيف تحوّل النباتات ضوء الشمس إلى طاقة. غطّي التفاعلات الضوئية، دورة كلفن، والتطبيقات الواقعية.",
         presets: ["درس علوم", "مفهوم رياضيات", "نظرة تاريخية", "درس لغة"],
       },
       "explainer-video": {
         title: "فيديو شرح",
-        description: "أنشئ فيديوهات شرح خطوة بخطوة من وصف مفهوم. مثالية للدروس وال تعريف والتعليم.",
-        placeholder: "مثال: كيفية إعداد متجر Shopify في 5 خطوات. غطّي إنشاء الحساب، وصف المنتجات، إعداد الدفع، تخصيص السمة، والإطلاق.",
+        description:
+          "أنشئ فيديوهات شرح خطوة بخطوة من وصف مفهوم. مثالية للدروس وال تعريف والتعليم.",
+        placeholder:
+          "مثال: كيفية إعداد متجر Shopify في 5 خطوات. غطّي إنشاء الحساب، وصف المنتجات، إعداد الدفع، تخصيص السمة، والإطلاق.",
         presets: ["tutorial كيف", "عرض المنتج", "سير التعريف", "شرح المفهوم"],
       },
       "whiteboard-animation": {
         title: "رسوم متحركة على السبورة",
-        description: "ولّد فيديوهات تعليمية على نمط السبورة البيضاء من نص. شاهد المفاهيم تتحول إلى حياة برسم يدوي.",
-        placeholder: "مثال: شرح دورة المياه: التبخر، التكثف، الهطول، والتجميع. بسيط، بصري، وسهل التذكر.",
-        presets: ["سبورة كلاسيكية", "رسم ملوّن", "رسم خطي بسيط", "قائم على قصة"],
+        description:
+          "ولّد فيديوهات تعليمية على نمط السبورة البيضاء من نص. شاهد المفاهيم تتحول إلى حياة برسم يدوي.",
+        placeholder:
+          "مثال: شرح دورة المياه: التبخر، التكثف، الهطول، والتجميع. بسيط، بصري، وسهل التذكر.",
+        presets: [
+          "سبورة كلاسيكية",
+          "رسم ملوّن",
+          "رسم خطي بسيط",
+          "قائم على قصة",
+        ],
       },
       "course-trailer": {
         title: "إعلان الدورة",
-        description: "إنشاء إعلان جذاب للترويج لدورةك الإلكترونية. أبرز الموضوعات الرئيسية والنتائج لزيادة التسجيلات.",
-        placeholder: "مثال: دورة إتقان التسويق الرقمي الشاملة. تغطي SEO، إعلانات وسائل التواصل، التسويق بالبريد الإلكتروني، التحليلات، وتحسين معدلات التحويل.",
+        description:
+          "إنشاء إعلان جذاب للترويج لدورةك الإلكترونية. أبرز الموضوعات الرئيسية والنتائج لزيادة التسجيلات.",
+        placeholder:
+          "مثال: دورة إتقان التسويق الرقمي الشاملة. تغطي SEO، إعلانات وسائل التواصل، التسويق بالبريد الإلكتروني، التحليلات، وتحسين معدلات التحويل.",
         presets: ["ترويج احترافي", "ودود وعفوي", "إلحاح", "أسلوب الشهادات"],
       },
       "style-transfer": {
         title: "نقل الأسلوب",
-        description: "ارفع أي صورة وحوّلها إلى نمط فني جديد. اختر من لوحة زيتية، ألوان مائية، أنمي، سايبربانك، والمزيد.",
-        placeholder: "حوّل هذه الصورة إلى لوحة مائية نابضة بالحياة مع حواف ناعمة، ألوان دافقة، أجواء حالمية.",
-        presets: ["لوحة زيتية", "ألوان مائية", "نمط أنمي", "نيون سايبربانك", "فيلم كلاسيكي", "رسم قلم رصاص"],
+        description:
+          "ارفع أي صورة وحوّلها إلى نمط فني جديد. اختر من لوحة زيتية، ألوان مائية، أنمي، سايبربانك، والمزيد.",
+        placeholder:
+          "حوّل هذه الصورة إلى لوحة مائية نابضة بالحياة مع حواف ناعمة، ألوان دافقة، أجواء حالمية.",
+        presets: [
+          "لوحة زيتية",
+          "ألوان مائية",
+          "نمط أنمي",
+          "نيون سايبربانك",
+          "فيلم كلاسيكي",
+          "رسم قلم رصاص",
+        ],
       },
       "surreal-scene": {
         title: "منشئ المشاهد السريالية",
-        description: "ولّد مشاهد أحلام مستحيلة من أوصاف نصية. تجاوز حدود الواقع مع عناصر طائمة، إضاءة أثيرية، ومناظر طبيعية خيالية.",
-        placeholder: "مثال: مدينة طائمة من الكريستال فوق محيط هادئ عند الغروب، مع قناديل بحر مضيئة تتأرجح بين المباني.",
-        presets: ["عالم أحلام", "هندسة مستحيلة", "عالم خيالي", "سايبربانك سريالي"],
+        description:
+          "ولّد مشاهد أحلام مستحيلة من أوصاف نصية. تجاوز حدود الواقع مع عناصر طائمة، إضاءة أثيرية، ومناظر طبيعية خيالية.",
+        placeholder:
+          "مثال: مدينة طائمة من الكريستال فوق محيط هادئ عند الغروب، مع قناديل بحر مضيئة تتأرجح بين المباني.",
+        presets: [
+          "عالم أحلام",
+          "هندسة مستحيلة",
+          "عالم خيالي",
+          "سايبربانك سريالي",
+        ],
       },
       "visual-remix": {
         title: "ريمكس بصري",
-        description: "ارفع صورة وولّد نسخاً متنوعة بأساليب مختلفة. أعد تصوير مرئياتك بتحويلات إبداعية جريئة.",
-        placeholder: "حوّل صورة المنتج هذه إلى نسخة سايبربانك مضاءة بالنيون مع حواف متوهجة وخلفية مدينة مستقبلية.",
-        presets: ["ريمكس نيون", "إعادة تخيل كلاسيكية", "فن تجريد", "نمط البوب آرت"],
+        description:
+          "ارفع صورة وولّد نسخاً متنوعة بأساليب مختلفة. أعد تصوير مرئياتك بتحويلات إبداعية جريئة.",
+        placeholder:
+          "حوّل صورة المنتج هذه إلى نسخة سايبربانك مضاءة بالنيون مع حواف متوهجة وخلفية مدينة مستقبلية.",
+        presets: [
+          "ريمكس نيون",
+          "إعادة تخيل كلاسيكية",
+          "فن تجريد",
+          "نمط البوب آرت",
+        ],
       },
       "loop-generator": {
         title: "مولّد الحلقات",
-        description: "أنشئ فن بصري مثالي التكرار للخلفيات ووسائل التواصل والشاشات الرقمية.",
-        placeholder: "مثال: جزيئات تجريدية دافقة في أزرق وذهبي، تشكل أنماط أمواج عضوية تتكرر بسلاسة.",
+        description:
+          "أنشئ فن بصري مثالي التكرار للخلفيات ووسائل التواصل والشاشات الرقمية.",
+        placeholder:
+          "مثال: جزيئات تجريدية دافقة في أزرق وذهبي، تشكل أنماط أمواج عضوية تتكرر بسلاسة.",
         presets: ["أمواج دافقة", "تدفق جزيئات", "حلقة هندسية", "نبض الطبيعة"],
       },
       "script-to-storyboard": {
         title: "نص إلى ستوري بورد",
-        description: "الصق نصك واحصل على ستوري بورد كامل مع تحليل المشاهد، التوجيهات البصرية، والتعليق الصوتي.",
-        placeholder: "مثال: إعلان 30 ثانية لعلامة قهوة. المشهد 1: شروق الشمس على مزرعة. المشهد 2: يدאן تقطفان حبوب القهوة. المشهد 3: تحضير كوب مثالي. المشهد 4: عميل سعيد يستمتع بأول رشفة.",
-        presets: ["نص إعلان 30 ثانية", "إعلان 60 ثانية", "قصة المنتج", "سرد العلامة"],
+        description:
+          "الصق نصك واحصل على ستوري بورد كامل مع تحليل المشاهد، التوجيهات البصرية، والتعليق الصوتي.",
+        placeholder:
+          "مثال: إعلان 30 ثانية لعلامة قهوة. المشهد 1: شروق الشمس على مزرعة. المشهد 2: يدאן تقطفان حبوب القهوة. المشهد 3: تحضير كوب مثالي. المشهد 4: عميل سعيد يستمتع بأول رشفة.",
+        presets: [
+          "نص إعلان 30 ثانية",
+          "إعلان 60 ثانية",
+          "قصة المنتج",
+          "سرد العلامة",
+        ],
       },
       "ab-variants": {
         title: "مولّد اختبار A/B",
-        description: "ولّد نسخاً متنوعة من إعلان واحد. اختبر مناهج بصرية مختلفة لتجد ما يحقق أفضل تحويل.",
-        placeholder: "مثال: إعلان عرض صيفي لتطبيق لياقة. ولّد نسخاً بألوان ونقاط تركيز وتنسيقات مختلفة.",
-        presets: ["اختبار الألوان", "تنويعات التخطيط", "تنويعات CTA", "تقسيم الجمهور"],
+        description:
+          "ولّد نسخاً متنوعة من إعلان واحد. اختبر مناهج بصرية مختلفة لتجد ما يحقق أفضل تحويل.",
+        placeholder:
+          "مثال: إعلان عرض صيفي لتطبيق لياقة. ولّد نسخاً بألوان ونقاط تركيز وتنسيقات مختلفة.",
+        presets: [
+          "اختبار الألوان",
+          "تنويعات التخطيط",
+          "تنويعات CTA",
+          "تقسيم الجمهور",
+        ],
       },
       "seasonal-transform": {
         title: "محوّل الحملات الموسمية",
-        description: "ارفع إعلاناً موجوداً وحوّله إلى نسخة موسمية. يُطبّق سمة العطلات تلقائياً مع الحفاظ على رسالتك الأساسية.",
-        placeholder: "مثال: حوّل هذا الإعلان لموسم العطلات بألوان شتوية دافئة، ثلج، وأجواء تقديم الهدايا.",
-        presets: ["أجواء الصيف", "موسم العطلات", "العودة إلى المدرسة", "تجديد الربيع"],
+        description:
+          "ارفع إعلاناً موجوداً وحوّله إلى نسخة موسمية. يُطبّق سمة العطلات تلقائياً مع الحفاظ على رسالتك الأساسية.",
+        placeholder:
+          "مثال: حوّل هذا الإعلان لموسم العطلات بألوان شتوية دافئة، ثلج، وأجواء تقديم الهدايا.",
+        presets: [
+          "أجواء الصيف",
+          "موسم العطلات",
+          "العودة إلى المدرسة",
+          "تجديد الربيع",
+        ],
       },
       "image-to-video": {
         title: "صورة إلى فيديو",
-        description: "ابدأ من صورة ملصقة أو مرفوعة، أو ثبّت الإطارات الأولى والأخيرة ليولّد الذكاء الاصطناعي الحركة بينهما فقط.",
+        description:
+          "ابدأ من صورة ملصقة أو مرفوعة، أو ثبّت الإطارات الأولى والأخيرة ليولّد الذكاء الاصطناعي الحركة بينهما فقط.",
         heroHeading: "حوّل صورة ثابتة إلى حركة دون فقدان الإطار الأصلي.",
-        heroSubtext: "استخدم صورة منتج كإطار افتتاحي، أو ارفع إطاراً أول وآخر لاستبدال تحكمي.",
+        heroSubtext:
+          "استخدم صورة منتج كإطار افتتاحي، أو ارفع إطاراً أول وآخر لاستبدال تحكمي.",
         firstFrameMode: "الإطار الأول",
         firstFrameModeDesc: "تحريك من صورة واحدة",
         firstLastMode: "أول + آخر",
         firstLastModeDesc: "ملء الفاصل",
-        motionPlaceholderDual: "حركة كاميرا سلسة فاخرة تربط صورة المنتج الأولى بزاوية البطل النهية، مع مسح ضوئي خفيف وبدون تشويه للمنتج.",
-        motionPlaceholderSingle: "تتقدم الكاميرا ببطء، يلمع التكاثف على الزجاجة، تتأرجح إضاءة الخلفية برفق، المنتج يبقى حاداً وواضحاً.",
+        motionPlaceholderDual:
+          "حركة كاميرا سلسة فاخرة تربط صورة المنتج الأولى بزاوية البطل النهية، مع مسح ضوئي خفيف وبدون تشويه للمنتج.",
+        motionPlaceholderSingle:
+          "تتقدم الكاميرا ببطء، يلمع التكاثف على الزجاجة، تتأرجح إضاءة الخلفية برفق، المنتج يبقى حاداً وواضحاً.",
       },
       "multi-shot-video": {
         title: "فيديو متعدد المشاهد",
         description: "اكتب موجزاً بسيطاً، احصل على فيديو متعدد المشاهد.",
         heroHeading: "فيديو متعدد المشاهد",
         heroSubtext: "اكتب موجزاً بسيطاً، احصل على فيديو متعدد المشاهد.",
-        autoPlaceholder: "رائد فضاء وحيد يمشي عبر صحراء حمراء واسعة تحت وردي سماء. يتوقف، يركع، ويلتقط موضوعاً متوهجاً نصف مدفوع في الرمل. لقطة قريبة على وجهها وهي تنظر إلى الأعلى، تظهر هيكلاً ضخماً من الغبار على الأفق.",
+        autoPlaceholder:
+          "رائد فضاء وحيد يمشي عبر صحراء حمراء واسعة تحت وردي سماء. يتوقف، يركع، ويلتقط موضوعاً متوهجاً نصف مدفوع في الرمل. لقطة قريبة على وجهها وهي تنظر إلى الأعلى، تظهر هيكلاً ضخماً من الغبار على الأفق.",
         openingShot: "لقطة الافتتاح: الشخصية تدخل المشهد...",
         finalShot: "اللقطة الأخيرة: الكشف، المكافأة...",
         describeShot: "صف اللقطة {n}...",
@@ -1101,7 +1428,8 @@ export const dictionaries = {
     features: {
       "edit-studio": {
         title: "استوديو التحرير",
-        description: "حوّل فيديو بتحريرات بسيطة للإضاءة والنمط والعناصر والإيقاع.",
+        description:
+          "حوّل فيديو بتحريرات بسيطة للإضاءة والنمط والعناصر والإيقاع.",
       },
       "multi-shot-video": {
         title: "فيديو متعدد المشاهد",
@@ -1109,7 +1437,8 @@ export const dictionaries = {
       },
       "scene-builder": {
         title: "منشئ المشاهد",
-        description: "صمّم مشهدك المتعدد الخطوات خطوة بخطوة، شاهد المظهر، ثم أحضره إلى الحياة.",
+        description:
+          "صمّم مشهدك المتعدد الخطوات خطوة بخطوة، شاهد المظهر، ثم أحضره إلى الحياة.",
       },
       "upscale-video": {
         title: "تحسين الفيديو",
@@ -1133,7 +1462,8 @@ export const dictionaries = {
       },
       "image-editor": {
         title: "محرر صور بالذكاء الاصطناعي",
-        description: "أعد التصميم أو الإضاءة أو التصوير أو غيّر الخلفيات من صورة مرجعية واحدة.",
+        description:
+          "أعد التصميم أو الإضاءة أو التصوير أو غيّر الخلفيات من صورة مرجعية واحدة.",
       },
       "image-to-video": {
         title: "صورة إلى فيديو",
@@ -1145,7 +1475,8 @@ export const dictionaries = {
       },
       "stylize-image": {
         title: "تجميل الصورة",
-        description: "طبّق أنماطاً فنية على صورتك -- ألوان مائية، زيت، أنمي، كلاسيكي، والمزيد.",
+        description:
+          "طبّق أنماطاً فنية على صورتك -- ألوان مائية، زيت، أنمي، كلاسيكي، والمزيد.",
       },
       "product-reshoot": {
         title: "إعادة تصوير المنتج",
@@ -1153,19 +1484,23 @@ export const dictionaries = {
       },
       "vary-image": {
         title: "تنويع الصورة",
-        description: "ولّد تنويعات إبداعية لصورتك -- غيّر العناصر مع الحفاظ على التكوين الأساسي.",
+        description:
+          "ولّد تنويعات إبداعية لصورتك -- غيّر العناصر مع الحفاظ على التكوين الأساسي.",
       },
       mockup: {
         title: "مولّد الموك أب",
-        description: "ضع تصميمك على منتجات حقيقية -- ملابس، أكواب، شاشات، لافتات.",
+        description:
+          "ضع تصميمك على منتجات حقيقية -- ملابس، أكواب، شاشات، لافتات.",
       },
       "create-ad": {
         title: "إنشاء إعلان",
-        description: "ولّد إعلانات إبداعية من الصفر أو نسخاً متنوعة من إعلان موجود.",
+        description:
+          "ولّد إعلانات إبداعية من الصفر أو نسخاً متنوعة من إعلان موجود.",
       },
       "batch-social": {
         title: "مولّد السوشيال بالجملة",
-        description: "ولّد أسبوعاً من منشورات السوشيال المخصصة للمنصات من فكرة واحدة.",
+        description:
+          "ولّد أسبوعاً من منشورات السوشيال المخصصة للمنصات من فكرة واحدة.",
       },
       "carousel-builder": {
         title: "منشئ الكاروسيل",
@@ -1197,7 +1532,8 @@ export const dictionaries = {
       },
       "style-transfer": {
         title: "نقل الأسلوب",
-        description: "حوّل أي صورة إلى نمط فني جديد -- لوحة زيتية، أنمي، سايبربانك، والمزيد.",
+        description:
+          "حوّل أي صورة إلى نمط فني جديد -- لوحة زيتية، أنمي، سايبربانك، والمزيد.",
       },
       "surreal-scene": {
         title: "منشئ المشاهد السريالية",
