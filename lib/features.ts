@@ -40,21 +40,21 @@ export type FeatureTile = {
 
 export const mediaAssets = {
   productWorkspace:
-    "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=1600&q=80",
+    "/images/media/product-workspace.jpg",
   productPhoto:
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80",
+    "/images/media/product-photo.jpg",
   studioBottle:
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80",
+    "/images/media/studio-bottle.jpg",
   socialShoot:
-    "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1200&q=80",
+    "/images/media/social-shoot.jpg",
   editDesk:
-    "https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=1200&q=80",
+    "/images/media/edit-desk.jpg",
   packaging:
-    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=80",
+    "/images/media/packaging.jpg",
   apparel:
-    "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80",
+    "/images/media/apparel.jpg",
   campaignWall:
-    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80",
+    "/images/media/campaign-wall.jpg",
   videoPreview:
     "https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4",
 } as const;
