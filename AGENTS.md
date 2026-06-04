@@ -14,6 +14,11 @@ pnpm is the Package Manager of choice on this  repo.
 
 - All of `pnpm lint`, must pass before considering tasks completed.
 
+## Code Freshness
+
+- Before starting any work, run `git pull` to ensure you are on the latest version of the codebase.
+- Do not proceed with tasks on a stale branch.
+
 ## Project Snapshot
 
 Softai is an AI media generation web application used to generate images and videos. The primary target audience for this application are small business owners that are looking for a cheap way to generate advertisements for their product. 
