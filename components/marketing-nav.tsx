@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -33,12 +34,13 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
           href={localizePath("/", locale)}
           className="flex items-center gap-2.5"
         >
-          <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-text text-[11px] font-bold text-bg">
-            S
-          </div>
-          <span className="text-[15px] font-semibold tracking-tight text-text">
-            Soft-Magic AI
-          </span>
+          <Image
+            src="/logo.png"
+            alt="Soft-Magic AI"
+            width={150}
+            height={75}
+            className="shrink-0 rounded-md"
+          />
         </Link>
 
         {/* Desktop Nav */}

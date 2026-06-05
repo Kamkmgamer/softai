@@ -37,7 +37,7 @@ type BrandKitFormProps = {
 export function BrandKitForm({ kit, onSave }: BrandKitFormProps) {
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(kit?.name ?? "");
-  const [logoUrl, setLogoUrl] = useState(kit?.logoUrl ?? null);
+  const [logoUrl, setLogoUrl] = useState(kit?.logoUrl ?? "/logo.png");
   const [primaryColor, setPrimaryColor] = useState(kit?.primaryColor ?? "");
   const [secondaryColor, setSecondaryColor] = useState(kit?.secondaryColor ?? "");
   const [headingFont, setHeadingFont] = useState(kit?.fonts?.heading ?? "Inter");

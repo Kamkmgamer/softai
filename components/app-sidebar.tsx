@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentType } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -196,12 +197,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
           href={localizePath("/dashboard", locale)}
           className="mb-4 flex items-center gap-2.5 rounded-xl border border-border-strong bg-surface-raised px-3 py-2.5 text-text transition-colors hover:bg-accent-soft"
         >
-          <div className="grid shrink-0 grid-cols-2 gap-0.5">
-            <span className="h-2 w-2 rounded-xs border border-current" />
-            <span className="h-2 w-2 rounded-xs border border-current" />
-            <span className="h-2 w-2 rounded-xs border border-current" />
-            <span className="h-2 w-2 rounded-xs bg-accent" />
-          </div>
+          <Image src="/logo.png" alt="Soft-Magic AI" width={32} height={32} className="shrink-0 rounded-md" />
           <span className="text-sm font-semibold tracking-tight">Soft-Magic AI</span>
         </Link>
 
