@@ -45,7 +45,7 @@ export function OnboardingFlow() {
   }
 
   return (
-    <div className="flex min-h-dvh items-start justify-center overflow-y-auto bg-bg px-4 py-12">
+    <div className="flex h-full items-start justify-center overflow-y-auto bg-bg px-4 py-12 thin-scrollbar">
       <div className="w-full max-w-2xl">
         {/* Progress bar */}
         <div className="mb-8 flex items-center justify-center gap-2">
