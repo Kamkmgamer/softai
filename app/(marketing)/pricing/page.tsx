@@ -15,8 +15,8 @@ export default async function PricingPage() {
     <div className="flex min-h-screen flex-col bg-bg">
       <MarketingNav hasAccess={hasAccess} />
 
-      <main className="flex-1">
-        <section className="mx-auto max-w-5xl px-6 py-20 lg:py-32">
+      <main id="main-content" className="flex-1">
+        <section className="mx-auto max-w-5xl px-6 py-[clamp(4rem,8vw,8rem)]">
           <div className="text-center mb-16">
             <h1 className="text-3xl font-semibold tracking-tight text-text sm:text-4xl text-balance">
               {pricing.title}

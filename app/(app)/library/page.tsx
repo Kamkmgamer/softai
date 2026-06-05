@@ -34,7 +34,7 @@ export default async function LibraryPage() {
             description={dictionary.library.emptyDescription}
           />
         ) : (
-          <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
             {completedProjects.map((project) => (
               <div key={project.id} className="flex items-center justify-between gap-4 p-4 transition-colors hover:bg-surface-raised">
                 <div className="min-w-0">

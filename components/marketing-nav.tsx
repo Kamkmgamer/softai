@@ -28,7 +28,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-bg/95">
       <div className="mx-auto flex h-16 max-w-300 items-center justify-between px-6">
         <Link
           href={localizePath("/", locale)}

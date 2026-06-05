@@ -6,10 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowRight,
   CheckCircle2,
+  Clapperboard,
   CreditCard,
   ImageIcon,
   Layers3,
-  Sparkles,
+  MessageSquare,
   Video,
   Wallet,
 } from "lucide-react";
@@ -54,7 +55,7 @@ export function OnboardingFlow() {
           {STEPS.map((s, i) => (
             <div
               key={s}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
+              className={`h-1.5 rounded-full transition-colors duration-300 ${
                 i <= currentIndex
                   ? "w-10 bg-accent"
                   : "w-6 bg-border"
@@ -88,8 +89,8 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
   return (
     <div className="space-y-8 text-center">
       {/* Logo mark */}
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-soft animate-scale-in">
-        <Sparkles className="h-7 w-7 text-accent-text" />
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-accent-soft animate-scale-in">
+        <Clapperboard className="h-7 w-7 text-accent-text" />
       </div>
 
       <div className="space-y-3">
@@ -181,13 +182,13 @@ function CreditsStep({
     {
       label: "AI assistant response",
       cost: CREDIT_COSTS.chatResponse,
-      icon: Sparkles,
+      icon: MessageSquare,
     },
   ];
 
   return (
     <div className="space-y-8 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-soft animate-scale-in">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-accent-soft animate-scale-in">
         <Wallet className="h-7 w-7 text-accent-text" />
       </div>
 
@@ -275,7 +276,7 @@ function SubscribeStep({
   return (
     <div className="space-y-8">
       <div className="space-y-3 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-soft animate-scale-in">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-accent-soft animate-scale-in">
           <CreditCard className="h-7 w-7 text-accent-text" />
         </div>
         <h1 className="text-3xl font-semibold tracking-tight text-text">

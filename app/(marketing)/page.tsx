@@ -35,8 +35,8 @@ export default async function MarketingPage() {
     <div className="flex min-h-screen flex-col bg-bg text-text selection:bg-accent-soft selection:text-text">
       <MarketingNav hasAccess={hasAccess} />
 
-      <main className="flex-1 overflow-hidden">
-        <section className="mx-auto grid max-w-300 gap-10 px-6 py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(560px,1fr)] lg:items-center lg:py-24">
+      <main id="main-content" className="flex-1 overflow-hidden">
+        <section className="mx-auto grid max-w-300 gap-10 px-6 py-[clamp(3rem,6vw,6rem)] lg:grid-cols-[minmax(0,0.9fr)_minmax(560px,1fr)] lg:items-center">
           <div className="max-w-2xl animate-slide-up">
             <h1 className="text-balance text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
               {marketing.heroTitle}
@@ -64,7 +64,7 @@ export default async function MarketingPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-surface p-3 shadow-(--shadow-lg) animate-scale-in">
+          <div className="rounded-xl border border-border bg-surface p-3 shadow-(--shadow-lg) animate-scale-in">
             <div className="grid gap-3 lg:grid-cols-[1fr_180px]">
               <div className="relative min-h-92 overflow-hidden rounded-xl bg-bg-subtle">
                 <Image
@@ -122,7 +122,7 @@ export default async function MarketingPage() {
           </div>
         </section>
 
-        <section className="border-y border-border bg-surface py-16">
+        <section className="border-y border-border bg-surface py-[clamp(3rem,5vw,5rem)]">
           <div className="mx-auto grid max-w-300 gap-10 px-6 lg:grid-cols-[360px_1fr] lg:items-start">
             <div>
               <h2 className="text-3xl font-semibold tracking-tight text-text">
@@ -132,7 +132,7 @@ export default async function MarketingPage() {
                 {marketing.howDescription}
               </p>
             </div>
-            <div className="grid gap-3 md:grid-cols-3 stagger-children">
+            <div className="grid gap-3 md:grid-cols-2 stagger-children">
               {workflowSteps.map((step, index) => (
                 <div
                   key={step.title}
@@ -153,7 +153,7 @@ export default async function MarketingPage() {
           </div>
         </section>
 
-        <section id="tools" className="mx-auto max-w-300 px-6 py-16 lg:py-24">
+        <section id="tools" className="mx-auto max-w-300 px-6 py-[clamp(3rem,6vw,6rem)]">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="text-3xl font-semibold tracking-tight text-text">
@@ -173,7 +173,7 @@ export default async function MarketingPage() {
               <Link
                 key={feature.slug}
                 href={localizePath(feature.appRoute, locale)}
-                className="group overflow-hidden rounded-xl border border-border bg-surface transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
+                className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
               >
                 <div className="relative h-42 bg-bg-subtle">
                   <Image

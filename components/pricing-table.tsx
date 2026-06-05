@@ -35,7 +35,7 @@ export function PricingCards({
         return (
           <div
             key={plan.slug}
-            className={`relative flex flex-col rounded-2xl border bg-surface p-5 transition-shadow hover:shadow-[var(--shadow-md)] ${
+            className={`relative flex flex-col rounded-xl border bg-surface p-5 transition-shadow hover:shadow-[var(--shadow-md)] ${
               isCurrent ? "border-accent ring-2 ring-accent/20" : "border-border"
             }`}
           >

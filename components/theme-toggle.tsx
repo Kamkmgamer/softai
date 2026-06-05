@@ -22,7 +22,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       className={cn(
         "group relative inline-flex h-8 w-8 items-center justify-center rounded-md",
         "border border-border bg-surface text-text-secondary",
-        "transition-all duration-200 ease-out",
+        "transition-colors duration-200 ease-out",
         "hover:border-border-strong hover:bg-surface-raised hover:text-text",
         "focus-visible:shadow-(--focus-ring)",
         className,
@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     >
       <Sun
         className={cn(
-          "h-4 w-4 transition-all duration-300",
+          "h-4 w-4 transition-[transform,opacity] duration-300",
           currentResolved === "dark"
             ? "rotate-90 scale-0 opacity-0"
             : "rotate-0 scale-100 opacity-100",
@@ -41,7 +41,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       />
       <Moon
         className={cn(
-          "absolute h-4 w-4 transition-all duration-300",
+          "absolute h-4 w-4 transition-[transform,opacity] duration-300",
           currentResolved === "dark"
             ? "rotate-0 scale-100 opacity-100"
             : "-rotate-90 scale-0 opacity-0",

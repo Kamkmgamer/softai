@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { FileText, Sparkles } from "lucide-react";
+import { FileText, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTemplatesByKit, type Template } from "@/lib/templates";
 import type { StarterKit } from "@/lib/features";
@@ -25,7 +25,7 @@ export function TemplateBrowser({ kit }: TemplateBrowserProps) {
 
   if (templates.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-surface/80 px-5 py-6 text-center">
+      <div className="rounded-xl border border-border bg-surface/80 px-5 py-6 text-center">
         <FileText className="mx-auto mb-3 h-8 w-8 text-text-tertiary" />
         <p className="text-sm text-text-secondary">
           No templates available for this kit yet.
@@ -47,7 +47,7 @@ export function TemplateBrowser({ kit }: TemplateBrowserProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-accent-text" />
+        <LayoutGrid className="h-4 w-4 text-accent-text" />
         <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
           Quick-start templates
         </p>

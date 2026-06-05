@@ -87,8 +87,8 @@ export default async function BillingPage() {
         </header>
 
         <section className="grid gap-3 md:grid-cols-4">
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-surface-raised text-text-secondary">
               <Wallet className="h-4 w-4" />
             </div>
             <p className="text-xs font-medium text-text-tertiary">
@@ -98,8 +98,8 @@ export default async function BillingPage() {
               {formatCredits(balance, locale)}
             </p>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-surface-raised text-text-secondary">
               <CreditCard className="h-4 w-4" />
             </div>
             <p className="text-xs font-medium text-text-tertiary">
@@ -109,8 +109,8 @@ export default async function BillingPage() {
               {localizePlanName(plan, locale)}
             </p>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-surface-raised text-text-secondary">
               <Activity className="h-4 w-4" />
             </div>
             <p className="text-xs font-medium text-text-tertiary">
@@ -120,8 +120,8 @@ export default async function BillingPage() {
               <StatusBadge status={status} />
             </div>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-surface-raised text-text-secondary">
               <CalendarClock className="h-4 w-4" />
             </div>
             <p className="text-xs font-medium text-text-tertiary">
@@ -160,7 +160,7 @@ export default async function BillingPage() {
                 description={dictionary.billing.noActivityDescription}
               />
             ) : (
-              <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+              <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
                 {recentActivity.map((tx) => (
                   <div
                     key={tx.id}

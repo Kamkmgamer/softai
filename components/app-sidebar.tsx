@@ -134,7 +134,9 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         )}
       >
         <Icon className="h-4.25 w-4.25 shrink-0" />
-        <span className="min-w-0 truncate">{dictionary.app[link.labelKey]}</span>
+        <span className="min-w-0 truncate">
+          {dictionary.app[link.labelKey]}
+        </span>
       </Link>
     );
   }
@@ -225,7 +227,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
 
       {/* Viewport-wide top bar and drawer */}
       <div className="app-mobile-menu fixed inset-x-0 top-0 z-1000 app-hide-on-desktop">
-        <div className="flex h-16 items-center justify-between border-b border-border bg-surface/95 px-5 backdrop-blur-md">
+        <div className="flex h-16 items-center justify-between border-b border-border bg-surface px-5">
           <Link
             href={localizePath("/dashboard", locale)}
             className="flex items-center gap-2.5"
@@ -310,7 +312,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         </div>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-1000 flex border-t border-border bg-surface/95 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-(--shadow-lg) backdrop-blur-md app-hide-on-desktop">
+      <nav className="fixed inset-x-0 bottom-0 z-1000 flex border-t border-border bg-surface px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-(--shadow-lg) app-hide-on-desktop">
         <div className="mx-auto flex max-w-110 gap-1">
           {bottomLinks.map(renderBottomLink)}
         </div>

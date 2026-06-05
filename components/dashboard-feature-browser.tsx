@@ -208,7 +208,7 @@ export function DashboardFeatureBrowser({
                           type="button"
                           onClick={() => openFeature(feature)}
                           className={cn(
-                            "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
+                            "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
                             active
                               ? "border-border-strong bg-surface-raised/85"
                               : "border-transparent hover:border-border hover:bg-surface-raised/70",
@@ -219,7 +219,7 @@ export function DashboardFeatureBrowser({
                             alt=""
                             width={96}
                             height={96}
-                            className="h-18 w-18 rounded-2xl object-cover ring-1 ring-border"
+                            className="h-18 w-18 rounded-lg object-cover ring-1 ring-border"
                           />
                           <span className="min-w-0 self-center">
                             <span className="flex items-center gap-2 text-sm font-semibold text-text">
@@ -239,7 +239,7 @@ export function DashboardFeatureBrowser({
                     })}
                   </div>
                 ) : (
-                  <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
+                  <div className="rounded-xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
                     {dictionary.shared.noToolsInKit}
                   </div>
                 )}
@@ -254,7 +254,7 @@ export function DashboardFeatureBrowser({
                     type="button"
                     onClick={() => openFeature(feature)}
                     className={cn(
-                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-2xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
+                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
                       active
                         ? "border-border-strong bg-surface-raised/85"
                         : "border-transparent hover:border-border hover:bg-surface-raised/70",
@@ -265,7 +265,7 @@ export function DashboardFeatureBrowser({
                       alt=""
                       width={96}
                       height={96}
-                      className="h-18 w-18 rounded-2xl object-cover ring-1 ring-border"
+                      className="h-18 w-18 rounded-lg object-cover ring-1 ring-border"
                     />
                     <span className="min-w-0 self-center">
                       <span className="flex items-center gap-2 text-sm font-semibold text-text">
@@ -284,7 +284,7 @@ export function DashboardFeatureBrowser({
                 );
               })
             ) : (
-              <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
+              <div className="rounded-xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
                 {dictionary.shared.noToolsMatch}
               </div>
             )}
@@ -296,7 +296,7 @@ export function DashboardFeatureBrowser({
 
       <section className="min-h-0 overflow-y-auto bg-bg px-5 py-8 app-hide-on-mobile lg:px-10 lg:py-8">
         <div className="mx-auto flex min-h-full max-w-245 flex-col justify-center gap-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface/80 px-4 py-3 shadow-(--shadow-sm)">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface/80 px-4 py-3 shadow-(--shadow-sm)">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">
               <span className="inline-flex items-center gap-2">
                 <Wallet className="h-4 w-4 text-text-tertiary" />

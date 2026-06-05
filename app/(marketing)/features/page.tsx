@@ -53,8 +53,8 @@ export default async function FeaturesPage() {
     <div className="flex min-h-screen flex-col bg-bg text-text selection:bg-accent-soft selection:text-text">
       <MarketingNav hasAccess={hasAccess} />
 
-      <main className="flex-1 overflow-hidden">
-        <section className="mx-auto max-w-300 px-6 pt-20 pb-12 lg:pt-28 lg:pb-16">
+      <main id="main-content" className="flex-1 overflow-hidden">
+        <section className="mx-auto max-w-300 px-6 pt-[clamp(4rem,8vw,7rem)] pb-[clamp(2rem,4vw,4rem)]">
           <div className="max-w-2xl animate-slide-up">
             <h1 className="text-balance text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
               {fp.heroTitle}
@@ -92,7 +92,7 @@ export default async function FeaturesPage() {
           return (
             <section
               key={kit}
-              className="border-y border-border bg-surface py-14"
+              className="border-y border-border bg-surface py-[clamp(2.5rem,5vw,4rem)]"
             >
               <div className="mx-auto max-w-300 px-6">
                 <div className="mb-8 flex items-center gap-3">
@@ -114,7 +114,7 @@ export default async function FeaturesPage() {
                     <Link
                       key={feature.slug}
                       href={localizePath(feature.appRoute, locale)}
-                      className="group overflow-hidden rounded-xl border border-border bg-bg transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
+                      className="group overflow-hidden rounded-xl border border-border bg-bg transition-colors duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
                     >
                       <div className="relative h-36 bg-bg-subtle">
                         <Image
@@ -147,7 +147,7 @@ export default async function FeaturesPage() {
         })}
 
         {standalone.length > 0 && (
-          <section className="py-14">
+          <section className="py-[clamp(2.5rem,5vw,4rem)]">
             <div className="mx-auto max-w-300 px-6">
               <div className="mb-8">
                 <h2 className="text-xl font-semibold tracking-tight text-text">
@@ -163,7 +163,7 @@ export default async function FeaturesPage() {
                   <Link
                     key={feature.slug}
                     href={localizePath(feature.appRoute, locale)}
-                    className="group overflow-hidden rounded-xl border border-border bg-surface transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
+                    className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
                   >
                     <div className="relative h-36 bg-bg-subtle">
                       <Image
@@ -194,7 +194,7 @@ export default async function FeaturesPage() {
           </section>
         )}
 
-        <section className="border-t border-border bg-surface py-16">
+        <section className="border-t border-border bg-surface py-[clamp(3rem,5vw,5rem)]">
           <div className="mx-auto max-w-300 px-6 text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">
               {dictionary.marketing.featuresTitle}

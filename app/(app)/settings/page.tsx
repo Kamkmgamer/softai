@@ -33,14 +33,14 @@ export default async function SettingsPage() {
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-4">
             <SectionHeader title={dictionary.settings.accountProfile} />
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
+            <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-(--shadow-sm)">
               <UserProfile appearance={softaiClerkAppearance} routing="hash" />
             </div>
           </div>
 
           <div className="space-y-4">
             <SectionHeader title={dictionary.settings.trustSafety} />
-            <div className="rounded-2xl border border-border bg-surface p-5 text-[13px] leading-relaxed text-text-secondary">
+            <div className="rounded-xl border border-border bg-surface p-5 text-[13px] leading-relaxed text-text-secondary">
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-surface-raised text-text-secondary">
                 <ShieldCheck className="h-5 w-5" />
               </div>
