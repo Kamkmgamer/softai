@@ -119,7 +119,7 @@ export function BrandKitForm({ kit, onSave }: BrandKitFormProps) {
               </div>
               <button
                 type="button"
-                onClick={() => { setLogoUrl(null); }}
+                onClick={() => { setLogoUrl(""); }}
                 className="text-xs font-medium text-text-secondary hover:text-danger transition-colors"
               >
                 Remove
