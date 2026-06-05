@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -15,7 +14,6 @@ import {
   Wallet,
 } from "lucide-react";
 import { PricingCards } from "@/components/pricing-table";
-import { getDictionary } from "@/lib/dictionaries";
 import {
   DEFAULT_LOCALE,
   getLocaleFromPathname,
@@ -31,7 +29,6 @@ export function OnboardingFlow() {
   const pathname = usePathname();
   const router = useRouter();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
-  const dictionary = getDictionary(locale);
   const [step, setStep] = useState<Step>("welcome");
   const currentIndex = STEPS.indexOf(step);
 
@@ -296,6 +293,12 @@ function SubscribeStep({
           className="btn btn-secondary px-5 py-3 text-sm"
         >
           Back
+        </button>
+        <button
+          onClick={onComplete}
+          className="btn btn-primary px-5 py-3 text-sm"
+        >
+          Continue to Dashboard
         </button>
       </div>
     </div>
