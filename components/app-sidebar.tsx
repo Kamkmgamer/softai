@@ -199,8 +199,13 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
           href={localizePath("/dashboard", locale)}
           className="mb-4 flex items-center gap-2.5 rounded-xl border border-border-strong bg-surface-raised px-3 py-2.5 text-text transition-colors hover:bg-accent-soft"
         >
-          <Image src="/logo.png" alt="Soft-Magic AI" width={32} height={32} className="shrink-0 rounded-md" />
-          <span className="text-sm font-semibold tracking-tight">Soft-Magic AI</span>
+          <Image
+            src="/logo.png"
+            alt="Soft-Magic AI"
+            width={100}
+            height={50}
+            className="shrink-0 rounded-md"
+          />
         </Link>
 
         {/* Nav */}
