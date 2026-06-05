@@ -61,13 +61,13 @@ export const subscriptions = pgTable("subscriptions", {
   userId: uuid("user_id").notNull(),
   plan: varchar("plan", { length: 100 }).notNull(),
   status: varchar("status", { length: 50 }).notNull(),
-  clerkPayerId: varchar("clerk_payer_id", { length: 255 }),
-  clerkSubscriptionId: varchar("clerk_subscription_id", { length: 255 }),
+  polarCustomerId: varchar("polar_customer_id", { length: 255 }),
+  polarSubscriptionId: varchar("polar_subscription_id", { length: 255 }),
   currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
   monthlyCredits: integer("monthly_credits").notNull().default(1000),
 }, (table) => [
   index("subscriptions_user_period_idx").on(table.userId, table.currentPeriodEnd),
-  index("subscriptions_clerk_subscription_idx").on(table.clerkSubscriptionId),
+  index("subscriptions_polar_subscription_idx").on(table.polarSubscriptionId),
 ]);
 
 export const creditLedger = pgTable("credit_ledger", {
@@ -106,7 +106,7 @@ export const chatMessages = pgTable("chat_messages", {
   index("chat_messages_conversation_created_idx").on(table.conversationId, table.createdAt),
 ]);
 
-export const clerkWebhookEvents = pgTable("clerk_webhook_events", {
+export const polarWebhookEvents = pgTable("polar_webhook_events", {
   id: uuid("id").defaultRandom().primaryKey(),
   eventId: varchar("event_id", { length: 255 }).notNull().unique(),
   type: varchar("type", { length: 100 }).notNull(),

@@ -1,10 +1,8 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { ui } from "@clerk/ui";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { IBM_Plex_Mono, Inter, Noto_Naskh_Arabic } from "next/font/google";
 import { Providers } from "@/components/providers";
-import { softaiArabicClerkLocalization } from "@/lib/clerk-localization";
 import { DEFAULT_LOCALE, getDirection, isLocale } from "@/lib/i18n";
 import "@uploadthing/react/styles.css";
 import "./globals.css";
@@ -63,7 +61,7 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <ClerkProvider ui={ui} localization={locale === "ar" ? softaiArabicClerkLocalization : undefined}>
+        <ClerkProvider>
           <Providers>{children}</Providers>
         </ClerkProvider>
       </body>

@@ -1,5 +1,5 @@
 import { MarketingNav } from "@/components/marketing-nav";
-import { PricingTable } from "@clerk/nextjs";
+import { PricingCards } from "@/components/pricing-table";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import { getRequestLocale } from "@/lib/server-locale";
@@ -26,8 +26,8 @@ export default async function PricingPage() {
             </p>
           </div>
 
-          <div className="mx-auto max-w-3xl rounded-lg border border-border bg-surface shadow-(--shadow-sm)">
-            <PricingTable newSubscriptionRedirectUrl="/billing" />
+          <div className="mx-auto max-w-3xl">
+            <PricingCards />
           </div>
 
           <div className="mx-auto mt-20 max-w-2xl">

@@ -13,8 +13,7 @@ import {
   Video,
   Wallet,
 } from "lucide-react";
-import { PricingTable } from "@/components/pricing-table";
-import { softaiClerkAppearance } from "@/lib/clerk-appearance";
+import { PricingCards } from "@/components/pricing-table";
 import { getDictionary } from "@/lib/dictionaries";
 import {
   DEFAULT_LOCALE,
@@ -288,16 +287,7 @@ function SubscribeStep({
         </p>
       </div>
 
-      {/* Clerk pricing table */}
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
-        <PricingTable
-          appearance={softaiClerkAppearance}
-          newSubscriptionRedirectUrl={localizePath(
-            "/dashboard",
-            locale,
-          )}
-        />
-      </div>
+      <PricingCards redirectUrl={localizePath("/dashboard", locale)} />
 
       <div className="flex items-center justify-center gap-3">
         <button

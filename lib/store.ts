@@ -39,7 +39,7 @@ import { formatCredits } from "@/lib/utils";
 type DatabaseState = {
   users: UserRecord[];
   subscriptions: SubscriptionRecord[];
-  clerkWebhookEvents: ClerkWebhookEventRecord[];
+  polarWebhookEvents: PolarWebhookEventRecord[];
   creditLedger: CreditLedgerRecord[];
   chatConversations: ChatConversationRecord[];
   chatMessages: ChatMessageRecord[];
@@ -56,7 +56,7 @@ type DatabaseState = {
   shareTokens: ShareTokenRecord[];
 };
 
-type ClerkWebhookEventRecord = {
+type PolarWebhookEventRecord = {
   id: string;
   eventId: string;
   type: string;
@@ -71,7 +71,7 @@ declare global {
 }
 
 const now = () => new Date().toISOString();
-const CLERK_WEBHOOK_PROCESSING_TIMEOUT_MS = 5 * 60 * 1000;
+const POLAR_WEBHOOK_PROCESSING_TIMEOUT_MS = 5 * 60 * 1000;
 const STORE_CACHE_REVALIDATE_SECONDS = 60;
 
 const cacheTags = {
@@ -101,8 +101,8 @@ function revalidateProjectData(userId: string, projectId: string) {
   revalidateStoreTag(cacheTags.project(projectId));
 }
 
-function isStaleClerkWebhookClaim(createdAt: string | Date) {
-  return Date.now() - new Date(createdAt).getTime() > CLERK_WEBHOOK_PROCESSING_TIMEOUT_MS;
+function isStalePolarWebhookClaim(createdAt: string | Date) {
+  return Date.now() - new Date(createdAt).getTime() > POLAR_WEBHOOK_PROCESSING_TIMEOUT_MS;
 }
 
 function toIso(value: string | Date | null | undefined) {
@@ -133,13 +133,13 @@ function createSeedStore(): DatabaseState {
         userId,
         plan: "starter",
         status: "active",
-        clerkPayerId: null,
-        clerkSubscriptionId: null,
+        polarCustomerId: null,
+        polarSubscriptionId: null,
         currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
         monthlyCredits: 1000,
       },
     ],
-    clerkWebhookEvents: [],
+    polarWebhookEvents: [],
     creditLedger: [
       {
         id: "credit_demo_1",
@@ -342,8 +342,8 @@ function mapSubscription(row: typeof schema.subscriptions.$inferSelect): Subscri
     userId: row.userId,
     plan: row.plan,
     status: row.status as SubscriptionRecord["status"],
-    clerkPayerId: row.clerkPayerId,
-    clerkSubscriptionId: row.clerkSubscriptionId,
+    polarCustomerId: row.polarCustomerId,
+    polarSubscriptionId: row.polarSubscriptionId,
     currentPeriodEnd: toIso(row.currentPeriodEnd),
     monthlyCredits: row.monthlyCredits,
   };
@@ -580,8 +580,8 @@ export async function upsertUser(input: Pick<UserRecord, "clerkUserId" | "email"
       userId: created.id,
       plan: DEFAULT_PLAN_NAME,
       status: "inactive",
-      clerkPayerId: null,
-      clerkSubscriptionId: null,
+      polarCustomerId: null,
+      polarSubscriptionId: null,
       currentPeriodEnd: null,
       monthlyCredits: DEFAULT_MONTHLY_CREDITS,
     });
@@ -634,8 +634,8 @@ export async function upsertUser(input: Pick<UserRecord, "clerkUserId" | "email"
       userId: user.id,
       plan: DEFAULT_PLAN_NAME,
       status: "inactive",
-      clerkPayerId: null,
-      clerkSubscriptionId: null,
+      polarCustomerId: null,
+      polarSubscriptionId: null,
       currentPeriodEnd: null,
       monthlyCredits: DEFAULT_MONTHLY_CREDITS,
     });
@@ -651,6 +651,17 @@ export async function findUserByClerkId(clerkUserId: string) {
   await ensureDatabase();
   const row = await db.query.users.findFirst({
     where: eq(schema.users.clerkUserId, clerkUserId),
+  });
+  return row ? mapUser(row) : null;
+}
+
+export async function findUserByEmail(email: string) {
+  if (!databaseEnabled() || !db) {
+    return getState().users.find((user) => user.email.toLowerCase() === email.toLowerCase()) ?? null;
+  }
+  await ensureDatabase();
+  const row = await db.query.users.findFirst({
+    where: sql`lower(${schema.users.email}) = lower(${email})`,
   });
   return row ? mapUser(row) : null;
 }
@@ -1824,16 +1835,16 @@ export async function hasActiveSubscription(userId: string) {
   );
 }
 
-export async function claimClerkWebhookEvent(eventId: string, type: string) {
+export async function claimPolarWebhookEvent(eventId: string, type: string) {
   if (!databaseEnabled() || !db) {
     const state = getState();
-    const existing = state.clerkWebhookEvents.find((entry) => entry.eventId === eventId);
+    const existing = state.polarWebhookEvents.find((entry) => entry.eventId === eventId);
 
     if (existing?.status === "processed") {
       return false;
     }
 
-    if (existing?.status === "processing" && !isStaleClerkWebhookClaim(existing.createdAt)) {
+    if (existing?.status === "processing" && !isStalePolarWebhookClaim(existing.createdAt)) {
       return false;
     }
 
@@ -1848,7 +1859,7 @@ export async function claimClerkWebhookEvent(eventId: string, type: string) {
       return true;
     }
 
-    state.clerkWebhookEvents.push({
+    state.polarWebhookEvents.push({
       id: randomUUID(),
       eventId,
       type,
@@ -1862,37 +1873,37 @@ export async function claimClerkWebhookEvent(eventId: string, type: string) {
 
   await ensureDatabase();
   const [inserted] = await db
-    .insert(schema.clerkWebhookEvents)
+    .insert(schema.polarWebhookEvents)
     .values({ id: randomUUID(), eventId, type, status: "processing", createdAt: new Date() })
     .onConflictDoNothing()
-    .returning({ id: schema.clerkWebhookEvents.id });
+    .returning({ id: schema.polarWebhookEvents.id });
 
   if (inserted) {
     return true;
   }
 
-  const existing = await db.query.clerkWebhookEvents.findFirst({
-    where: eq(schema.clerkWebhookEvents.eventId, eventId),
+  const existing = await db.query.polarWebhookEvents.findFirst({
+    where: eq(schema.polarWebhookEvents.eventId, eventId),
   });
 
   if (existing?.status === "processed") {
     return false;
   }
 
-  if (existing?.status === "processing" && !isStaleClerkWebhookClaim(existing.createdAt)) {
+  if (existing?.status === "processing" && !isStalePolarWebhookClaim(existing.createdAt)) {
     return false;
   }
 
   await db
-    .update(schema.clerkWebhookEvents)
+    .update(schema.polarWebhookEvents)
     .set({ status: "processing", error: null, processedAt: null })
-    .where(eq(schema.clerkWebhookEvents.eventId, eventId));
+    .where(eq(schema.polarWebhookEvents.eventId, eventId));
   return true;
 }
 
-export async function markClerkWebhookEventProcessed(eventId: string) {
+export async function markPolarWebhookEventProcessed(eventId: string) {
   if (!databaseEnabled() || !db) {
-    const existing = getState().clerkWebhookEvents.find((entry) => entry.eventId === eventId);
+    const existing = getState().polarWebhookEvents.find((entry) => entry.eventId === eventId);
     if (existing) {
       existing.status = "processed";
       existing.error = null;
@@ -1903,14 +1914,14 @@ export async function markClerkWebhookEventProcessed(eventId: string) {
 
   await ensureDatabase();
   await db
-    .update(schema.clerkWebhookEvents)
+    .update(schema.polarWebhookEvents)
     .set({ status: "processed", error: null, processedAt: new Date() })
-    .where(eq(schema.clerkWebhookEvents.eventId, eventId));
+    .where(eq(schema.polarWebhookEvents.eventId, eventId));
 }
 
-export async function markClerkWebhookEventFailed(eventId: string, error: string) {
+export async function markPolarWebhookEventFailed(eventId: string, error: string) {
   if (!databaseEnabled() || !db) {
-    const existing = getState().clerkWebhookEvents.find((entry) => entry.eventId === eventId);
+    const existing = getState().polarWebhookEvents.find((entry) => entry.eventId === eventId);
     if (existing) {
       existing.status = "failed";
       existing.error = error;
@@ -1921,14 +1932,14 @@ export async function markClerkWebhookEventFailed(eventId: string, error: string
 
   await ensureDatabase();
   await db
-    .update(schema.clerkWebhookEvents)
+    .update(schema.polarWebhookEvents)
     .set({ status: "failed", error, processedAt: null })
-    .where(eq(schema.clerkWebhookEvents.eventId, eventId));
+    .where(eq(schema.polarWebhookEvents.eventId, eventId));
 }
 
 export async function upsertUserSubscription(
   userId: string,
-  input: { clerkPayerId: string | null; clerkSubscriptionId?: string | null; plan?: string; status: SubscriptionRecord["status"]; currentPeriodEnd?: string | null; monthlyCredits?: number },
+  input: { polarCustomerId: string | null; polarSubscriptionId?: string | null; plan?: string; status: SubscriptionRecord["status"]; currentPeriodEnd?: string | null; monthlyCredits?: number },
 ) {
   const shouldGrantUpgradeCredits = (existingMonthlyCredits: number, nextStatus: SubscriptionRecord["status"]) =>
     (nextStatus === "active" || nextStatus === "trialing") &&
@@ -1938,14 +1949,14 @@ export async function upsertUserSubscription(
   if (!databaseEnabled() || !db) {
     const state = getState();
     const existing =
-      state.subscriptions.find((entry) => input.clerkSubscriptionId !== null && entry.clerkSubscriptionId === input.clerkSubscriptionId) ??
+      state.subscriptions.find((entry) => input.polarSubscriptionId !== null && entry.polarSubscriptionId === input.polarSubscriptionId) ??
       state.subscriptions.find((entry) => entry.userId === userId);
     if (existing) {
       const upgradeCreditDelta = shouldGrantUpgradeCredits(existing.monthlyCredits, input.status)
         ? (input.monthlyCredits as number) - existing.monthlyCredits
         : 0;
-      existing.clerkPayerId = input.clerkPayerId;
-      existing.clerkSubscriptionId = input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId;
+      existing.polarCustomerId = input.polarCustomerId;
+      existing.polarSubscriptionId = input.polarSubscriptionId === undefined ? existing.polarSubscriptionId : input.polarSubscriptionId;
       existing.plan = input.plan ?? existing.plan;
       existing.status = input.status;
       existing.currentPeriodEnd = input.currentPeriodEnd ?? existing.currentPeriodEnd;
@@ -1964,8 +1975,8 @@ export async function upsertUserSubscription(
       return existing;
     }
     const created: SubscriptionRecord = {
-      id: randomUUID(), userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
-      clerkSubscriptionId: input.clerkSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
+      id: randomUUID(), userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, polarCustomerId: input.polarCustomerId,
+      polarSubscriptionId: input.polarSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
       monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
     };
     state.subscriptions.push(created);
@@ -1973,9 +1984,9 @@ export async function upsertUserSubscription(
   }
   await ensureDatabase();
   let existing = null;
-  if (input.clerkSubscriptionId !== undefined && input.clerkSubscriptionId !== null) {
+  if (input.polarSubscriptionId !== undefined && input.polarSubscriptionId !== null) {
     existing = await db.query.subscriptions.findFirst({
-      where: eq(schema.subscriptions.clerkSubscriptionId, input.clerkSubscriptionId),
+      where: eq(schema.subscriptions.polarSubscriptionId, input.polarSubscriptionId),
     });
   }
   if (!existing) {
@@ -1983,8 +1994,8 @@ export async function upsertUserSubscription(
   }
   if (existing) {
     const updateValues = {
-      clerkPayerId: input.clerkPayerId,
-      clerkSubscriptionId: input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId,
+      polarCustomerId: input.polarCustomerId,
+      polarSubscriptionId: input.polarSubscriptionId === undefined ? existing.polarSubscriptionId : input.polarSubscriptionId,
       plan: input.plan ?? existing.plan,
       status: input.status,
       currentPeriodEnd: input.currentPeriodEnd ? new Date(input.currentPeriodEnd) : existing.currentPeriodEnd,
@@ -2022,8 +2033,8 @@ export async function upsertUserSubscription(
     revalidateUserData(userId);
     return {
       ...mapSubscription(existing),
-      clerkPayerId: input.clerkPayerId,
-      clerkSubscriptionId: input.clerkSubscriptionId === undefined ? existing.clerkSubscriptionId : input.clerkSubscriptionId ?? null,
+      polarCustomerId: input.polarCustomerId,
+      polarSubscriptionId: input.polarSubscriptionId === undefined ? existing.polarSubscriptionId : input.polarSubscriptionId ?? null,
       plan: input.plan ?? existing.plan,
       status: input.status,
       currentPeriodEnd: input.currentPeriodEnd ?? toIso(existing.currentPeriodEnd),
@@ -2032,15 +2043,15 @@ export async function upsertUserSubscription(
   }
   const id = randomUUID();
   await db.insert(schema.subscriptions).values({
-    id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
-    clerkSubscriptionId: input.clerkSubscriptionId ?? null,
+    id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, polarCustomerId: input.polarCustomerId,
+    polarSubscriptionId: input.polarSubscriptionId ?? null,
     currentPeriodEnd: input.currentPeriodEnd ? new Date(input.currentPeriodEnd) : null,
     monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
   });
   revalidateUserData(userId);
   return {
-    id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, clerkPayerId: input.clerkPayerId,
-    clerkSubscriptionId: input.clerkSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
+    id, userId, plan: input.plan ?? DEFAULT_PLAN_NAME, status: input.status, polarCustomerId: input.polarCustomerId,
+    polarSubscriptionId: input.polarSubscriptionId ?? null, currentPeriodEnd: input.currentPeriodEnd ?? null,
     monthlyCredits: input.monthlyCredits ?? DEFAULT_MONTHLY_CREDITS,
   };
 }

@@ -79,7 +79,7 @@ const links: Array<{
     group: "account",
   },
   {
-    href: "/payments#/billing",
+    href: "/api/portal/polar",
     labelKey: "payments",
     shortLabel: "Payments",
     icon: CreditCard,

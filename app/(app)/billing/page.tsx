@@ -6,9 +6,8 @@ import { getDictionary } from "@/lib/dictionaries";
 import { localizePath, type Locale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
 import { getBillingSummary } from "@/lib/store";
-import { softaiClerkAppearance } from "@/lib/clerk-appearance";
 import { AppBackButton } from "@/components/app-back-button";
-import { PricingTable } from "@/components/pricing-table";
+import { PricingCards } from "@/components/pricing-table";
 import { EmptyState, SectionHeader, StatusBadge } from "@/components/ui";
 import { formatCredits, formatDate } from "@/lib/utils";
 
@@ -80,7 +79,7 @@ export default async function BillingPage() {
             </p>
           </div>
           <Link
-            href={localizePath("/payments#/billing", locale)}
+            href="/api/portal/polar"
             className="btn btn-secondary"
           >
             {dictionary.payments.title}
@@ -143,12 +142,10 @@ export default async function BillingPage() {
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-4">
             <SectionHeader title={dictionary.billing.topUpCredits} />
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-sm)">
-              <PricingTable
-                appearance={softaiClerkAppearance}
-                newSubscriptionRedirectUrl={localizePath("/billing", locale)}
-              />
-            </div>
+            <PricingCards
+              redirectUrl={localizePath("/billing", locale)}
+              currentPlan={plan.toLowerCase() === "no plan" ? undefined : plan.toLowerCase()}
+            />
           </div>
 
           <div className="space-y-4">

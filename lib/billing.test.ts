@@ -3,7 +3,9 @@ import {
   getBillingPlanDisplayName,
   getMonthlyCreditsForPlan,
   normalizeBillingPlanSlug,
-  parseClerkBillingUpdate,
+  planSlugFromProductId,
+  getPolarProductId,
+  parsePolarSubscriptionEvent,
 } from "./billing";
 
 describe("billing plans", () => {
@@ -19,19 +21,33 @@ describe("billing plans", () => {
   });
 });
 
-describe("parseClerkBillingUpdate", () => {
-  it("parses subscription events with payer, plan, status, and period", () => {
+describe("Polar product ID mapping", () => {
+  it("maps plan slugs to Polar product IDs", () => {
+    expect(getPolarProductId("starter")).toBe("592a9cdb-3179-4f50-be49-39bd4f86362c");
+    expect(getPolarProductId("pro")).toBe("4d4e3511-259e-45c2-8a58-a5972596faa3");
+    expect(getPolarProductId("none")).toBeNull();
+  });
+
+  it("maps Polar product IDs to plan slugs", () => {
+    expect(planSlugFromProductId("592a9cdb-3179-4f50-be49-39bd4f86362c")).toBe("starter");
+    expect(planSlugFromProductId("4d4e3511-259e-45c2-8a58-a5972596faa3")).toBe("pro");
+    expect(planSlugFromProductId("unknown-id")).toBeNull();
+  });
+});
+
+describe("parsePolarSubscriptionEvent", () => {
+  it("parses a subscription event with all fields", () => {
     expect(
-      parseClerkBillingUpdate("subscription.active", {
+      parsePolarSubscriptionEvent({
         id: "sub_123",
         status: "active",
-        payer: { user_id: "user_123" },
-        items: [{ plan: { slug: "pro" }, period: { end: "2026-06-01T00:00:00.000Z" } }],
+        customer_id: "cust_123",
+        product_id: "4d4e3511-259e-45c2-8a58-a5972596faa3",
+        current_period_end: "2026-06-01T00:00:00.000Z",
       }),
     ).toEqual({
-      clerkUserId: "user_123",
-      clerkPayerId: "user_123",
-      clerkSubscriptionId: "sub_123",
+      polarCustomerId: "cust_123",
+      polarSubscriptionId: "sub_123",
       plan: "pro",
       status: "active",
       currentPeriodEnd: "2026-06-01T00:00:00.000Z",
@@ -39,25 +55,55 @@ describe("parseClerkBillingUpdate", () => {
     });
   });
 
-  it("parses subscription item cancellation without clobbering the current plan", () => {
+  it("parses a canceled subscription", () => {
     expect(
-      parseClerkBillingUpdate("subscriptionItem.canceled", {
-        id: "subitem_123",
-        payer: { user_id: "user_123" },
+      parsePolarSubscriptionEvent({
+        id: "sub_123",
+        status: "canceled",
+        customer_id: "cust_123",
+        product_id: "4d4e3511-259e-45c2-8a58-a5972596faa3",
+        current_period_end: "2026-06-01T00:00:00.000Z",
       }),
     ).toEqual({
-      clerkUserId: "user_123",
-      clerkPayerId: "user_123",
-      clerkSubscriptionId: undefined,
-      plan: undefined,
+      polarCustomerId: "cust_123",
+      polarSubscriptionId: "sub_123",
+      plan: "pro",
       status: "canceled",
-      currentPeriodEnd: null,
+      currentPeriodEnd: "2026-06-01T00:00:00.000Z",
       monthlyCredits: undefined,
     });
   });
 
-  it("ignores unsupported events and organization-only billing updates", () => {
-    expect(parseClerkBillingUpdate("user.created", { id: "user_123" })).toBeNull();
-    expect(parseClerkBillingUpdate("subscription.active", { payer: { organization_id: "org_123" } })).toBeNull();
+  it("returns null when customer_id is missing", () => {
+    expect(
+      parsePolarSubscriptionEvent({
+        id: "sub_123",
+        status: "active",
+        customer_id: null,
+        product_id: "4d4e3511-259e-45c2-8a58-a5972596faa3",
+      }),
+    ).toBeNull();
+  });
+
+  it("returns null when subscription id is missing", () => {
+    expect(
+      parsePolarSubscriptionEvent({
+        id: null,
+        status: "active",
+        customer_id: "cust_123",
+        product_id: "4d4e3511-259e-45c2-8a58-a5972596faa3",
+      }),
+    ).toBeNull();
+  });
+
+  it("maps unknown product IDs to undefined plan", () => {
+    const result = parsePolarSubscriptionEvent({
+      id: "sub_123",
+      status: "active",
+      customer_id: "cust_123",
+      product_id: "unknown-product-id",
+    });
+    expect(result?.plan).toBeUndefined();
+    expect(result?.monthlyCredits).toBeUndefined();
   });
 });

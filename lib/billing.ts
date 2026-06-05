@@ -1,5 +1,6 @@
 import { DEFAULT_PLAN_NAME } from "@/lib/constants";
 import type { SubscriptionRecord } from "@/lib/types";
+import polarProducts from "@/polar-products.json";
 
 export const BILLING_PLANS = [
   { slug: "none", name: "No Plan", monthlyCredits: 0 },
@@ -13,53 +14,10 @@ export const BILLING_PLANS = [
 export type BillingPlanSlug = (typeof BILLING_PLANS)[number]["slug"];
 
 const planBySlug = new Map(BILLING_PLANS.map((plan) => [plan.slug, plan]));
-const billingEvents = new Set([
-  "subscription.created",
-  "subscription.updated",
-  "subscription.active",
-  "subscription.pastDue",
-  "subscriptionItem.active",
-  "subscriptionItem.updated",
-  "subscriptionItem.canceled",
-  "subscriptionItem.pastDue",
-  "subscriptionItem.ended",
-  "subscriptionItem.expired",
-]);
 
-type ClerkBillingWebhookData = {
-  id?: string | null;
-  status?: string | null;
-  payer?: {
-    user_id?: string | null;
-    organization_id?: string | null;
-  } | null;
-  items?: Array<{
-    plan?: {
-      slug?: string | null;
-    } | null;
-    period?: {
-      end?: string | number | Date | null;
-    } | null;
-    current_period_end?: string | number | Date | null;
-  }>;
-  plan?: {
-    slug?: string | null;
-  } | null;
-  period?: {
-    end?: string | number | Date | null;
-  } | null;
-  current_period_end?: string | number | Date | null;
-};
-
-export type ClerkBillingUpdate = {
-  clerkUserId: string;
-  clerkPayerId: string;
-  clerkSubscriptionId?: string | null;
-  plan?: BillingPlanSlug;
-  status: SubscriptionRecord["status"];
-  currentPeriodEnd?: string | null;
-  monthlyCredits?: number;
-};
+const productIdToPlan = new Map<string, BillingPlanSlug>(
+  Object.entries(polarProducts).map(([slug, id]) => [id, slug as BillingPlanSlug]),
+);
 
 export function normalizeBillingPlanSlug(plan: string | null | undefined): BillingPlanSlug {
   const slug = plan?.trim().toLowerCase();
@@ -88,51 +46,24 @@ export function getBillingPlanDisplayName(plan: string | null | undefined) {
   return getBillingPlan(plan).name;
 }
 
-export function resolveCurrentBillingPlan(has: ((params: { plan: string }) => boolean) | undefined) {
-  if (!has) {
-    return null;
-  }
-
-  for (const plan of [...BILLING_PLANS].reverse()) {
-    if (has({ plan: plan.slug })) {
-      return plan;
-    }
-  }
-
-  return null;
+export function getPolarProductId(plan: string | null | undefined): string | null {
+  const slug = normalizeBillingPlanSlug(plan);
+  if (slug === "none") return null;
+  return polarProducts[slug as keyof typeof polarProducts] ?? null;
 }
 
-export function isClerkBillingEvent(eventType: string) {
-  return billingEvents.has(eventType);
+export function planSlugFromProductId(productId: string): BillingPlanSlug | null {
+  return productIdToPlan.get(productId) ?? null;
 }
 
-function normalizeStatus(eventType: string, status?: string | null): SubscriptionRecord["status"] {
-  if (eventType === "subscriptionItem.canceled" || eventType === "subscriptionItem.ended" || eventType === "subscriptionItem.expired") {
-    return "canceled";
-  }
-
-  if (eventType === "subscription.pastDue" || eventType === "subscriptionItem.pastDue") {
-    return "past_due";
-  }
-
-  if (eventType === "subscription.active" || eventType === "subscriptionItem.active") {
-    return "active";
-  }
-
-  if (status === "past_due" || status === "pastDue") {
-    return "past_due";
-  }
-
-  if (status === "canceled" || status === "cancelled" || status === "expired") {
-    return "canceled";
-  }
-
-  if (status === "active" || status === "trialing") {
-    return status;
-  }
-
-  return "inactive";
-}
+export type PolarSubscriptionUpdate = {
+  polarCustomerId: string;
+  polarSubscriptionId: string;
+  plan?: BillingPlanSlug;
+  status: SubscriptionRecord["status"];
+  currentPeriodEnd?: string | null;
+  monthlyCredits?: number;
+};
 
 function normalizeDate(value: string | number | Date | null | undefined) {
   if (!value) {
@@ -143,28 +74,37 @@ function normalizeDate(value: string | number | Date | null | undefined) {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
-export function parseClerkBillingUpdate(eventType: string, data: ClerkBillingWebhookData): ClerkBillingUpdate | null {
-  if (!isClerkBillingEvent(eventType)) {
-    return null;
-  }
+function normalizePolarStatus(status: string | null | undefined): SubscriptionRecord["status"] {
+  if (status === "active") return "active";
+  if (status === "trialing") return "trialing";
+  if (status === "past_due") return "past_due";
+  if (status === "canceled" || status === "revoked") return "canceled";
+  if (status === "incomplete" || status === "incomplete_expired") return "inactive";
+  return "inactive";
+}
 
-  const clerkUserId = data.payer?.user_id;
-  if (!clerkUserId) {
-    return null;
-  }
+export function parsePolarSubscriptionEvent(data: {
+  id?: string | null;
+  status?: string | null;
+  customer_id?: string | null;
+  current_period_end?: string | null;
+  product_id?: string | null;
+}): PolarSubscriptionUpdate | null {
+  const polarCustomerId = data.customer_id;
+  if (!polarCustomerId) return null;
 
-  const firstItem = data.items?.[0];
-  const rawPlan = firstItem?.plan?.slug ?? data.plan?.slug;
-  const plan = isKnownBillingPlanSlug(rawPlan) ? normalizeBillingPlanSlug(rawPlan) : undefined;
-  const currentPeriodEnd = normalizeDate(
-    firstItem?.period?.end ?? firstItem?.current_period_end ?? data.period?.end ?? data.current_period_end,
-  );
-  const status = normalizeStatus(eventType, data.status);
+  const polarSubscriptionId = data.id;
+  if (!polarSubscriptionId) return null;
+
+  const productId = data.product_id;
+  const plan = productId ? planSlugFromProductId(productId) ?? undefined : undefined;
+
+  const status = normalizePolarStatus(data.status);
+  const currentPeriodEnd = normalizeDate(data.current_period_end);
 
   return {
-    clerkUserId,
-    clerkPayerId: data.payer?.organization_id ?? clerkUserId,
-    clerkSubscriptionId: eventType.startsWith("subscriptionItem.") ? undefined : data.id ?? null,
+    polarCustomerId,
+    polarSubscriptionId,
     plan,
     status,
     currentPeriodEnd,

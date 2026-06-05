@@ -10,7 +10,7 @@ declare global {
 
 const env = getEnv();
 const hasDatabase = Boolean(env.databaseUrl);
-const DB_BOOTSTRAP_VERSION = 4;
+const DB_BOOTSTRAP_VERSION = 5;
 
 export const neonSql = hasDatabase ? neon(env.databaseUrl as string) : null;
 export const db = hasDatabase && neonSql ? drizzle(neonSql, { schema }) : null;
@@ -60,8 +60,8 @@ export async function ensureDatabase() {
             user_id uuid NOT NULL,
             plan varchar(100) NOT NULL,
             status varchar(50) NOT NULL,
-            clerk_payer_id varchar(255) NULL,
-            clerk_subscription_id varchar(255) NULL,
+            polar_customer_id varchar(255) NULL,
+            polar_subscription_id varchar(255) NULL,
             current_period_end timestamptz NULL,
             monthly_credits integer NOT NULL DEFAULT 1000
           )`,
@@ -92,7 +92,7 @@ export async function ensureDatabase() {
             metadata jsonb NULL,
             created_at timestamptz NOT NULL DEFAULT now()
           )`,
-          sql`CREATE TABLE IF NOT EXISTS clerk_webhook_events (
+          sql`CREATE TABLE IF NOT EXISTS polar_webhook_events (
             id uuid PRIMARY KEY,
             event_id varchar(255) NOT NULL UNIQUE,
             type varchar(100) NOT NULL,
@@ -286,10 +286,10 @@ export async function ensureDatabase() {
           sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS language varchar(10) NOT NULL DEFAULT 'en'`,
           sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS metadata jsonb NULL`,
           sql`ALTER TABLE outputs ADD COLUMN IF NOT EXISTS removed_at timestamptz NULL`,
-          sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_payer_id varchar(255) NULL`,
-          sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS clerk_subscription_id varchar(255) NULL`,
-          sql`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS error text NULL`,
-          sql`ALTER TABLE clerk_webhook_events ADD COLUMN IF NOT EXISTS processed_at timestamptz NULL`,
+          sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS polar_customer_id varchar(255) NULL`,
+          sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS polar_subscription_id varchar(255) NULL`,
+          sql`ALTER TABLE polar_webhook_events ADD COLUMN IF NOT EXISTS error text NULL`,
+          sql`ALTER TABLE polar_webhook_events ADD COLUMN IF NOT EXISTS processed_at timestamptz NULL`,
           sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS provider_key varchar(100) NULL`,
           sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS model_key varchar(255) NULL`,
           sql`ALTER TABLE generation_jobs ADD COLUMN IF NOT EXISTS cost_estimate integer NULL`,
@@ -376,7 +376,6 @@ export async function ensureDatabase() {
 
       await sql.transaction([
         sql`CREATE INDEX IF NOT EXISTS subscriptions_user_period_idx ON subscriptions (user_id, current_period_end)`,
-        sql`CREATE INDEX IF NOT EXISTS subscriptions_clerk_subscription_idx ON subscriptions (clerk_subscription_id)`,
         sql`CREATE INDEX IF NOT EXISTS credit_ledger_user_created_idx ON credit_ledger (user_id, created_at)`,
         sql`CREATE INDEX IF NOT EXISTS chat_messages_conversation_created_idx ON chat_messages (conversation_id, created_at)`,
         sql`CREATE INDEX IF NOT EXISTS projects_user_updated_idx ON projects (user_id, updated_at)`,
@@ -414,6 +413,16 @@ export async function ensureDatabase() {
           created_at timestamptz NOT NULL DEFAULT now()
         )`,
         sql`CREATE INDEX IF NOT EXISTS share_tokens_output_idx ON share_tokens (output_id)`,
+      ]);
+
+      // Polar billing migration: rename Clerk billing columns/tables
+      // Uses DO blocks to be idempotent — safe on both fresh and existing databases.
+      await sql.transaction([
+        sql`DO $$ BEGIN ALTER TABLE subscriptions RENAME COLUMN clerk_payer_id TO polar_customer_id; EXCEPTION WHEN undefined_column THEN NULL; END $$`,
+        sql`DO $$ BEGIN ALTER TABLE subscriptions RENAME COLUMN clerk_subscription_id TO polar_subscription_id; EXCEPTION WHEN undefined_column THEN NULL; END $$`,
+        sql`DROP INDEX IF EXISTS subscriptions_clerk_subscription_idx`,
+        sql`CREATE INDEX IF NOT EXISTS subscriptions_polar_subscription_idx ON subscriptions (polar_subscription_id)`,
+        sql`DO $$ BEGIN ALTER TABLE clerk_webhook_events RENAME TO polar_webhook_events; EXCEPTION WHEN undefined_table THEN NULL; END $$`,
       ]);
     })();
     const retryableReady = ready.catch((error) => {
