@@ -1,12 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Brush, ImageIcon, Layers3 } from "lucide-react";
+import {
+  ArrowRight,
+  Camera,
+  Clapperboard,
+  Image as ImageIcon,
+  Layers3,
+  Megaphone,
+  Palette,
+  Pen,
+  Share2,
+  Shield,
+  Video,
+} from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
+import { MarketingFooter } from "@/components/marketing-footer";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import { getImplementedFeatures, mediaAssets } from "@/lib/features";
 import { localizePath } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/server-locale";
+
+const categoryIcons = {
+  Video,
+  Image: ImageIcon,
+  Audio: Camera,
+  Custom: Pen,
+  Models: Layers3,
+} as const;
 
 export default async function MarketingPage() {
   const locale = await getRequestLocale();
@@ -14,198 +35,303 @@ export default async function MarketingPage() {
   const marketing = dictionary.marketing;
   const session = await getAppSession().catch(() => null);
   const hasAccess = session !== null;
-  const implementedFeatures = getImplementedFeatures(locale).slice(0, 6);
+  const implementedFeatures = getImplementedFeatures(locale);
 
-  const workflowSteps = [
-    {
-      title: marketing.workflow.step1Title,
-      description: marketing.workflow.step1Description,
-    },
-    {
-      title: marketing.workflow.step2Title,
-      description: marketing.workflow.step2Description,
-    },
-    {
-      title: marketing.workflow.step3Title,
-      description: marketing.workflow.step3Description,
-    },
-  ];
+  const uniqueCategories = [...new Set(implementedFeatures.map((f) => f.category))];
 
   return (
     <div className="flex min-h-screen flex-col bg-bg text-text selection:bg-accent-soft selection:text-text">
       <MarketingNav hasAccess={hasAccess} />
 
       <main id="main-content" className="flex-1 overflow-hidden">
-        <section className="mx-auto grid max-w-300 gap-10 px-6 py-[clamp(3rem,6vw,6rem)] lg:grid-cols-[minmax(0,0.9fr)_minmax(560px,1fr)] lg:items-center">
-          <div className="max-w-2xl animate-slide-up">
-            <h1 className="text-balance text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
+        {/* ─── Hero ───────────────────────────────────────── */}
+        <section className="relative mx-auto max-w-7xl px-6 pt-[clamp(4rem,8vw,8rem)] pb-[clamp(3rem,6vw,5rem)]">
+          <div className="mx-auto max-w-3xl text-center animate-slide-up">
+            <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
               {marketing.heroTitle}
             </h1>
-            <p className="mt-5 max-w-xl text-pretty text-[17px] leading-8 text-text-secondary">
+            <p className="mx-auto mt-5 max-w-2xl text-pretty text-lg leading-7 text-text-secondary">
               {marketing.heroDescription}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
-                href={localizePath(
-                  hasAccess ? "/dashboard" : "/sign-up",
-                  locale,
-                )}
-                className="btn btn-primary px-5 py-3 text-sm"
+                href={localizePath(hasAccess ? "/dashboard" : "/sign-up", locale)}
+                className="btn btn-primary px-6 py-3 text-sm"
               >
                 {hasAccess ? marketing.dashboardCta : marketing.startCta}
                 <ArrowRight className="h-4 w-4 rtl-flip-x" />
               </Link>
               <Link
                 href={localizePath("/pricing", locale)}
-                className="btn btn-secondary px-5 py-3 text-sm"
+                className="btn btn-secondary px-6 py-3 text-sm"
               >
                 {marketing.pricingCta}
               </Link>
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-surface p-3 shadow-(--shadow-lg) animate-scale-in">
-            <div className="grid gap-3 lg:grid-cols-[1fr_180px]">
-              <div className="relative min-h-92 overflow-hidden rounded-xl bg-bg-subtle">
+          {/* Hero visual */}
+          <div className="mx-auto mt-14 max-w-5xl animate-scale-in">
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-(--shadow-lg)">
+              <div className="relative aspect-video">
                 <Image
                   src={mediaAssets.campaignWall}
                   alt={marketing.heroImageAlt}
                   fill
-                  sizes="(min-width: 1024px) 620px, 100vw"
+                  sizes="(min-width: 1024px) 1024px, 100vw"
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-bg/80 via-bg/10 to-transparent" />
-                <div className="absolute inset-x-4 bottom-4 rounded-xl border border-border bg-surface/95 p-4 shadow-(--shadow-sm)">
-                  <p className="text-lg font-semibold tracking-tight text-text">
-                    {marketing.heroOverlay.headline}
-                  </p>
-                  <p className="mt-2 text-sm text-text-secondary">
-                    {marketing.heroOverlay.tags}
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {[
-                  [
-                    mediaAssets.productPhoto,
-                    marketing.heroThumbnails.referenceProduct,
-                  ],
-                  [
-                    mediaAssets.studioBottle,
-                    marketing.heroThumbnails.studioLighting,
-                  ],
-                  [
-                    mediaAssets.socialShoot,
-                    marketing.heroThumbnails.shortVideoCut,
-                  ],
-                ].map(([src, label]) => (
-                  <div
-                    key={label}
-                    className="relative min-h-28 overflow-hidden rounded-xl border border-border bg-bg-subtle"
-                  >
-                    <Image
-                      src={src}
-                      alt={label}
-                      fill
-                      sizes="180px"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-bg/80 via-transparent to-transparent" />
-                    <p className="absolute inset-x-3 bottom-3 text-xs font-semibold text-text">
-                      {label}
-                    </p>
+                <div className="absolute inset-0 bg-linear-to-t from-bg/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex gap-3 max-sm:flex-col sm:bottom-6 sm:left-6 sm:right-auto">
+                  <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-surface/90 px-4 py-3 shadow-(--shadow-sm)">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-text">
+                      <Megaphone className="h-4.5 w-4.5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-text">{marketing.heroOverlay.headline}</p>
+                      <p className="text-xs text-text-secondary">{marketing.heroOverlay.tags}</p>
+                    </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="border-y border-border bg-surface py-[clamp(3rem,5vw,5rem)]">
-          <div className="mx-auto grid max-w-300 gap-10 px-6 lg:grid-cols-[360px_1fr] lg:items-start">
-            <div>
-              <h2 className="text-3xl font-semibold tracking-tight text-text">
-                {marketing.howTitle}
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-text-secondary">
-                {marketing.howDescription}
-              </p>
+        {/* ─── Metrics bar ────────────────────────────────── */}
+        <section className="border-y border-border bg-surface">
+          <div className="mx-auto grid max-w-5xl grid-cols-3 divide-x divide-border px-6 py-8">
+            <div className="flex flex-col items-center gap-1 px-4 text-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-text">
+                <Camera className="h-4.5 w-4.5" />
+              </div>
+              <p className="mt-2 text-sm font-semibold text-text">{marketing.statSpeed}</p>
+              <p className="text-xs text-text-tertiary">Generate in seconds</p>
             </div>
-            <div className="grid gap-3 md:grid-cols-2 stagger-children">
-              {workflowSteps.map((step, index) => (
-                <div
-                  key={step.title}
-                  className="rounded-xl border border-border bg-bg px-4 py-5 hover-lift"
-                >
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-xs font-bold text-accent-text">
-                    {index + 1}
+            <div className="flex flex-col items-center gap-1 px-4 text-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-text">
+                <Share2 className="h-4.5 w-4.5" />
+              </div>
+              <p className="mt-2 text-sm font-semibold text-text">{marketing.statFormat}</p>
+              <p className="text-xs text-text-tertiary">TikTok, Reels, YouTube, and more</p>
+            </div>
+            <div className="flex flex-col items-center gap-1 px-4 text-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-text">
+                <Shield className="h-4.5 w-4.5" />
+              </div>
+              <p className="mt-2 text-sm font-semibold text-text">{marketing.statControl}</p>
+              <p className="text-xs text-text-tertiary">Your brand kit, your voice</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── How it works ───────────────────────────────── */}
+        <section className="mx-auto max-w-5xl px-6 py-[clamp(3rem,6vw,5rem)]">
+          <div className="mb-10 max-w-lg">
+            <h2 className="text-3xl font-semibold tracking-tight text-text">
+              {marketing.howTitle}
+            </h2>
+            <p className="mt-3 text-[15px] leading-7 text-text-secondary">
+              {marketing.howDescription}
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                step: 1,
+                title: marketing.workflow.step1Title,
+                description: marketing.workflow.step1Description,
+                icon: Camera,
+                image: mediaAssets.editDesk,
+              },
+              {
+                step: 2,
+                title: marketing.workflow.step2Title,
+                description: marketing.workflow.step2Description,
+                icon: Pen,
+                image: mediaAssets.productWorkspace,
+              },
+              {
+                step: 3,
+                title: marketing.workflow.step3Title,
+                description: marketing.workflow.step3Description,
+                icon: Clapperboard,
+                image: mediaAssets.socialShoot,
+              },
+            ].map((item) => (
+              <div key={item.step} className="group overflow-hidden rounded-xl border border-border bg-surface">
+                <div className="relative aspect-[16/10] overflow-hidden bg-bg-subtle">
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-surface via-surface/20 to-transparent" />
+                  <span className="absolute top-3 left-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-text text-xs font-bold text-bg">
+                    {item.step}
                   </span>
-                  <h3 className="mt-4 text-base font-semibold text-text">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-text-secondary">
-                    {step.description}
-                  </p>
                 </div>
+                <div className="px-5 py-4">
+                  <h3 className="text-base font-semibold text-text">{item.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-text-secondary">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ─── Tools by category ──────────────────────────── */}
+        <section id="tools" className="border-y border-border bg-surface">
+          <div className="mx-auto max-w-5xl px-6 py-[clamp(3rem,6vw,5rem)]">
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-3xl font-semibold tracking-tight text-text">
+                  {marketing.tools.heading}
+                </h2>
+                <p className="mt-2 text-[15px] text-text-secondary">
+                  {implementedFeatures.length} tools across {uniqueCategories.length} categories
+                </p>
+              </div>
+              <Link
+                href={localizePath("/features", locale)}
+                className="btn btn-secondary"
+              >
+                {marketing.tools.browseCta}
+                <ArrowRight className="h-3.5 w-3.5 rtl-flip-x" />
+              </Link>
+            </div>
+
+            {/* Category pills */}
+            <div className="flex flex-wrap gap-2 mb-8">
+              {uniqueCategories.map((cat) => {
+                const Icon = categoryIcons[cat] ?? Layers3;
+                const count = implementedFeatures.filter((f) => f.category === cat).length;
+                return (
+                  <div
+                    key={cat}
+                    className="flex items-center gap-2 rounded-full border border-border bg-bg px-3.5 py-1.5 text-sm font-medium text-text-secondary"
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {cat}
+                    <span className="text-xs text-text-tertiary">({count})</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Feature grid - show top 8 */}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {implementedFeatures.slice(0, 8).map((feature) => (
+                <Link
+                  key={feature.slug}
+                  href={localizePath(feature.appRoute, locale)}
+                  className="group overflow-hidden rounded-xl border border-border bg-bg transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
+                >
+                  <div className="relative aspect-video overflow-hidden bg-bg-subtle">
+                    <Image
+                      src={feature.image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                    />
+                    {feature.badge ? (
+                      <span className="absolute top-2 left-2 rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
+                        {feature.badge}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="px-3.5 py-3">
+                    <h3 className="text-sm font-semibold text-text">{feature.title}</h3>
+                    <p className="mt-1 line-clamp-2 text-xs leading-5 text-text-secondary">
+                      {feature.description}
+                    </p>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="tools" className="mx-auto max-w-300 px-6 py-[clamp(3rem,6vw,6rem)]">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="text-3xl font-semibold tracking-tight text-text">
-                {marketing.tools.heading}
-              </h2>
-            </div>
-            <Link
-              href={localizePath("/dashboard", locale)}
-              className="btn btn-secondary"
-            >
-              {marketing.tools.browseCta}
-            </Link>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 stagger-children">
-            {implementedFeatures.map((feature) => (
-              <Link
-                key={feature.slug}
-                href={localizePath(feature.appRoute, locale)}
-                className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:-translate-y-0.5 hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
-              >
-                <div className="relative h-42 bg-bg-subtle">
+        {/* ─── Value props ────────────────────────────────── */}
+        <section className="mx-auto max-w-5xl px-6 py-[clamp(3rem,6vw,5rem)]">
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                title: marketing.storyboardTitle,
+                description: marketing.storyboardDescription,
+                icon: Megaphone,
+                image: mediaAssets.studioBottle,
+              },
+              {
+                title: marketing.avatarsTitle,
+                description: marketing.avatarsDescription,
+                icon: Palette,
+                image: mediaAssets.packaging,
+              },
+              {
+                title: marketing.safetyTitle,
+                description: marketing.safetyDescription,
+                icon: Shield,
+                image: mediaAssets.apparel,
+              },
+            ].map((item) => (
+              <div key={item.title} className="group overflow-hidden rounded-xl border border-border bg-surface">
+                <div className="relative aspect-[16/10] overflow-hidden bg-bg-subtle">
                   <Image
-                    src={feature.image}
+                    src={item.image}
                     alt=""
                     fill
-                    sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                   />
-                </div>
-                <div className="p-4">
-                  <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-surface-raised text-text-secondary ring-1 ring-border">
-                    {feature.category === "Video" ? (
-                      <Layers3 className="h-4 w-4" />
-                    ) : feature.slug === "text-to-image" ? (
-                      <Brush className="h-4 w-4" />
-                    ) : (
-                      <ImageIcon className="h-4 w-4" />
-                    )}
+                  <div className="absolute inset-0 bg-linear-to-t from-surface via-surface/30 to-transparent" />
+                  <div className="absolute bottom-3 left-3 flex h-8 w-8 items-center justify-center rounded-lg bg-text/20 text-text">
+                    <item.icon className="h-4 w-4" />
                   </div>
-                  <h3 className="text-base font-semibold text-text">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-text-secondary">
-                    {feature.description}
-                  </p>
                 </div>
-              </Link>
+                <div className="px-5 py-4">
+                  <h3 className="text-base font-semibold text-text">{item.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-text-secondary">{item.description}</p>
+                </div>
+              </div>
             ))}
           </div>
         </section>
+
+        {/* ─── Final CTA ─────────────────────────────────── */}
+        <section className="border-t border-border bg-surface">
+          <div className="mx-auto max-w-3xl px-6 py-[clamp(3rem,6vw,5rem)] text-center">
+            <h2 className="text-3xl font-semibold tracking-tight text-text sm:text-4xl text-balance">
+              Start creating in minutes
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-[15px] leading-7 text-text-secondary">
+              Join thousands of small business owners who save hours every week with AI-powered creative tools.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href={localizePath(hasAccess ? "/dashboard" : "/sign-up", locale)}
+                className="btn btn-primary px-6 py-3 text-sm"
+              >
+                {hasAccess ? marketing.dashboardCta : marketing.startCta}
+                <ArrowRight className="h-4 w-4 rtl-flip-x" />
+              </Link>
+              <Link
+                href={localizePath("/pricing", locale)}
+                className="btn btn-secondary px-6 py-3 text-sm"
+              >
+                {marketing.pricingCta}
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <MarketingFooter locale={locale} />
     </div>
   );
 }

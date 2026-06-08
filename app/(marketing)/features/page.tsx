@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clapperboard } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
+import { MarketingFooter } from "@/components/marketing-footer";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
 import {
@@ -220,6 +221,8 @@ export default async function FeaturesPage() {
           </div>
         </section>
       </main>
+
+      <MarketingFooter locale={locale} />
     </div>
   );
 }

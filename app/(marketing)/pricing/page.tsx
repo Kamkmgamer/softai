@@ -1,4 +1,5 @@
 import { MarketingNav } from "@/components/marketing-nav";
+import { MarketingFooter } from "@/components/marketing-footer";
 import { PricingCards } from "@/components/pricing-table";
 import { getAppSession } from "@/lib/auth";
 import { getDictionary } from "@/lib/dictionaries";
@@ -65,6 +66,8 @@ export default async function PricingPage() {
           </div>
         </section>
       </main>
+
+      <MarketingFooter locale={locale} />
     </div>
   );
 }
