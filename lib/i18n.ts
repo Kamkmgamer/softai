@@ -3,7 +3,7 @@ export const LOCALES = ["en", "ar"] as const;
 export type Locale = (typeof LOCALES)[number];
 export type Direction = "ltr" | "rtl";
 
-export const DEFAULT_LOCALE: Locale = "en";
+export const DEFAULT_LOCALE: Locale = "ar";
 export const LOCALE_COOKIE = "softai_locale";
 
 const localeSet = new Set<string>(LOCALES);
