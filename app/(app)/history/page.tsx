@@ -16,8 +16,8 @@ export default async function HistoryPage() {
   const { items, nextCursor } = await getGenerationHistory(session.userId);
 
   return (
-    <div className="thin-scrollbar h-full overflow-y-auto px-5 py-8 lg:px-10 lg:py-10">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <div className="thin-scrollbar h-full overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
+      <div className="mx-auto max-w-6xl space-y-6">
         <PageHeader
           title={dictionary.history.title}
           description={dictionary.history.description}

@@ -135,23 +135,23 @@ export function CreativeAppForm({
   }
 
   return (
-    <div className="min-h-full bg-bg lg:grid lg:h-full lg:min-h-0 lg:grid-cols-[464px_minmax(0,1fr)]">
-      <aside className="flex flex-col border-border bg-surface px-4 py-5 lg:min-h-0 lg:border-r lg:px-6 lg:py-8">
-        <div className="mb-5 flex items-start gap-3 px-1">
+    <div className="thin-scrollbar h-full overflow-y-auto bg-bg">
+      <div className="mx-auto max-w-2xl px-4 py-6 lg:px-8 lg:py-10">
+        <div className="mb-6 flex items-start gap-3">
           <AppBackButton className="mt-0.5" />
-          <div className="space-y-2">
-            <h1 className="text-[15px] font-semibold text-text">{title}</h1>
+          <div className="space-y-1">
+            <h1 className="text-lg font-semibold text-text">{title}</h1>
             {description ? (
-              <p className="text-[13px] leading-5 text-text-secondary">
+              <p className="text-sm text-text-secondary">
                 {description}
               </p>
             ) : null}
           </div>
         </div>
 
-        <div className="thin-scrollbar space-y-5 lg:flex-1 lg:overflow-y-auto lg:pr-1">
+        <div className="space-y-5 rounded-xl border border-border bg-surface p-5 shadow-(--shadow-sm) lg:p-6">
           {uploadType ? (
-            <div className="space-y-2 px-1">
+            <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-[13px] font-medium text-text">
                 <UploadCloud className="h-3.5 w-3.5" />
                 {requiresUpload ? formDict.sourceRequired : formDict.sourceOptional} {uploadType}
@@ -201,26 +201,26 @@ export function CreativeAppForm({
             </div>
           ) : null}
 
-          <div className="space-y-2 px-1">
+          <div className="space-y-2">
             <label className="text-[13px] font-medium text-text">{formDict.describeResult}</label>
             <textarea
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
-              className="min-h-45 w-full resize-none rounded-xl border border-border bg-bg-subtle px-3 py-3 text-[15px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-[var(--focus-ring)] lg:min-h-70"
+              className="min-h-40 w-full resize-none rounded-xl border border-border bg-bg-subtle px-3.5 py-3 text-[15px] leading-relaxed text-text placeholder:text-text-tertiary transition-colors focus:border-border-strong focus:shadow-[var(--focus-ring)] lg:min-h-52"
               placeholder={placeholder}
             />
           </div>
 
-          <div className="space-y-2 px-1">
+          <div className="space-y-2">
             <p className="text-[13px] font-medium text-text">{formDict.quickTools}</p>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="flex flex-wrap gap-2">
               {presets.map((preset) => (
                 <button
                   key={preset}
                   type="button"
                   onClick={() => setStyle(preset)}
                   className={cn(
-                    "rounded-md border px-3 py-2 text-left text-xs font-semibold transition-colors",
+                    "rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors",
                     style === preset
                       ? "border-accent bg-accent-soft text-accent-text"
                       : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
@@ -231,85 +231,85 @@ export function CreativeAppForm({
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="sticky bottom-18 z-10 -mx-4 mt-4 space-y-3 border-t border-border bg-surface px-4 pb-3 pt-3 shadow-(--shadow-lg) lg:static lg:-mx-6 lg:px-6 lg:pb-0 lg:shadow-none">
-          <div className="grid gap-2 text-xs font-semibold text-text-secondary sm:grid-cols-3">
-            {aspectRatios.map((ratio) => (
-              <button
-                key={ratio}
-                type="button"
-                onClick={() => setAspectRatio(ratio)}
-                className={cn(
-                  "rounded-md border px-2.5 py-2 transition-colors",
-                  aspectRatio === ratio
-                    ? "border-accent bg-accent-soft text-accent-text"
-                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
-                )}
-              >
-                {ratio}
-              </button>
-            ))}
-            {app === "edit-studio" ? durations.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setDuration(option)}
-                className={cn(
-                  "rounded-md border px-2.5 py-2 transition-colors",
-                  duration === option
-                    ? "border-accent bg-accent-soft text-accent-text"
-                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
-                )}
-              >
-                {option}
-              </button>
-            )) : null}
-            {(app === "lesson-to-video" || app === "explainer-video" || app === "whiteboard-animation") ? videoDurations.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setDuration(option)}
-                className={cn(
-                  "rounded-md border px-2.5 py-2 transition-colors",
-                  duration === option
-                    ? "border-accent bg-accent-soft text-accent-text"
-                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
-                )}
-              >
-                {option}
-              </button>
-            )) : null}
-            {app === "course-trailer" ? trailerDurations.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setDuration(option)}
-                className={cn(
-                  "rounded-md border px-2.5 py-2 transition-colors",
-                  duration === option
-                    ? "border-accent bg-accent-soft text-accent-text"
-                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
-                )}
-              >
-                {option}
-              </button>
-            )) : null}
-            {app === "loop-generator" ? shortDurations.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setDuration(option)}
-                className={cn(
-                  "rounded-md border px-2.5 py-2 transition-colors",
-                  duration === option
-                    ? "border-accent bg-accent-soft text-accent-text"
-                    : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
-                )}
-              >
-                {option}
-              </button>
-            )) : null}
+          <div className="space-y-2">
+            <div className="grid gap-2 text-xs font-semibold text-text-secondary sm:grid-cols-3">
+              {aspectRatios.map((ratio) => (
+                <button
+                  key={ratio}
+                  type="button"
+                  onClick={() => setAspectRatio(ratio)}
+                  className={cn(
+                    "rounded-lg border px-2.5 py-2 transition-colors",
+                    aspectRatio === ratio
+                      ? "border-accent bg-accent-soft text-accent-text"
+                      : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                  )}
+                >
+                  {ratio}
+                </button>
+              ))}
+              {app === "edit-studio" ? durations.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setDuration(option)}
+                  className={cn(
+                    "rounded-lg border px-2.5 py-2 transition-colors",
+                    duration === option
+                      ? "border-accent bg-accent-soft text-accent-text"
+                      : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                  )}
+                >
+                  {option}
+                </button>
+              )) : null}
+              {(app === "lesson-to-video" || app === "explainer-video" || app === "whiteboard-animation") ? videoDurations.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setDuration(option)}
+                  className={cn(
+                    "rounded-lg border px-2.5 py-2 transition-colors",
+                    duration === option
+                      ? "border-accent bg-accent-soft text-accent-text"
+                      : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                  )}
+                >
+                  {option}
+                </button>
+              )) : null}
+              {app === "course-trailer" ? trailerDurations.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setDuration(option)}
+                  className={cn(
+                    "rounded-lg border px-2.5 py-2 transition-colors",
+                    duration === option
+                      ? "border-accent bg-accent-soft text-accent-text"
+                      : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                  )}
+                >
+                  {option}
+                </button>
+              )) : null}
+              {app === "loop-generator" ? shortDurations.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setDuration(option)}
+                  className={cn(
+                    "rounded-lg border px-2.5 py-2 transition-colors",
+                    duration === option
+                      ? "border-accent bg-accent-soft text-accent-text"
+                      : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
+                  )}
+                >
+                  {option}
+                </button>
+              )) : null}
+            </div>
           </div>
 
           {(app === "batch-social" || app === "hook-generator" || app === "platform-resizer") ? (
@@ -322,7 +322,7 @@ export function CreativeAppForm({
                     type="button"
                     onClick={() => setPlatform(p)}
                     className={cn(
-                      "rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors capitalize",
+                      "rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors capitalize",
                       platform === p
                         ? "border-accent bg-accent-soft text-accent-text"
                         : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
@@ -387,7 +387,7 @@ export function CreativeAppForm({
                     type="button"
                     onClick={() => setSeason(s)}
                     className={cn(
-                      "rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
+                      "rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors",
                       season === s
                         ? "border-accent bg-accent-soft text-accent-text"
                         : "border-border bg-bg text-text-secondary hover:bg-surface-raised hover:text-text",
@@ -400,23 +400,18 @@ export function CreativeAppForm({
             </div>
           ) : null}
 
-          {error ? <div className="rounded-md bg-danger-soft p-3 text-[13px] text-danger">{error}</div> : null}
+          {error ? <div className="rounded-lg bg-danger-soft p-3 text-[13px] text-danger">{error}</div> : null}
 
           <button
             type="button"
             onClick={onSubmit}
             disabled={isPending || !canSubmit}
-            className="btn-primary mx-auto mb-2 block w-full max-w-95 rounded-xl px-5 py-3 text-sm lg:max-w-none"
+            className="btn-primary w-full rounded-xl px-5 py-3 text-sm"
           >
             {isPending ? formDict.creating : app === "edit-studio" ? formDict.createEditPlan : formDict.generate}
           </button>
         </div>
-      </aside>
-
-      <section className="relative min-h-0 flex-1 overflow-hidden bg-bg-subtle app-hide-on-mobile">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,oklch(0.72_0.11_67_/_0.20),transparent_28%),radial-gradient(circle_at_78%_8%,oklch(0.58_0.13_252_/_0.16),transparent_26%)]" />
-        <div className="relative mx-auto flex min-h-full max-w-[980px] flex-col justify-center px-5 py-12 lg:px-10" />
-      </section>
+      </div>
     </div>
   );
 }

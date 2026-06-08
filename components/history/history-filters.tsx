@@ -25,10 +25,10 @@ export function HistoryFilters({ active, onChange, labels }: Props) {
           type="button"
           onClick={() => onChange(f.value)}
           className={cn(
-            "rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors",
+            "shrink-0 rounded-full border px-4 py-1.5 text-[13px] font-medium transition-colors",
             active === f.value
-              ? "border-accent bg-accent-soft text-accent-text"
-              : "border-border bg-surface text-text-secondary hover:bg-surface-raised hover:text-text",
+              ? "border-text bg-text text-bg"
+              : "border-border bg-surface text-text-secondary hover:border-border-strong hover:bg-surface-raised",
           )}
         >
           {labels[f.labelKey]}

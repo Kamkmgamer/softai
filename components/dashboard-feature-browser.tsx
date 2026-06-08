@@ -18,9 +18,7 @@ import {
   type StarterKit,
   categories,
   features,
-  mediaAssets,
   starterKits,
-  getDefaultFeatureForCategory,
   getImplementedFeatures,
 } from "@/lib/features";
 import { TemplateBrowser } from "@/components/template-browser";
@@ -33,8 +31,10 @@ type DashboardBillingSummary = {
 
 export function DashboardFeatureBrowser({
   billingSummary,
+  initialQuery = "",
 }: {
   billingSummary: DashboardBillingSummary;
+  initialQuery?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -44,8 +44,7 @@ export function DashboardFeatureBrowser({
     useState<FeatureCategory>("Starter Kits");
   const [activeStarterKit, setActiveStarterKit] =
     useState<StarterKit>("Film or shorts");
-  const [query, setQuery] = useState("");
-  const [selectedFeature, setSelectedFeature] = useState("multi-shot-video");
+  const [query, setQuery] = useState(initialQuery);
 
   const implementedFeatures = useMemo(
     () => features.filter((feature) => feature.status === "implemented"),
@@ -103,278 +102,163 @@ export function DashboardFeatureBrowser({
     });
   }, [activeCategory, activeStarterKit, implementedFeatures, query]);
 
-  const activeFeature =
-    visibleFeatures.find((f) => f.slug === selectedFeature) ??
-    visibleFeatures[0] ??
-    implementedFeatures.find((f) => f.slug === "multi-shot-video")!;
-
-  const localizedActiveFeature =
-    localizedFeatureMap.get(activeFeature.slug) ?? activeFeature;
-
   function openFeature(feature: FeatureTile) {
-    setSelectedFeature(feature.slug);
     router.push(localizePath(feature.appRoute, locale));
   }
 
   return (
-    <div className="min-h-full lg:grid lg:h-full lg:min-h-0 lg:overflow-hidden lg:grid-cols-[464px_minmax(0,1fr)]">
-      <aside className="border-b border-border bg-surface px-4 py-5 lg:min-h-0 lg:overflow-hidden lg:border-b-0 lg:border-r lg:px-6 lg:py-12">
-        <div className="mx-auto flex max-w-104 flex-col lg:h-full">
-          <div className="px-1">
-            <label className="flex h-10.75 items-center gap-2 rounded-xl border border-border-strong bg-surface-raised/80 px-3 text-text-secondary shadow-(--shadow-sm) transition-colors focus-within:border-border-strong">
-              <Search className="h-4 w-4" />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                className="min-w-0 flex-1 bg-transparent text-sm text-text placeholder:text-text-tertiary"
-                placeholder={dictionary.shared.searchApps}
-              />
-            </label>
+    <div className="thin-scrollbar h-full overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
+      <div className="mx-auto max-w-6xl space-y-6">
+        {/* Billing banner */}
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 py-3 shadow-(--shadow-sm)">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">
+            <span className="inline-flex items-center gap-2">
+              <Wallet className="h-4 w-4 text-text-tertiary" />
+              <strong className="font-semibold text-text">
+                {formatCredits(billingSummary.balance, locale)}
+              </strong>
+              {dictionary.shared.credits}
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-text-tertiary" />
+              <strong className="font-semibold text-text">
+                {billingSummary.plan}
+              </strong>
+              {dictionary.shared.plan}
+            </span>
           </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href={localizePath("/billing", locale)}
+              className="btn btn-secondary btn-sm"
+            >
+              {dictionary.app.billing}
+            </Link>
+            <Link
+              href={localizePath("/payments#/billing", locale)}
+              className="btn btn-primary btn-sm"
+            >
+              {dictionary.app.payments}
+            </Link>
+          </div>
+        </div>
 
-          <div className="mt-5 flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] lg:mt-14 [&::-webkit-scrollbar]:hidden">
-            {visibleCategories.map((category) => {
-              const active = category === activeCategory;
+        {/* Mobile search (hidden on desktop where TopNav has search) */}
+        <div className="lg:hidden">
+          <label className="flex h-10.75 items-center gap-2 rounded-xl border border-border-strong bg-surface-raised/80 px-3 text-text-secondary shadow-(--shadow-sm) transition-colors focus-within:border-border-strong">
+            <Search className="h-4 w-4" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="min-w-0 flex-1 bg-transparent text-sm text-text placeholder:text-text-tertiary"
+              placeholder={dictionary.shared.searchApps}
+            />
+          </label>
+        </div>
+
+        {/* Category chips */}
+        <div className="flex gap-2 overflow-x-auto pb-1 text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
+          {visibleCategories.map((category) => {
+            const active = category === activeCategory;
+            return (
+              <button
+                key={category}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  setActiveCategory(category);
+                }}
+                className={cn(
+                  "shrink-0 rounded-full border px-4 py-1.5 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
+                  active
+                    ? "border-text bg-text text-bg"
+                    : "border-border bg-surface text-text-secondary hover:border-border-strong hover:bg-surface-raised",
+                )}
+              >
+                {category}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Starter kit sub-tabs */}
+        {activeCategory === "Starter Kits" ? (
+          <div className="flex gap-2 overflow-x-auto pb-1 text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
+            {visibleStarterKits.map((kit) => {
+              const active = kit.title === activeStarterKit;
               return (
                 <button
-                  key={category}
+                  key={kit.title}
                   type="button"
                   aria-pressed={active}
                   onClick={() => {
-                    setActiveCategory(category);
-                    const next = getDefaultFeatureForCategory(
-                      category,
-                      activeStarterKit,
-                      locale,
-                    );
-                    setSelectedFeature(next.slug);
+                    setActiveStarterKit(kit.title);
                   }}
                   className={cn(
-                    "shrink-0 rounded-t-lg border-b px-2.5 pb-2 pt-1 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
+                    "shrink-0 rounded-full border px-3.5 py-1.5 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
                     active
-                      ? "border-text text-text"
-                      : "border-transparent text-text-tertiary hover:border-border-strong",
+                      ? "border-accent bg-accent-soft text-accent-text"
+                      : "border-border bg-surface text-text-secondary hover:border-border-strong hover:bg-surface-raised",
                   )}
                 >
-                  {category}
+                  {kit.title}
                 </button>
               );
             })}
           </div>
+        ) : null}
 
-          <div className="thin-scrollbar mt-5 space-y-3 lg:flex-1 lg:overflow-y-auto lg:pr-2">
-            {activeCategory === "Starter Kits" ? (
-              <>
-                <div className="flex gap-2 overflow-x-auto border-b border-border/60 pb-px text-[13px] font-medium text-text-tertiary [scrollbar:none] [&::-webkit-scrollbar]:hidden">
-                  {visibleStarterKits.map((kit) => {
-                    const active = kit.title === activeStarterKit;
-                    return (
-                      <button
-                        key={kit.title}
-                        type="button"
-                        aria-pressed={active}
-                        onClick={() => {
-                          setActiveStarterKit(kit.title);
-                          const next = getDefaultFeatureForCategory(
-                            "Starter Kits",
-                            kit.title,
-                            locale,
-                          );
-                          setSelectedFeature(next.slug);
-                        }}
-                        className={cn(
-                          "shrink-0 rounded-t-lg border-b px-2.5 pb-2 pt-1 transition-colors hover:text-text focus-visible:shadow-(--focus-ring)",
-                          active
-                            ? "border-text text-text"
-                            : "border-transparent text-text-tertiary hover:border-border-strong",
-                        )}
-                      >
-                        {kit.title}
-                      </button>
-                    );
-                  })}
-                </div>
-                {visibleFeatures.length > 0 ? (
-                  <div className="space-y-2 pt-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
-                      {dictionary.shared.toolsInKit}
-                    </p>
-                    {visibleFeatures.map((feature) => {
-                      const active = feature.slug === selectedFeature;
-                      const localized = localizedFeatureMap.get(feature.slug) ?? feature;
-                      return (
-                        <button
-                          key={feature.slug}
-                          type="button"
-                          onClick={() => openFeature(feature)}
-                          className={cn(
-                            "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
-                            active
-                              ? "border-border-strong bg-surface-raised/85"
-                              : "border-transparent hover:border-border hover:bg-surface-raised/70",
-                          )}
-                        >
-                          <Image
-                            src={feature.image}
-                            alt=""
-                            width={96}
-                            height={96}
-                            className="h-18 w-18 rounded-lg object-cover ring-1 ring-border"
-                          />
-                          <span className="min-w-0 self-center">
-                            <span className="flex items-center gap-2 text-sm font-semibold text-text">
-                              {localized.title}
-                              {feature.badge ? (
-                                <span className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
-                                  {feature.badge}
-                                </span>
-                              ) : null}
-                            </span>
-                            <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                              {localized.description}
-                            </span>
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="rounded-xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
-                    {dictionary.shared.noToolsInKit}
-                  </div>
-                )}
-              </>
-            ) : visibleFeatures.length ? (
-              visibleFeatures.map((feature) => {
-                const active = feature.slug === activeFeature.slug;
-                const localized = localizedFeatureMap.get(feature.slug) ?? feature;
-                return (
-                  <button
-                    key={feature.slug}
-                    type="button"
-                    onClick={() => openFeature(feature)}
-                    className={cn(
-                      "group grid w-full grid-cols-[72px_1fr] gap-4 rounded-xl border p-1.5 text-left transition-colors focus-visible:shadow-(--focus-ring)",
-                      active
-                        ? "border-border-strong bg-surface-raised/85"
-                        : "border-transparent hover:border-border hover:bg-surface-raised/70",
-                    )}
-                  >
+        {/* Template browser (shown for Starter Kits) */}
+        {activeCategory === "Starter Kits" ? (
+          <TemplateBrowser kit={activeStarterKit} />
+        ) : null}
+
+        {/* Feature card grid */}
+        {visibleFeatures.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {visibleFeatures.map((feature) => {
+              const localized = localizedFeatureMap.get(feature.slug) ?? feature;
+              return (
+                <button
+                  key={feature.slug}
+                  type="button"
+                  onClick={() => openFeature(feature)}
+                  className="group overflow-hidden rounded-xl border border-border bg-surface text-left transition-all hover:border-border-strong hover:shadow-(--shadow-md) focus-visible:shadow-(--focus-ring)"
+                >
+                  <span className="relative block aspect-video overflow-hidden bg-bg-subtle">
                     <Image
                       src={feature.image}
                       alt=""
-                      width={96}
-                      height={96}
-                      className="h-18 w-18 rounded-lg object-cover ring-1 ring-border"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <span className="min-w-0 self-center">
-                      <span className="flex items-center gap-2 text-sm font-semibold text-text">
-                        {localized.title}
-                        {feature.badge ? (
-                          <span className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
-                            {feature.badge}
-                          </span>
-                        ) : null}
+                    {feature.badge ? (
+                      <span className="absolute top-2 left-2 rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase text-text">
+                        {feature.badge}
                       </span>
-                      <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                        {localized.description}
-                      </span>
+                    ) : null}
+                  </span>
+                  <span className="block px-3.5 py-3">
+                    <span className="block text-sm font-semibold text-text">
+                      {localized.title}
                     </span>
-                  </button>
-                );
-              })
-            ) : (
-              <div className="rounded-xl border border-border bg-surface px-4 py-6 text-sm text-text-secondary">
-                {dictionary.shared.noToolsMatch}
-              </div>
-            )}
+                    <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary line-clamp-2">
+                      {localized.description}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
-
-          <div className="h-4 shrink-0 app-hide-on-mobile" />
-        </div>
-      </aside>
-
-      <section className="min-h-0 overflow-y-auto bg-bg px-5 py-8 app-hide-on-mobile lg:px-10 lg:py-8">
-        <div className="mx-auto flex min-h-full max-w-245 flex-col justify-center gap-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface/80 px-4 py-3 shadow-(--shadow-sm)">
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-secondary">
-              <span className="inline-flex items-center gap-2">
-                <Wallet className="h-4 w-4 text-text-tertiary" />
-                <strong className="font-semibold text-text">
-                  {formatCredits(billingSummary.balance, locale)}
-                </strong>
-                {dictionary.shared.credits}
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-text-tertiary" />
-                <strong className="font-semibold text-text">
-                  {billingSummary.plan}
-                </strong>
-                {dictionary.shared.plan}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href={localizePath("/billing", locale)}
-                className="btn btn-secondary btn-sm"
-              >
-                {dictionary.app.billing}
-              </Link>
-              <Link
-                href={localizePath("/payments#/billing", locale)}
-                className="btn btn-primary btn-sm"
-              >
-                {dictionary.app.payments}
-              </Link>
-            </div>
+        ) : (
+          <div className="rounded-xl border border-border bg-surface px-4 py-10 text-center text-sm text-text-secondary">
+            {query.trim()
+              ? dictionary.shared.noToolsMatch
+              : dictionary.shared.noToolsInKit}
           </div>
-
-          <div>
-            <h2 className="text-[28px] font-semibold text-text sm:text-[32px]">
-              {localizedActiveFeature.title}
-            </h2>
-            <p className="mt-2 max-w-xl text-sm text-text-secondary">
-              {localizedActiveFeature.description}
-            </p>
-          </div>
-
-          {activeCategory === "Starter Kits" ? (
-            <TemplateBrowser kit={activeStarterKit} />
-          ) : null}
-
-          <button
-            type="button"
-            onClick={() => openFeature(activeFeature)}
-            className="block w-full overflow-hidden rounded-md border border-border bg-surface text-left shadow-(--shadow-lg) transition-colors hover:border-border-strong focus-visible:shadow-(--focus-ring)"
-          >
-            <span className="relative block aspect-video">
-              <video
-                src={mediaAssets.videoPreview}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <span className="absolute inset-x-0 top-0 h-1 bg-success" />
-              <span className="absolute inset-0 bg-linear-to-t from-bg/70 via-transparent to-transparent" />
-              <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-md bg-bg/85 px-3 py-2 text-xs font-medium text-text ring-1 ring-border">
-                {dictionary.shared.openGenerator}
-              </span>
-            </span>
-          </button>
-
-          <div className="flex justify-start">
-            <button
-              type="button"
-              onClick={() => openFeature(activeFeature)}
-              className="btn btn-primary"
-            >
-              {dictionary.shared.openFeature.replace("{title}", activeFeature.title)}
-            </button>
-          </div>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   );
 }

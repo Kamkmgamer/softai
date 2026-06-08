@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +9,8 @@ import {
   Blocks,
   Clock,
   CreditCard,
+  ChevronsLeft,
+  ChevronsRight,
   LibraryBig,
   Menu,
   Palette,
@@ -103,6 +106,48 @@ const links: Array<{
   },
 ];
 
+function SidebarTooltip({
+  children,
+  label,
+  collapsed,
+}: {
+  children: React.ReactNode;
+  label: string;
+  collapsed: boolean;
+}) {
+  const [show, setShow] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const open = useCallback(() => {
+    if (!collapsed) return;
+    timeoutRef.current = setTimeout(() => setShow(true), 400);
+  }, [collapsed]);
+
+  const close = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setShow(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  if (!collapsed) return <>{children}</>;
+
+  return (
+    <div className="relative" onMouseEnter={open} onMouseLeave={close} onFocus={open} onBlur={close}>
+      {children}
+      {show ? (
+        <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-text px-2.5 py-1.5 text-xs font-medium text-bg shadow-(--shadow-md) animate-fade-in">
+          {label}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE;
@@ -113,6 +158,22 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   const accountLinks = visibleLinks.filter((link) => link.group === "account");
   const bottomLinks = createLinks.slice(0, 5);
 
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("softai-sidebar-collapsed");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (stored === "true") setCollapsed(true);
+  }, []);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem("softai-sidebar-collapsed", String(next));
+      return next;
+    });
+  }, []);
+
   function renderDesktopLink(link: (typeof links)[number]) {
     const Icon = link.icon;
     const activeHref = link.href.split("#")[0] ?? link.href;
@@ -120,24 +181,41 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
       unlocalizedPathname === activeHref ||
       unlocalizedPathname.startsWith(`${activeHref}/`);
 
-    return (
+    const linkContent = (
       <Link
         key={link.href}
         href={localizePath(link.href, locale)}
-        title={dictionary.app[link.labelKey]}
+        title={collapsed ? dictionary.app[link.labelKey] : undefined}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "sidebar-link group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium",
+          "sidebar-link group flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium",
+          collapsed ? "justify-center px-2" : "px-3",
           active
             ? "bg-accent-soft text-accent-text"
             : "text-text-secondary hover:bg-surface-raised hover:text-text",
         )}
       >
         <Icon className="h-4.25 w-4.25 shrink-0" />
-        <span className="min-w-0 truncate">
+        <span
+          className={cn(
+            "min-w-0 truncate transition-opacity duration-200",
+            collapsed && "hidden w-0 opacity-0",
+            !collapsed && "opacity-100",
+          )}
+        >
           {dictionary.app[link.labelKey]}
         </span>
       </Link>
+    );
+
+    return (
+      <SidebarTooltip
+        key={link.href}
+        label={dictionary.app[link.labelKey]}
+        collapsed={collapsed}
+      >
+        {linkContent}
+      </SidebarTooltip>
     );
   }
 
@@ -193,20 +271,46 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 flex h-dvh w-58 shrink-0 flex-col border-r border-border bg-surface px-3 py-3 app-hide-on-mobile">
-        {/* Logo */}
-        <Link
-          href={localizePath("/dashboard", locale)}
-          className="mb-4 flex items-center gap-2.5 rounded-xl border border-border-strong bg-surface-raised px-3 py-2.5 text-text transition-colors hover:bg-accent-soft"
-        >
-          <Image
-            src="/logo.png"
-            alt="Soft-Magic AI"
-            width={100}
-            height={50}
-            className="shrink-0 rounded-md"
-          />
-        </Link>
+      <aside
+        className={cn(
+          "sticky top-0 flex h-dvh shrink-0 flex-col border-r border-border bg-surface px-3 py-3 transition-[width] duration-200 app-hide-on-mobile",
+          collapsed ? "w-[72px]" : "w-60",
+        )}
+      >
+        {/* Logo + toggle */}
+        <div className={cn("mb-4 flex items-center gap-2.5", collapsed ? "justify-center" : "justify-between")}>
+          <Link
+            href={localizePath("/dashboard", locale)}
+            className={cn(
+              "flex items-center gap-2.5 rounded-xl border border-border-strong bg-surface-raised text-text transition-colors hover:bg-accent-soft",
+              collapsed ? "h-9 w-9 justify-center px-0" : "px-3 py-2.5",
+            )}
+          >
+            {collapsed ? (
+              <div className="flex h-5 w-5 items-center justify-center rounded-md bg-accent text-[11px] font-bold text-text">
+                S
+              </div>
+            ) : (
+              <Image
+                src="/logo.png"
+                alt="Soft-Magic AI"
+                width={100}
+                height={50}
+                className="shrink-0 rounded-md"
+              />
+            )}
+          </Link>
+          {!collapsed ? (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              className="flex h-7 w-7 items-center justify-center rounded-md text-text-tertiary transition-colors hover:bg-surface-raised hover:text-text"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </button>
+          ) : null}
+        </div>
 
         {/* Nav */}
         <nav className="flex flex-1 flex-col">
@@ -216,17 +320,33 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
           </div>
         </nav>
 
-        {/* User */}
-        <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: "h-7 w-7",
-              },
-            }}
-          />
-          <ThemeToggle />
-          <LanguageSwitcher />
+        {/* Expand button + User */}
+        <div className={cn("mt-3 flex items-center border-t border-border pt-3", collapsed ? "flex-col gap-2" : "justify-between gap-2")}>
+          {collapsed ? (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              className="flex h-7 w-7 items-center justify-center rounded-md text-text-tertiary transition-colors hover:bg-surface-raised hover:text-text"
+              aria-label="Expand sidebar"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </button>
+          ) : null}
+          <div className={cn("flex items-center gap-2", collapsed && "flex-col")}>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "h-7 w-7",
+                },
+              }}
+            />
+            {!collapsed ? (
+              <>
+                <ThemeToggle />
+                <LanguageSwitcher />
+              </>
+            ) : null}
+          </div>
         </div>
       </aside>
 
