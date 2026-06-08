@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
-  detectLocaleFromAcceptLanguage,
   getLocaleFromPathname,
   isLocale,
   localizePath,
@@ -43,9 +42,7 @@ function handleLocale(request: NextRequest) {
   }
 
   const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
-  const locale = isLocale(cookieLocale)
-    ? cookieLocale
-    : detectLocaleFromAcceptLanguage(request.headers.get("accept-language")) || DEFAULT_LOCALE;
+  const locale = isLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
 
   const url = request.nextUrl.clone();
   url.pathname = localizePath(pathname, locale);
