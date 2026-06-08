@@ -137,7 +137,13 @@ function SidebarTooltip({
   if (!collapsed) return <>{children}</>;
 
   return (
-    <div className="relative" onMouseEnter={open} onMouseLeave={close} onFocus={open} onBlur={close}>
+    <div
+      className="relative"
+      onMouseEnter={open}
+      onMouseLeave={close}
+      onFocus={open}
+      onBlur={close}
+    >
       {children}
       {show ? (
         <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-text px-2.5 py-1.5 text-xs font-medium text-bg shadow-(--shadow-md) animate-fade-in">
@@ -274,11 +280,16 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
       <aside
         className={cn(
           "sticky top-0 flex h-dvh shrink-0 flex-col border-r border-border bg-surface px-3 py-3 transition-[width] duration-200 app-hide-on-mobile",
-          collapsed ? "w-[72px]" : "w-60",
+          collapsed ? "w-18" : "w-60",
         )}
       >
         {/* Logo + toggle */}
-        <div className={cn("mb-4 flex items-center gap-2.5", collapsed ? "justify-center" : "justify-between")}>
+        <div
+          className={cn(
+            "mb-4 flex items-center gap-2.5",
+            collapsed ? "justify-center" : "justify-between",
+          )}
+        >
           <Link
             href={localizePath("/dashboard", locale)}
             className={cn(
@@ -321,7 +332,12 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
         </nav>
 
         {/* Expand button + User */}
-        <div className={cn("mt-3 flex items-center border-t border-border pt-3", collapsed ? "flex-col gap-2" : "justify-between gap-2")}>
+        <div
+          className={cn(
+            "mt-3 flex items-center border-t border-border pt-3",
+            collapsed ? "flex-col gap-2" : "justify-between gap-2",
+          )}
+        >
           {collapsed ? (
             <button
               type="button"
@@ -332,7 +348,9 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
               <ChevronsRight className="h-4 w-4" />
             </button>
           ) : null}
-          <div className={cn("flex items-center gap-2", collapsed && "flex-col")}>
+          <div
+            className={cn("flex items-center gap-2", collapsed && "flex-col")}
+          >
             <UserButton
               appearance={{
                 elements: {
