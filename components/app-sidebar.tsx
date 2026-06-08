@@ -308,6 +308,7 @@ export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
                 width={100}
                 height={50}
                 className="shrink-0 rounded-md"
+                style={{ width: "auto", height: "auto" }}
               />
             )}
           </Link>

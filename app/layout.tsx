@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { ui } from "@clerk/ui";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { IBM_Plex_Mono, Inter, Noto_Naskh_Arabic } from "next/font/google";
@@ -67,7 +68,7 @@ export default async function RootLayout({
         >
           Skip to content
         </a>
-        <ClerkProvider>
+        <ClerkProvider ui={ui}>
           <Providers>{children}</Providers>
         </ClerkProvider>
       </body>

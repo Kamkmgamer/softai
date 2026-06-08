@@ -40,6 +40,7 @@ export function MarketingNav({ hasAccess }: { hasAccess: boolean }) {
             width={150}
             height={75}
             className="shrink-0 rounded-md"
+            style={{ width: "auto", height: "auto" }}
           />
         </Link>
 

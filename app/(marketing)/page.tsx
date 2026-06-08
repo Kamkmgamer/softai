@@ -80,6 +80,7 @@ export default async function MarketingPage() {
                   fill
                   sizes="(min-width: 1024px) 1024px, 100vw"
                   className="object-cover"
+                  loading="eager"
                   priority
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-bg/60 via-transparent to-transparent" />
