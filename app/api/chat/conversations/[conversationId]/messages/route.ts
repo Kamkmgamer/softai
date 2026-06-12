@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { buildChatHistory, buildProjectChatSystemPrompt } from "@/lib/chat-context";
 import { holdChatCredits, refundChatCredits, settleChatCredits } from "@/lib/credits";
 import { apiError, readJson, requireAppUser } from "@/lib/api";
+import { assertPromptAllowed } from "@/lib/moderation";
 import { getChatUnavailableMessage, streamChatCompletion } from "@/lib/openrouter";
 import { chatMessageSchema } from "@/lib/validators";
 import { createChatMessage, deleteChatMessage, getChatConversation, getProjectBundle, listChatMessages } from "@/lib/store";
@@ -34,6 +35,7 @@ export async function POST(
     const user = await requireAppUser();
     const { conversationId } = await params;
     const input = await readJson(request, chatMessageSchema);
+    assertPromptAllowed(input.content);
     const conversation = await getChatConversation(user.id, conversationId);
 
     if (!conversation) {
